@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
         marginTop: 24,
     },
     subheading: {
+        lineHeight: 20,
         fontSize: 22,
         fontWeight: 'bold',
         color: colors.textPrimary,
