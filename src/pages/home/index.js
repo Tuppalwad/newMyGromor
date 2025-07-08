@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
 import React from 'react';
 import CustomHeader from '../../component/common/CustomHeader';
+import Slider from '../../component/Slider';
+import ServiceCard from '../../component/home/ServiceCard';
 // Import your custom components: SearchBar, Slider, ServiceCard, FooterBar, etc.
 
 const HomeScreen = () => {
@@ -25,13 +27,15 @@ const HomeScreen = () => {
       <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
         {/* Slider */}
         <View style={styles.sliderContainer}>
-          <Text>Slider Component Here</Text>
+          {/* <Text>Slider Component Here</Text> */}
+          <Slider />
           {/* Replace with your Slider component */}
         </View>
 
         {/* Service Section */}
         <View style={styles.servicesContainer}>
           <Text>Services Grid (Buy Products, Spraying, Delivery, etc.)</Text>
+          <ServiceCard />
           {/* Create a ServiceGrid component */}
         </View>
 
@@ -59,6 +63,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     paddingHorizontal: 16,
     paddingVertical: 6,
+    height: 30
   },
   weatherText: {
     fontSize: 12,
