@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 10,
         paddingVertical: 40,
-        marginLeft: 10
+        marginLeft: 10,
     },
     radioOuter: {
         width: 18,
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     },
     label: {
         // fontWeight: 'bold',
+        lineHeight: 10,
         color: '#333',
         fontSize: 18
     },
@@ -68,6 +69,7 @@ const styles = StyleSheet.create({
 
     },
     subLabel: {
+        // lineHeight: 10,
         fontSize: 16,
         color: '#666',
     },
