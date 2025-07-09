@@ -21,6 +21,7 @@ export default function CustomHeader({
     onCartPress,
     onNotificationPress,
     onSearch,
+    subtitle = '',
 }) {
     return (
         <View>
@@ -46,6 +47,8 @@ export default function CustomHeader({
                     ) : (
                         <View>
                             <Text style={styles.shopTitle}>Shop</Text>
+                            <Text style={styles.shopSubTitle}>{subtitle}</Text>
+
                             {showLocation && (
                                 <View style={styles.storeDetails}>
                                     <Image source={locationIcon} style={styles.locationIcon} />
@@ -65,17 +68,6 @@ export default function CustomHeader({
                         <Image source={cartIcon} style={styles.icon} />
                     </TouchableOpacity>
                 </View>
-            </View>
-
-            {/* Search Bar */}
-            <View style={styles.searchContainer}>
-                <TextInput
-                    placeholder="Search for Seeds"
-                    placeholderTextColor="#999"
-                    style={styles.searchInput}
-                    onChangeText={onSearch}
-                />
-                <Image source={searchIcon} style={styles.searchIcon} />
             </View>
         </View>
     );
@@ -121,6 +113,14 @@ const styles = StyleSheet.create({
         color: '#222',
         marginLeft: 8,
     },
+    shopSubTitle: {
+        fontSize: 12,
+        lineHeight: 10,
+        fontWeight: 'bold',
+        color: '#222',
+        marginLeft: 8,
+
+    },
     storeDetails: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -156,23 +156,5 @@ const styles = StyleSheet.create({
         height: 22,
         resizeMode: 'contain',
     },
-    searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-        marginHorizontal: 16,
-        marginBottom: 8,
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        height: 40,
-    },
-    searchInput: {
-        flex: 1,
-        fontSize: 14,
-        color: '#333',
-    },
-    searchIcon: {
-        width: 16,
-        height: 16,
-    },
+
 });
