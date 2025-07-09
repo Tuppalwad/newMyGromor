@@ -7,6 +7,9 @@ import WelcomeScreen from './src/pages/welcome';
 import LanguageScreen from './src/pages/language/LanguageScreen';
 import LoginScreen from './src/pages/login/LoginScreen';
 import VerifyOtp from './src/pages/login/VerifyOtp';
+import ShopScreen from './src/pages/shop/ShopScreen';
+import ViewAllProduct from './src/component/shop/ViewAllProduct';
+import ProductDetail from './src/component/shop/ProductDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +23,9 @@ export default function App() {
         <Stack.Screen name='language' component={LanguageScreen} />
         <Stack.Screen name='Login' component={LoginScreen} />
         <Stack.Screen name='VerifyOtp' component={VerifyOtp} />
+        <Stack.Screen name='ShopScreen' component={ShopScreen} />
+        <Stack.Screen name='AllProduct' component={ViewAllProduct} />
+        <Stack.Screen name='ProductDetail' component={ProductDetail} />
 
 
 
