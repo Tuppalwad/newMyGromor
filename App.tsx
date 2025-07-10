@@ -10,6 +10,7 @@ import VerifyOtp from './src/pages/login/VerifyOtp';
 import ShopScreen from './src/pages/shop/ShopScreen';
 import ViewAllProduct from './src/component/shop/ViewAllProduct';
 import ProductDetail from './src/component/shop/ProductDetail';
+import AgriVideo from './src/component/shop/AgriVideo';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,7 @@ export default function App() {
         <Stack.Screen name='ShopScreen' component={ShopScreen} />
         <Stack.Screen name='AllProduct' component={ViewAllProduct} />
         <Stack.Screen name='ProductDetail' component={ProductDetail} />
+        <Stack.Screen name='AgriVideo' component={AgriVideo} />
 
 
 

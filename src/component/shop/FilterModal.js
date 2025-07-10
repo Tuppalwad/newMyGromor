@@ -23,16 +23,19 @@ export default function FilterModal({ visible, onClose }) {
 
                     {/* Header */}
                     <View style={styles.header}>
-                        <Text style={styles.title}>Filters</Text>
+                        <View></View>
+                        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                            <Text style={styles.title}>Filters</Text>
+                            <TouchableOpacity>
+                                <Text style={styles.clearAll}>Clear All</Text>
+                            </TouchableOpacity>
+                        </View>
                         <TouchableOpacity onPress={onClose}>
                             <Text style={styles.close}>✕</Text>
                         </TouchableOpacity>
                     </View>
 
                     {/* Clear All */}
-                    <TouchableOpacity>
-                        <Text style={styles.clearAll}>Clear All</Text>
-                    </TouchableOpacity>
 
                     <View style={styles.content}>
                         {/* Left Menu */}
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 16,
         borderTopRightRadius: 16,
         padding: 16,
-        height: 400
+        height: 450
     },
     header: {
         flexDirection: 'row',

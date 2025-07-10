@@ -1,20 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, ScrollView, TextInput } from 'react-native';
 import CustomHeader from '../../component/common/CustomHeader';
 import CustomButton from '../../component/common/CustomButton';
 import product1 from '../../assets/images/shop/product1.png';
 import specification from '../../assets/images/shop/specification.png';
 import downArrow from '../../assets/images/shop/downArrow.png'
+import leaf from '../../assets/images/shop/leaf.png';
+import dropDose from '../../assets/images/shop/doseDrop.png';
+import upArrow from '../../assets/images/shop/upArrow.png';
+import doorStep from '../../assets/images/shop/doorStep.png';
+import payOn from '../../assets/images/shop/payOn.png';
+import farmar from '../../assets/images/shop/farmar.png';
+import gst from '../../assets/images/shop/GST.png';
+import SimilarProducts from './SimilarProducts';
+import FarmersAlsoBought from './FarmersAlsoBought';
+import CustomerReviews from './CustomerReview';
+
 
 export default function ProductDetail() {
     const [quantity, setQuantity] = useState(300);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-
-
+    const [isDosageExpanded, setIsDosageExpanded] = useState(false);
+    const [isHowToUseExpanded, setIsHowToUseExpanded] = useState(false);
+    const [isAdvantagesExpanded, setIsAdvantagesExpanded] = useState(false);
+    const advantagesRef = useRef(null);
+    const dosageRef = React.useRef(null);
+    const howToUseRef = React.useRef(null);
+    const scrollViewRef = React.useRef(null);
     const handleIncrement = () => setQuantity(quantity + 1);
     const handleDecrement = () => {
         if (quantity > 1) setQuantity(quantity - 1);
     };
+
+
+    const data = [
+        { crop: 'Cotton', dose: '0.5 - 1 ml' },
+        { crop: 'Chilli', dose: '1 - 1.5 ml' },
+        { crop: 'Capsicum', dose: '1 ml' },
+        { crop: 'Sugarcane', dose: '1 - 1.5 ml' },
+        { crop: 'Onion &Tomato & Potato', dose: '1 ml' },
+        { crop: 'Cauliflower', dose: '0.5 - 1 ml' },
+        { crop: 'Cucumber, & Carrot', dose: '0.5 - 0.75 ml' },
+    ];
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -28,7 +56,11 @@ export default function ProductDetail() {
                 onNotificationPress={() => console.log('Notification pressed')}
             />
 
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView
+                ref={scrollViewRef}
+                showsVerticalScrollIndicator={false}
+            >
+
                 {/* Product Image */}
                 <View style={styles.imageContainer}>
                     <View style={styles.badgeContainer}>
@@ -105,7 +137,8 @@ export default function ProductDetail() {
                         onPress={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
                     >
                         <Text style={styles.descriptionTitle}>Description</Text>
-                        <Image source={downArrow} />
+                        {/* <Image source={downArrow} style={{ height: 7, width: 12 }} /> */}
+                        <Image source={!isDescriptionExpanded ? downArrow : upArrow} style={{ height: 7, width: 12 }} />
                     </TouchableOpacity>
                     {isDescriptionExpanded && (
                         <View style={styles.expandedDescriptionContent}>
@@ -115,36 +148,216 @@ export default function ProductDetail() {
                         </View>
                     )}
                 </View>
+
+                {/* Dosage table */}
+                {/* Dosage - Collapsible */}
+                {/* Dosage - Collapsible Dropdown */}
+                <View style={styles.doseContainer}
+                    ref={(ref) => (dosageRef.current = ref)} // Important fix
+                >
+                    <TouchableOpacity
+                        style={styles.doseContainerHeader}
+                        onPress={() => {
+                            const nextState = !isDosageExpanded;
+                            setIsDosageExpanded(nextState);
+
+                            if (nextState && dosageRef.current && scrollViewRef.current) {
+                                setTimeout(() => {
+                                    dosageRef.current.measureLayout(
+                                        scrollViewRef.current,
+                                        (x, y) => {
+                                            scrollViewRef.current.scrollTo({ y: y - 20, animated: true }); // Scroll with offset
+                                        },
+                                        (error) => console.error('Measure layout error', error)
+                                    );
+                                }, 200); // Give some time for layout to expand
+                            }
+                        }}
+                    >
+                        <Text style={styles.doseTitle}>Dosage</Text>
+                        <Image source={isDosageExpanded ? upArrow : downArrow} style={{ height: 7, width: 12 }} />
+                    </TouchableOpacity>
+
+                    {isDosageExpanded && (
+                        <View style={styles.tableContainer}>
+                            {/* Table Header */}
+                            <View style={[styles.row, styles.headerRow]}>
+                                <View style={styles.headerCell}>
+                                    <Image source={leaf} style={{ height: 20, width: 20 }} />
+                                    <Text style={styles.headerText}>  CROP</Text>
+                                </View>
+                                <View style={styles.headerCell}>
+                                    <Image source={dropDose} style={{ height: 20, width: 20 }} />
+                                    <Text style={styles.headerText}>
+                                        DOSE <Text style={styles.unitText}> (per Litre)</Text>
+                                    </Text>
+                                </View>
+                            </View>
+
+                            {/* Table Body */}
+                            {data.map((item, index) => (
+                                <View
+                                    key={index}
+                                    style={[
+                                        styles.row,
+                                        index === data.length - 1 ? styles.lastRow : null,
+                                    ]}
+                                >
+                                    <View style={[styles.cell, styles.leftColumn]}>
+                                        <Text style={styles.cellText}>{item.crop}</Text>
+                                    </View>
+                                    <View style={styles.cell}>
+                                        <Text style={styles.cellText}>{item.dose}</Text>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+                </View>
+
+                {/* How to Use - Collapsible */}
+                <View
+                    ref={(ref) => (howToUseRef.current = ref)} >
+                    <TouchableOpacity
+                        style={styles.howToUseContainer}
+                        onPress={() => {
+                            const nextState = !isHowToUseExpanded;
+                            setIsHowToUseExpanded(nextState);
+
+                            if (nextState && howToUseRef.current && scrollViewRef.current) {
+                                setTimeout(() => {
+                                    howToUseRef.current.measureLayout(
+                                        scrollViewRef.current,
+                                        (x, y) => {
+                                            scrollViewRef.current.scrollTo({ y: y - 20, animated: true });
+                                        },
+                                        (error) => console.error('Measure layout error', error)
+                                    );
+                                }, 200);
+                            }
+                        }}
+                    >
+                        <Text style={styles.howToUseTitle}>How to Use</Text>
+                        <Image source={!isHowToUseExpanded ? downArrow : upArrow} style={{ height: 7, width: 12 }} />
+                    </TouchableOpacity>
+                    {isHowToUseExpanded && (
+                        <View style={styles.howToUseContent}>
+                            <Text style={styles.howToUseText}>
+                                1. Mix the recommended dosage with water as per crop type.{"\n"}
+                                2. Spray uniformly across the crop foliage.{"\n"}
+                                3. Apply during early morning or late afternoon for best results.
+                            </Text>
+                        </View>
+                    )}
+                </View>
+                {/* Advantage  - Collapsible  */}
+
+                <View
+                    ref={(ref) => (advantagesRef.current = ref)} // Attach ref for scrolling
+                >
+                    <TouchableOpacity
+                        style={styles.advantagesContainer}
+                        onPress={() => {
+                            const nextState = !isAdvantagesExpanded;
+                            setIsAdvantagesExpanded(nextState);
+
+                            if (nextState && advantagesRef.current && scrollViewRef.current) {
+                                setTimeout(() => {
+                                    advantagesRef.current.measureLayout(
+                                        scrollViewRef.current,
+                                        (x, y) => {
+                                            scrollViewRef.current.scrollTo({ y: y - 20, animated: true });
+                                        },
+                                        (error) => console.error('Measure layout error', error)
+                                    );
+                                }, 200);
+                            }
+                        }}
+                    >
+                        <Text style={styles.advantagesTitle}>Advantages</Text>
+                        <Image source={!isAdvantagesExpanded ? downArrow : upArrow} style={{ height: 7, width: 12 }} />
+                    </TouchableOpacity>
+
+                    {isAdvantagesExpanded && (
+                        <View style={styles.advantagesContent}>
+                            <Text style={styles.advantagesText}>
+                                • Quickly corrects magnesium deficiency in crops.{"\n"}
+                                • Enhances chlorophyll production and overall plant health.{"\n"}
+                                • Easy-to-use formulation with fast absorption.{"\n"}
+                                • Suitable for a wide range of crops.
+                            </Text>
+                        </View>
+                    )}
+                </View>
+
+                {/* dilevry section  */}
+                <View style={{ marginVertical: 0, paddingHorizontal: 16, backgroundColor: '#fff', marginTop: 8 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', flexWrap: 'wrap', padding: 10 }}>
+
+                        {/* Doorstep Delivery */}
+                        <View style={styles.delivaryCard}>
+                            <Image source={doorStep} style={styles.delivaryImg} />
+                            <View style={[styles.delivaryText, { flex: 1 }]}>
+                                <Text style={{ fontWeight: 'bold' }}>Doorstep Delivery</Text>
+                                <Text style={{ fontSize: 12, color: '#555' }}>*Available Even in Remote Villages</Text>
+                            </View>
+                        </View>
+
+                        {/* Pay on Delivery */}
+                        <View style={styles.delivaryCard}>
+                            <Image source={payOn} style={styles.delivaryImg} />
+                            <View style={[styles.delivaryText, { flex: 1 }]}>
+                                <Text style={{ fontWeight: 'bold' }}>Pay on Delivery</Text>
+                                <Text style={{ fontSize: 12, color: '#555' }}>Payment at the Time of Delivery</Text>
+                            </View>
+                        </View>
+
+                        {/* 100% Quality Products */}
+                        <View style={styles.delivaryCard}>
+                            <Image source={farmar} style={styles.delivaryImg} />
+                            <View style={[styles.delivaryText, { flex: 1 }]}>
+                                <Text style={{ fontWeight: 'bold' }}>100% Quality Products</Text>
+                                <Text style={{ fontSize: 12, color: '#555' }}>Trusted by 3+ Millions Farmers</Text>
+                            </View>
+                        </View>
+
+                        {/* Original GST Bill */}
+                        <View style={styles.delivaryCard}>
+                            <Image source={gst} style={styles.delivaryImg} />
+                            <View style={[styles.delivaryText, { flex: 1 }]}>
+                                <Text style={{ fontWeight: 'bold' }}>Original GST Bill</Text>
+                                <Text style={{ fontSize: 12, color: '#555' }}>Official Bill for Your Records</Text>
+                            </View>
+                        </View>
+
+                    </View>
+                </View>
+
+                <SimilarProducts />
+                <FarmersAlsoBought />
+                <CustomerReviews />
+
             </ScrollView>
 
             {/* Footer */}
             <View style={styles.footer}>
-                {/* <CustomButton
-                    title="Buy Now"
-                    buttonStyle={[styles.footerButton, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#0A8F43' }]}
-                    textStyle={[styles.footerButtonText, { color: '#000' }]}
-                /> */}
+
                 <TouchableOpacity
                     style={[styles.footerButton, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#0A8F43' }]}
                     onPress={() => console.log('Buy Now pressed')}
                 >
-                    <Text style={[styles.footerButtonText, { color: '#0A8F43' }]}>Buy Now</Text>
+                    <Text style={[styles.footerButtonText, { color: '#004F34' }]}>Buy Now</Text>
                 </TouchableOpacity>
 
-                <CustomButton
+                <CustomButton style={{ width: '50%' }}
                     title="Add to Cart"
                     buttonStyle={[styles.footerButton, { backgroundColor: '#0A8F43' }]}
                     textStyle={[styles.footerButtonText, { color: '#fff' }]}
                 />
-                {/* <TouchableOpacity
-                    style={[styles.footerButton, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#0A8F43' }]}
-                    onPress={() => console.log('Buy Now pressed')}
-                >
-                    <Text style={[styles.footerButtonText, { color: '#0A8F43' }]}>Add to Cart</Text>
-                </TouchableOpacity> */}
+
 
             </View>
-        </SafeAreaView>
+        </SafeAreaView >
     );
 }
 
@@ -155,7 +368,10 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         alignItems: 'center',
-        marginTop: 10,
+        marginTop: 16,
+        height: 362,
+        width: '100%',
+        gap: 30,
         backgroundColor: '#fff',
         paddingVertical: 12,
     },
@@ -164,7 +380,9 @@ const styles = StyleSheet.create({
         top: 8,
         left: 8,
         backgroundColor: '#FFD700',
-        borderRadius: 4,
+        borderTopRightRadius: 10,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10,
         paddingHorizontal: 6,
         paddingVertical: 2,
         zIndex: 1,
@@ -172,10 +390,11 @@ const styles = StyleSheet.create({
     badgeText: {
         fontSize: 10,
         color: '#000',
+        fontWeight: 400
     },
     productImage: {
         width: 160,
-        height: 200,
+        height: 290,
         resizeMode: 'contain',
     },
     carouselDots: {
@@ -228,19 +447,20 @@ const styles = StyleSheet.create({
     priceContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+        height: 52
     },
     price: {
         fontSize: 18,
-        fontWeight: 'bold',
+        fontWeight: 600,
         color: '#000',
         marginRight: 12,
         lineHeight: 15
     },
     originalPrice: {
-        fontSize: 14,
+        fontSize: 16,
         color: '#E53935',
         textDecorationLine: 'line-through',
-        lineHeight: 10
+        lineHeight: 15
     },
     quantityContainer: {
         flexDirection: 'row',
@@ -259,16 +479,15 @@ const styles = StyleSheet.create({
     qtyText: {
         fontSize: 18,
         color: '#0A8F43',
-        fontWeight: '600',
         lineHeight: 10
 
     },
     qtyInput: {
-        width: 60,
-        height: 32,
+        width: 69,
+        height: 36,
         borderWidth: 1,
         borderColor: '#0A8F43',
-        borderRadius: 6,
+        borderRadius: 8,
         textAlign: 'center',
         fontSize: 16,
         color: '#000',
@@ -332,8 +551,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        // borderBottomWidth: 1,
+        // borderBottomColor: '#eee',
     },
     descriptionTitle: {
         fontSize: 14,
@@ -354,7 +573,151 @@ const styles = StyleSheet.create({
         color: '#333',
         lineHeight: 20,
     },
+    doseContainer: {
+        backgroundColor: '#fff',
+        paddingHorizontal: 16,
+        marginTop: 8,
+    },
+    doseContainerHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+        paddingVertical: 12,
+    },
+    doseTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#000',
+    },
+    tableContainer: {
+        margin: 16,
+        borderWidth: 1,
+        borderColor: '#cce0dd',
+        borderRadius: 5,
+        overflow: 'hidden',
+    },
+    row: {
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        borderColor: '#d8e2e0',
+        backgroundColor: '#fff',
+    },
+    headerRow: {
+        backgroundColor: '#f3f7f6',
+        paddingVertical: 12,
+    },
+    lastRow: {
+        borderBottomWidth: 0,
+    },
+    leftColumn: {
+        borderRightWidth: 1,
+        borderRightColor: '#d8e2e0',
+        justifyContent: 'center',
+        alignSelf: 'stretch',
+    },
 
+    headerCell: {
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingHorizontal: 10,
+    },
+    unitText: {
+        fontSize: 10,
+        color: '#666', fontWeight: 400
+    },
+    headerText: {
+        fontWeight: 'bold',
+        fontSize: 14,
+        color: '#222',
+    },
+    cell: {
+        flex: 1,
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    cellText: {
+        fontSize: 14,
+        color: '#333',
+        lineHeight: 15
+    },
+
+    howToUseContainer: {
+        backgroundColor: '#fff',
+        padding: 16,
+        marginTop: 8,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+
+    howToUseTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#000',
+    },
+
+    howToUseContent: {
+        backgroundColor: '#fff',
+        padding: 16,
+        paddingTop: 0,
+    },
+
+    howToUseText: {
+        fontSize: 14,
+        color: '#333',
+        lineHeight: 20,
+    },
+    advantagesContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        backgroundColor: '#fff',
+        marginTop: 8,
+
+    },
+
+    advantagesTitle: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: '#333',
+    },
+
+    advantagesContent: {
+        paddingHorizontal: 16,
+        paddingBottom: 12,
+    },
+
+    advantagesText: {
+        fontSize: 14,
+        color: '#444',
+        lineHeight: 20,
+    },
+    delivaryCard: {
+        width: 78,
+        height: 'auto',
+        flexDirection: 'column',
+        // marginBottom: 20,
+        backgroundColor: '#fff',
+    },
+    delivaryImg: {
+        width: 50,
+        height: 58,
+        marginRight: 10,
+        marginBottom: 10,
+    },
+    delivaryText: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'baseline',
+        // marginLeft: 10,
+        gap: 6,
+    },
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-between',

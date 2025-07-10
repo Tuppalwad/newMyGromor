@@ -55,6 +55,11 @@ const HomeScreen = () => {
             icon={''}
             onPress={() => navigation.navigate('ShopScreen')}
           />
+          <ServiceCard
+            title="Agri Video"
+            icon={''}
+            onPress={() => navigation.navigate('AgriVideo')}
+          />
           {/* Create a ServiceGrid component */}
         </View>
 
