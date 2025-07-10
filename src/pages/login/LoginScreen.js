@@ -1,5 +1,5 @@
 // src/screens/LoginScreen.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, ScrollView, KeyboardAvoidingView } from 'react-native';
 import Logo from '../../assets/images/splash/logo.png'
 import CustomLoginRadioButton from '../../component/CustomLoginRadioButton';
@@ -7,18 +7,42 @@ import CustomButton from '../../component/common/CustomButton';
 import colors from '../../utils/theam';
 import Phone from '../../assets/images/splash/phone.png'
 import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { getClasification, getOtp } from '../../services/auth/authApi';
 
 export default function LoginScreen() {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
+    const { selectedLanguage } = useSelector((state) => state.language);
+    const { clasificationData } = useSelector(state => state.auth)
     const navigation = useNavigation();
-    const options = ['Farmer', 'Dealer/Trader', 'Home Gardner', 'Others'];
+    const dispatch = useDispatch();
 
-    const handleLogin = () => {
-        console.log('Phone:', phoneNumber);
-        console.log('Role:', selectedOption);
+    console.log(selectedLanguage, 'selectedLanguage');
+    const fetchClisification = async () => {
+        try {
+            await dispatch(getClasification(selectedLanguage.id))
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
-        navigation.navigate('VerifyOtp');
+    useEffect(() => {
+        fetchClisification()
+    }, [])
+
+    const handleLogin = async () => {
+
+        if (!selectedOption) {
+            console.log("please select clasification")
+            return
+        }
+
+        const res = await dispatch(getOtp({ mobile: phoneNumber }))
+        console.log(res, 'rrrrr')
+        if (res.status == 200) {
+            navigation.navigate('VerifyOtp', { phoneNumber: phoneNumber, clsificationCode: selectedOption });
+        }
 
     };
 
@@ -41,6 +65,7 @@ export default function LoginScreen() {
                         style={styles.input}
                         value={phoneNumber}
                         onChangeText={setPhoneNumber}
+                        placeholderTextColor={'#999'}
                     />
                 </View>
 
@@ -51,12 +76,12 @@ export default function LoginScreen() {
 
                 {/* Radio Buttons */}
                 <View style={styles.radioContainer}>
-                    {options.map((option) => (
-                        <View key={option} style={styles.radioItem}>
+                    {(clasificationData || []).map((option) => (
+                        <View key={option.classificationCode} style={styles.radioItem}>
                             <CustomLoginRadioButton
-                                selected={selectedOption === option}
-                                onPress={() => setSelectedOption(option)}
-                                label={option}
+                                selected={selectedOption === option.classificationCode}
+                                onPress={() => setSelectedOption(option.classificationCode)}
+                                label={option.name}
                             />
                         </View>
                     ))}
@@ -66,12 +91,11 @@ export default function LoginScreen() {
 
             {/* Login Button at Bottom */}
             <View style={styles.footer}>
-
                 {/* Terms */}
                 <Text style={styles.termsText}>
                     By logging in, I accept the MyGromor <Text style={styles.link}>Terms & Conditions</Text> and <Text style={styles.link}>Privacy Policy</Text>.
                 </Text>
-                <CustomButton title="Login →" onPress={handleLogin} />
+                <CustomButton title="Login" onPress={handleLogin} />
                 <Text style={styles.text}>©2025 MyGromor | Version 1.0 </Text>
             </View>
         </KeyboardAvoidingView>

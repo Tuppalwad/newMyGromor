@@ -1,0 +1,186 @@
+{
+  "project_info": {
+    "project_number": "737779596965",
+    "project_id": "mygromor2",
+    "storage_bucket": "mygromor2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737779596965:android:d35c0972200463a740974c",
+        "android_client_info": {
+          "package_name": "com.coromandel.gromor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737779596965-7rkjns9lgnsugboq33d0690ca8ep64ni.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coromandel.gromor",
+            "certificate_hash": "480eab6ffb5df79dac7c01476a0ebcb2812bd161"
+          }
+        },
+        {
+          "client_id": "737779596965-jt7j5ne2q1u7mfmi3bbr94bcui3rs06j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coromandel.gromor",
+            "certificate_hash": "303128c734fb513d3b47d4ec2e6aadeb41c9a2bd"
+          }
+        },
+        {
+          "client_id": "737779596965-ootfagn09mj0le8n8v4jgrtm1nop452q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coromandel.gromor",
+            "certificate_hash": "7db8ea8f12ab4263e62ea54158adde92eb638e39"
+          }
+        },
+        {
+          "client_id": "737779596965-sm4dhi6bj8co04jrai7oe517vo7qlq5b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coromandel.gromor",
+            "certificate_hash": "162f0359259b28c5323839112ae6b139536a4602"
+          }
+        },
+        {
+          "client_id": "737779596965-7dap5733quv8s2vgj17gv0pamfqvhuqa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0HUC5HgJkFQQg1kUjzhrVJuJWncp65o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737779596965-7dap5733quv8s2vgj17gv0pamfqvhuqa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "737779596965-1ebh8ovku8loghe1bhao1e49751kcroq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.coromandel.mygromordelivery"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737779596965:android:a3b07f96534ebef440974c",
+        "android_client_info": {
+          "package_name": "com.coromandel.gromor.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737779596965-7dap5733quv8s2vgj17gv0pamfqvhuqa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0HUC5HgJkFQQg1kUjzhrVJuJWncp65o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737779596965-7dap5733quv8s2vgj17gv0pamfqvhuqa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "737779596965-1ebh8ovku8loghe1bhao1e49751kcroq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.coromandel.mygromordelivery"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737779596965:android:306042af6b8a46bc40974c",
+        "android_client_info": {
+          "package_name": "org.coromandel.mygromordelivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737779596965-7dap5733quv8s2vgj17gv0pamfqvhuqa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0HUC5HgJkFQQg1kUjzhrVJuJWncp65o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737779596965-7dap5733quv8s2vgj17gv0pamfqvhuqa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "737779596965-1ebh8ovku8loghe1bhao1e49751kcroq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.coromandel.mygromordelivery"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:737779596965:android:da6eb6b5280a611f40974c",
+        "android_client_info": {
+          "package_name": "org.coromandel.mygromordelivery.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "737779596965-7dap5733quv8s2vgj17gv0pamfqvhuqa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0HUC5HgJkFQQg1kUjzhrVJuJWncp65o4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "737779596965-7dap5733quv8s2vgj17gv0pamfqvhuqa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "737779596965-1ebh8ovku8loghe1bhao1e49751kcroq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.coromandel.mygromordelivery"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

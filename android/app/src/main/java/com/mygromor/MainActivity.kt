@@ -1,4 +1,4 @@
-package com.mygromor
+package com.coromandel.gromor
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

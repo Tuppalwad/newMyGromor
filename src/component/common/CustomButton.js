@@ -1,7 +1,8 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import colors from '../../utils/theam';
+import RightArrow from '../../assets/images/common/rightArrow.png'
 
 const CustomButton = ({ title, onPress, style, textStyle }) => {
     return (
@@ -12,7 +13,10 @@ const CustomButton = ({ title, onPress, style, textStyle }) => {
                 end={{ x: 1, y: 0 }}
                 style={styles.button}
             >
-                <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={[styles.buttonText, textStyle]}>{title}</Text>
+                    <Image source={RightArrow} resizeMode='contain' style={styles.rightarow} />
+                </View>
             </LinearGradient>
         </TouchableOpacity>
     );
@@ -33,6 +37,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
+    rightarow: {
+        width: 10,
+        height: 10,
+        marginLeft: 10,
+    }
 });
 
 export default CustomButton;

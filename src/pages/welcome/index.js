@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 // import CustomButton from '../components/CustomButton';
 import Logo from '../../assets/images/splash/logo.png';
 import Store from '../../assets/images/welcome/store.png'
 import CustomButton from '../../component/common/CustomButton';
 import colors from '../../utils/theam';
+// import PushNotification from "react-native-push-notification";
+import { useIsFocused } from '@react-navigation/native';
 
 
 const WelcomeScreen = ({ navigation }) => {
+
+    const isFocussed = useIsFocused();
+
+    useEffect(() => {
+        if (isFocussed) {
+            // createChannels()
+        }
+    }, [isFocussed]);
+
+    // const createChannels = () => {
+    //     PushNotification.createChannel({
+    //         channelId: "my-gromor",
+    //         channelName: "Gromor Notificaiton Channel"
+    //     })
+    // }
     return (
         <View style={styles.container}>
             <Image

@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     },
     label: {
         // fontWeight: 'bold',
-        lineHeight: 10,
+        lineHeight: 29,
         color: '#333',
         fontSize: 18
     },

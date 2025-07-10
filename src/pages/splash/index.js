@@ -122,9 +122,9 @@ const SplashScreen = () => {
                 }),
             ]).start(() => {
                 // 👇 Navigate after animation completes
-                navigation.replace('WelcomeScreen');
+                navigation.replace('language');
             });
-        }, 1000);
+        }, 1500);
     }, []);
 
     return (
