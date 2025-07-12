@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, ScrollView } from 'react-native';
-import CustomHeader from '../../component/common/CustomHeader';
+// import CustomHeader from '../../../../components/common/CustomHeader';
 // import SearchBar from '../../component/common/SearchBar';
-import CategoryCard from '../../component/shop/CategoryCard'; // You'll create this
-import NewLaunch from '../../component/shop/NewLaunch';
-import PopularProduct from '../../component/shop/PopularProduct';
-import CustomButton from '../../component/common/CustomButton';
-import SearchBar from '../../component/common/SearchBar';
+// import CategoryCard from '../../components/shop/CategoryCard'; // You'll create this
+import NewLaunch from '../../components/shop/NewLaunch';
+import PopularProduct from '../../components/shop/PopularProduct';
+import CustomButton from '../../components/common/CustomButton';
+import SearchBar from '../../components/common/SearchBar';
 import { useNavigation } from '@react-navigation/native';
+import CustomHeader from '../../components/common/CustomHeader';
+import CategoryCard from '../product_Modules/components/CategoryCard';
 
 const categories = [
     { id: '1', title: 'All', icon: require('../../assets/images/shop/all.png') },
