@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
     Image,
@@ -10,17 +10,18 @@ import {
 import { useNavigation } from '@react-navigation/native'; // 🔁 ADD THIS
 
 import Logo from '../../../assets/images/splash/logo.png';
-import Tree from '../../../assets/images/splash/tree.png';
+import Tree from '../../../assets/images/splash/tree.jpg';
 import Brand from '../../../assets/images/splash/brand.png';
 import { Screen } from '../../../router/screen';
 
 const { width, height } = Dimensions.get('window');
 
 const SplashScreen = () => {
+
     const logoTranslateY = useRef(new Animated.Value(0)).current;
-    const treeScale = useRef(new Animated.Value(1.1)).current;
+    const treeScale = useRef(new Animated.Value(1.6)).current;
     const treeOpacity = useRef(new Animated.Value(0)).current;
-    const navigation = useNavigation(); // 🔁 ADD THIS
+    const navigation = useNavigation(); 
 
     useEffect(() => {
         setTimeout(() => {
@@ -36,7 +37,7 @@ const SplashScreen = () => {
                     useNativeDriver: true,
                 }),
                 Animated.timing(treeScale, {
-                    toValue: 1.3,
+                    toValue: 1.0,
                     duration: 1000,
                     useNativeDriver: true,
                 }),

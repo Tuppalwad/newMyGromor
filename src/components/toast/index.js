@@ -4,10 +4,8 @@ import Toast from 'react-native-toast-message';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {isNil, isEmpty, isEqual} from 'lodash';
 import {Icon} from "../../../assets/images";
-// import { palette, typography } from '../../theme';
 import { UserManager } from '../../storage'
-// import { palette } from '../../theme/color';
-// import { typography } from '../../theme/typograph';
+
 
 
 export const ToastConfig = {

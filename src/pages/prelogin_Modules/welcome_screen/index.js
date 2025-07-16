@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
 // import CustomButton from '../components/CustomButton';
 import Logo from '../../../assets/images/splash/logo.png';
@@ -6,9 +6,101 @@ import Store from '../../../assets/images/welcome/store.png'
 import CustomButton from '../../../components/common/CustomButton';
 import colors from '../../../utils/theam';
 import { Screen } from '../../../router/screen';
+import { useOperation } from '../../../redux/operation';
+import { useDispatch, useSelector } from 'react-redux';
+import { useIsFocused } from '@react-navigation/native';
+import { createLoadingSelector } from '../../../redux/loading-reducer';
+import { UserManager } from '../../../storage';
+import { getVersion } from 'react-native-device-info';
+import { Linking } from 'react-native';
+import { Isplatform_IOS } from '../../../config/resposiveSize';
+import { UserType } from '../../../redux/user/type';
 
 
 const WelcomeScreen = ({ navigation }) => {
+
+    const operation = useOperation();
+    const dispatch = useDispatch();
+    const isFocussed = useIsFocused();
+    const [showUpdate, setshowUpdate] = useState({
+        visible: false,
+        Current_Version: '',
+    });
+    const loadingSelector = createLoadingSelector([UserType.versionHistory]);
+    // const isLoading = useSelector(state => loadingSelector(state));
+    const appLanguage = UserManager?.getAppMultiLanguage;
+
+    useEffect(() => {
+        try {
+            if (isFocussed) {
+                setTimeout(() => {
+                    let param = {
+                        applicationVersion: getVersion() ?? '',
+                        platform: Isplatform_IOS ? 'IOS' : 'ANDROID',
+                    };
+                    dispatch(operation.user.getVersionHistory(param))
+                        .then(res => {
+                            if (res?.forceUpdate) {
+                                setshowUpdate({
+                                    visible: res?.forceUpdate ?? false,
+                                    Current_Version: res?.currentVersion ?? '',
+                                });
+                            } else {
+                                getUpdatedUser();
+                            }
+                        })
+                        .catch(err => {
+                            getUpdatedUser();
+                            dispatch(
+                                operation.user.getErrorHandling(err, 'getVersionHistory'),
+                            );
+                        });
+                }, 2000);
+            }
+        } catch (e) { }
+    }, [isFocussed]);
+
+    const getUpdatedUser = () => {
+        UserManager.initUser()
+            .then(res => {
+                if (UserManager.isLoggedIn) {
+                    getUserDetails();
+                    getAppMultiLangaue();
+                    navigation.dispatch(
+                        CommonActions.reset({ index: 1, routes: [{ name: Screen.dashboard }] }),
+                    );
+                } else {
+                    navigation.dispatch(
+                        CommonActions.reset({ index: 1, routes: [{ name: Screen.welcome }] }),
+                    );
+                }
+            })
+            .catch(err => {
+                navigation.dispatch(
+                    CommonActions.reset({ index: 1, routes: [{ name: Screen.welcome }] }),
+                );
+            });
+    };
+
+    const getUserDetails = () => {
+        let parms = { farmerIdentityId: UserManager.getUserId };
+        let param = {
+            userId: UserManager.getUserId,
+            token: UserManager.getFcmToken,
+        };
+        dispatch(operation.user.notificationSend(param));
+        dispatch(operation.user.getFarmerDetails(parms));
+    };
+
+    const getAppMultiLangaue = () => {
+        let parms = { language: UserManager.getUserLanguage ?? 1 };
+        dispatch(operation.user.getAppMultiLanguage(parms));
+    };
+
+    const onPressDone = () => {
+        Linking.openURL(Isplatform_IOS ? Constants.ios : Constants.android);
+    };
+
     return (
         <View style={styles.container}>
             <Image
@@ -33,7 +125,7 @@ const WelcomeScreen = ({ navigation }) => {
             </Text>
 
             <CustomButton
-                title="Login  →"
+                title="Login"
                 onPress={() => navigation.navigate(Screen.language)}
                 style={styles.button}
                 textStyle={{ fontWeight: 'bold' }}

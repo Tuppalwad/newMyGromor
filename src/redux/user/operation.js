@@ -350,6 +350,10 @@ export const getAssetsDetails = farmerId => {
 
 export const getErrorHandling = (data, API_Name) => {
   try {
+    if (isEmpty(data)) {
+      HEToast("Something went wrong. Please try again later.", 'error');
+      return;
+    }
     console.log(data, API_Name, "getErrorHandling")
     const appLanguage = UserManager?.getAppMultiLanguage
     const { message, title, description, errors } = data?.data ?? data;

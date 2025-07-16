@@ -3,16 +3,17 @@ import { SafeAreaView, StyleSheet, StatusBar, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CProvider } from './src/redux';
 import AppStack from './src/router/router';
+import Toast from 'react-native-toast-message';
+import { ToastConfig } from './src/components/toast';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <CProvider>
-      <SafeAreaView style={styles.safeArea}>
-        <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-        <AppStack />
-      </SafeAreaView>
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <AppStack />
+      <Toast config={ToastConfig} />
     </CProvider>
   );
 }

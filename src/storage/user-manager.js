@@ -168,26 +168,12 @@ class UserManager {
     if (!this.isLoggedIn) {
       return null;
     }
-
-    // user data double level decryption for security purpose
-    // let userLevel1Decrypt = CryptoJS.AES.decrypt(d, 'user2');
-    // let userLevel2Decrypt = CryptoJS.AES.decrypt(userLevel1Decrypt, 'user1');
-    // let userLevel1Data = userLevel2Decrypt.toString(CryptoJS.enc.Utf8)
-    // let userData = JSON.parse(userLevel1Data);
-    // this.user = userData;
-
     return this.user.id;
   }
   get getUserLanguage() {
     if (!this.isLoggedIn) {
       return null;
     }
-    // user data double level decryption for security purpose
-    // let userLevel1Decrypt = CryptoJS.AES.decrypt(d, 'user2');
-    // let userLevel2Decrypt = CryptoJS.AES.decrypt(userLevel1Decrypt, 'user1');
-    // let userLevel1Data = userLevel2Decrypt.toString(CryptoJS.enc.Utf8)
-    // let userData = JSON.parse(userLevel1Data);
-    // this.user = userData;
 
     return this.user.languageId;
   }
@@ -195,12 +181,6 @@ class UserManager {
     if (!this.isLoggedIn) {
       return null;
     }
-    // user data double level decryption for security purpose
-    // let userLevel1Decrypt = CryptoJS.AES.decrypt(d, 'user2');
-    // let userLevel2Decrypt = CryptoJS.AES.decrypt(userLevel1Decrypt, 'user1');
-    // let userLevel1Data = userLevel2Decrypt.toString(CryptoJS.enc.Utf8)
-    // let userData = JSON.parse(userLevel1Data);
-    // this.user = userData;
 
     return this.user.address;
   }
@@ -208,12 +188,6 @@ class UserManager {
     if (!this.isLoggedIn) {
       return null;
     }
-    // user data double level decryption for security purpose
-    // let userLevel1Decrypt = CryptoJS.AES.decrypt(d, 'user2');
-    // let userLevel2Decrypt = CryptoJS.AES.decrypt(userLevel1Decrypt, 'user1');
-    // let userLevel1Data = userLevel2Decrypt.toString(CryptoJS.enc.Utf8)
-    // let userData = JSON.parse(userLevel1Data);
-    // this.user = userData;
 
     return this.user.identity;
   }
@@ -221,21 +195,11 @@ class UserManager {
     if (!this.isLoggedIn) {
       return null;
     }
-    // user data double level decryption for security purpose
-    // let userLevel1Decrypt = CryptoJS.AES.decrypt(d, 'user2');
-    // let userLevel2Decrypt = CryptoJS.AES.decrypt(userLevel1Decrypt, 'user1');
-    // let userLevel1Data = userLevel2Decrypt.toString(CryptoJS.enc.Utf8)
-    // let userData = JSON.parse(userLevel1Data);
-    // this.user = userData;
 
     return this.user.crops;
   }
 
   get getUserLocation() {
-    // if (!this.isLoggedIn) {
-    //   return null;
-    // }
-    // console.log("REFRESHTOKEN",this.user);
     return this.locationInfo;
   }
 
@@ -243,20 +207,11 @@ class UserManager {
     if (!this.isLoggedIn) {
       return null;
     }
-    // user data double level decryption for security purpose
-    // let userLevel1Decrypt = CryptoJS.AES.decrypt(d, 'user2');
-    // let userLevel2Decrypt = CryptoJS.AES.decrypt(userLevel1Decrypt, 'user1');
-    // let userLevel1Data = userLevel2Decrypt.toString(CryptoJS.enc.Utf8)
-    // let userData = JSON.parse(userLevel1Data);
-    // this.user = userData;
 
     return this.user.username;
   }
 
   get getAppMultiLanguage() {
-    // if (!this.isLoggedIn) {
-    //   return null;
-    // }
     return this.appMultiLanguage;
   }
 
