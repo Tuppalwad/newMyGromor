@@ -9,7 +9,7 @@ import cartIcon from '../../assets/images/splash/cart.png';
 import redDot from '../../assets/images/splash/redDot.png';
 import searchIcon from '../../assets/images/splash/search.png';
 import locationIcon from '../../assets/images/splash/location.png';
-
+import LinearGradient from 'react-native-linear-gradient';
 export default function CustomHeader({
     type = 'home', // 'home' or 'shop'
     welcomeText = '',
@@ -24,52 +24,59 @@ export default function CustomHeader({
     subtitle = '',
 }) {
     return (
-        <View>
-            <View style={styles.headerContainer}>
-                <View style={styles.leftSection}>
-                    {type === 'home' ? (
-                        <TouchableOpacity onPress={onMenuPress}>
-                            <Image source={menuIcon} style={styles.icon} resizeMode='contain' />
-                        </TouchableOpacity>
-                    ) : (
-                        <TouchableOpacity onPress={onBackPress}>
-                            <Image source={leftArrow} style={styles.icon} resizeMode='contain' />
-                        </TouchableOpacity>
-                    )}
-                    {type === 'home' ? (
-                        <View style={styles.welcomeBox}>
-                            <Image source={require('../../assets/images/splash/logo.png')} style={styles.logo} resizeMode='contain' />
-                            <View style={{ marginLeft: 8 }}>
-                                <Text style={styles.welcome}>Welcome</Text>
-                                <Text style={styles.username}>{welcomeText}</Text>
-                            </View>
-                        </View>
-                    ) : (
-                        <View>
-                            <Text style={styles.shopTitle}>Shop</Text>
-                            <Text style={styles.shopSubTitle}>{subtitle}</Text>
-
-                            {showLocation && (
-                                <View style={styles.storeDetails}>
-                                    <Image source={locationIcon} style={styles.locationIcon} resizeMode='contain' />
-                                    <Text style={styles.storeText}>Store Code: {storeCode} | {locationName}</Text>
+        <LinearGradient
+            colors={['#ecdc96ff', '#FFFFFF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.container}
+        >
+            <View >
+                <View style={styles.headerContainer}>
+                    <View style={styles.leftSection}>
+                        {type === 'home' ? (
+                            <TouchableOpacity onPress={onMenuPress}>
+                                <Image source={menuIcon} style={styles.icon} resizeMode='contain' />
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity onPress={onBackPress}>
+                                <Image source={leftArrow} style={styles.icon} resizeMode='contain' />
+                            </TouchableOpacity>
+                        )}
+                        {type === 'home' ? (
+                            <View style={styles.welcomeBox}>
+                                <Image source={require('../../assets/images/splash/logo.png')} style={styles.logo} resizeMode='contain' />
+                                <View style={{ marginLeft: 8 }}>
+                                    <Text style={styles.welcome}>Welcome</Text>
+                                    <Text style={styles.username}>{welcomeText}</Text>
                                 </View>
-                            )}
-                        </View>
-                    )}
-                </View>
+                            </View>
+                        ) : (
+                            <View>
+                                <Text style={styles.shopTitle}>Shop</Text>
+                                <Text style={styles.shopSubTitle}>{subtitle}</Text>
 
-                <View style={styles.rightSection}>
-                    <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
-                        <Image source={bellIcon} style={styles.icon} resizeMode='contain' />
-                        {/* <Image source={redDot} style={styles.redDot} resizeMode='contain' /> */}
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onCartPress}>
-                        <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
-                    </TouchableOpacity>
+                                {showLocation && (
+                                    <View style={styles.storeDetails}>
+                                        <Image source={locationIcon} style={styles.locationIcon} resizeMode='contain' />
+                                        <Text style={styles.storeText}>Store Code: {storeCode} | {locationName}</Text>
+                                    </View>
+                                )}
+                            </View>
+                        )}
+                    </View>
+
+                    <View style={styles.rightSection}>
+                        <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
+                            <Image source={bellIcon} style={styles.icon} resizeMode='contain' />
+                            {/* <Image source={redDot} style={styles.redDot} resizeMode='contain' /> */}
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={onCartPress}>
+                            <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
-        </View>
+        </LinearGradient>
     );
 }
 
@@ -81,7 +88,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         paddingTop: 20,
         paddingBottom: 10,
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
     },
     leftSection: {
         flexDirection: 'row',

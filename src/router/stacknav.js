@@ -89,6 +89,7 @@ import ShopScreen from '../pages/product_Modules/product-category/ShopScreen';
 import ViewAllProduct from '../pages/product_Modules/components/ViewAllProduct';
 import ProductDetail from '../pages/product_Modules/components/ProductDetail';
 import AgriVideo from '../pages/dashboard_Modules/tabs/ad-video/AgriVideo';
+import Cart from '../pages/product_Modules/my-cart';
 
 const Stack = createNativeStackNavigator();
 
@@ -175,6 +176,14 @@ const StackNav = ({ navigation }) => {
       <Stack.Screen name='AgriVideo'
         options={{ headerShown: false }}
         component={AgriVideo}
+      />
+
+
+      <Stack.Screen
+        name='Cart'
+        options={{ headerShown: false }}
+        // name={Screen.myCart}
+        component={Cart}
       />
 
 

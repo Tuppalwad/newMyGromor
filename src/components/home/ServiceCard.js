@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import colors from '../../utils/theam';
-
+import allProduct from '../../assets/images/shop/all.png'
 const ServiceCard = ({ title, icon, onPress }) => {
     return (
         <TouchableOpacity style={styles.card} onPress={onPress}>
             <View style={styles.iconContainer}>
-                {/* <Image source={icon} style={styles.icon} /> */}
+                <Image source={allProduct} style={styles.icon} />
+                <Text style={styles.title}>{title}</Text>
             </View>
-            <Text style={styles.title}>{title}</Text>
         </TouchableOpacity>
     );
 };
@@ -23,22 +23,26 @@ const styles = StyleSheet.create({
         marginHorizontal: 8,
     },
     iconContainer: {
-        width: 101,
-        height: 101,
-        borderRadius: 50,
+        width: 109,
+        height: 108,
+        borderRadius: 4,
         backgroundColor: '#F5F5F5',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 8,
+        // marginBottom: 8,
+        paddingTop: 4,
+        paddingBottom: 10,
     },
     icon: {
-        width: 32,
-        height: 32,
+        width: 50,
+        height: 50,
         resizeMode: 'contain',
     },
     title: {
-        fontSize: 12,
+        fontSize: 13,
         color: '#333',
         textAlign: 'center',
+        fontWeight: '500',
+        marginTop: 4,
     },
 });

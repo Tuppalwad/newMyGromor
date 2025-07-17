@@ -83,7 +83,7 @@ const style = props =>
             flexDirection: 'row',
             backgroundColor: props.white,
             height: 50,
-            // backgroundColor: 'red'
+            // backgroundColor: 'red',
             elevation: 20,
             shadowColor: props.black,
             shadowOffset: { width: 1, height: 0 },

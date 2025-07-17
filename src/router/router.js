@@ -10,6 +10,7 @@ import StackNav from './stacknav';
 import { Dimensions, View } from 'react-native';
 import analytics from '@react-native-firebase/analytics';
 import { UserManager } from '../storage';
+import DrawerContent from './drawercontent';
 
 const Drawer = createDrawerNavigator();
 
@@ -40,8 +41,8 @@ export default function AppStack() {
           }
           routeNameRef.current = currentRouteName;
         }}
-        // theme={AppTheme}
-        >
+      // theme={AppTheme}
+      >
         <Drawer.Navigator
           screenOptions={{
             gestureEnabled: false,
@@ -52,7 +53,7 @@ export default function AppStack() {
           }}
           initialRouteName="home"
           onStateChange={null}
-        // drawerContent={props => <DrawerContent {...props} />}
+          drawerContent={props => <DrawerContent {...props} />}
         >
           <Drawer.Screen
             options={{

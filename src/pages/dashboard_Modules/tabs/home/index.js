@@ -8,7 +8,7 @@ import searchIcon from '../../../../assets/images/splash/search.png'
 // Import your custom components: SearchBar, Slider, ServiceCard, FooterBar, etc.
 import Weather from '../../../../assets/images/common/Weather.png';
 import RightArrow from '../../../../assets/images/common/rightArrow.png';
-
+import LinearGradient from 'react-native-linear-gradient';
 const services = [
   { title: 'Buy Products', screen: 'ShopScreen' },
   { title: 'Spraying Services', screen: '' },
@@ -41,60 +41,67 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Top Weather Strip */}
-      <View style={styles.weatherStrip}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Image source={Weather} style={{ width: 16, height: 16, marginRight: 4 }} resizeMode='contain' />
-          <Text style={styles.weatherText}> 31°C  Partly cloudy and light winds</Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={styles.weatherLink}>View</Text>
-          <Image source={RightArrow} style={{ width: 8, height: 8, marginLeft: 4, tintColor: '#000' }} resizeMode='contain' />
-        </View>
-      </View>
-
-      {/* Header */}
-      <CustomHeader
-        type="home"
-        welcomeText="Ramachandra"
-        onMenuPress={() => console.log('Menu pressed')}
-        onCartPress={() => console.log('Cart pressed')}
-        onNotificationPress={() => console.log('Notification pressed')}
-      // onSearch={(text) => console.log('Search:', text)}
-      />
-
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <TextInput
-          placeholder="Search for Seeds"
-          placeholderTextColor="#999"
-          style={styles.searchInput}
-        // onChangeText={onSearch}
-        />
-        <Image source={searchIcon} style={styles.searchIcon} />
-      </View>
-
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-        {/* Slider */}
-        <View style={styles.sliderContainer}>
-          <Slider />
+      <LinearGradient
+        colors={['#f1e096ff', '#FFFFFF']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={styles.container}
+      >
+        <View style={styles.weatherStrip}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image source={Weather} style={{ width: 16, height: 16, marginRight: 4 }} resizeMode='contain' />
+            <Text style={styles.weatherText}> 31°C  Partly cloudy and light winds</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={styles.weatherLink}>View</Text>
+            <Image source={RightArrow} style={{ width: 8, height: 8, marginLeft: 4, tintColor: '#6AB42D' }} resizeMode='contain' />
+          </View>
         </View>
 
-        {/* Service Section */}
-        <FlatList
-          data={services}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={numColumns}
-          contentContainerStyle={styles.servicesContainer}
+        {/* Header */}
+        <CustomHeader
+          type="home"
+          welcomeText="Ramachandra"
+          onMenuPress={() => navigation.openDrawer()}
+          onCartPress={() => console.log('Cart pressed')}
+          onNotificationPress={() => console.log('Notification pressed')}
+        // onSearch={(text) => console.log('Search:', text)}
         />
 
-        {/* Any Other Sections */}
-      </ScrollView>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            placeholder="Search for Seeds"
+            placeholderTextColor="#999"
+            style={styles.searchInput}
+          // onChangeText={onSearch}
+          />
+          <Image source={searchIcon} style={styles.searchIcon} />
+        </View>
 
-      {/* Bottom Footer */}
-      <View style={styles.footerBar}>
-        <Text>Store Code: S0584 | Mana Gromor Centre Akola ▼</Text>
-      </View>
+        <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
+          {/* Slider */}
+          <View style={styles.sliderContainer}>
+            <Slider />
+          </View>
+
+          {/* Service Section */}
+          <FlatList
+            data={services}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={numColumns}
+            contentContainerStyle={styles.servicesContainer}
+          />
+
+          {/* Any Other Sections */}
+        </ScrollView>
+
+        {/* Bottom Footer */}
+        <View style={styles.footerBar}>
+          <Text>Store Code: S0584 | Mana Gromor Centre Akola ▼</Text>
+        </View>
+      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -104,13 +111,13 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
   },
   weatherStrip: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',      // vertically center content
-    backgroundColor: '#f5f5f5',
+    // backgroundColor: '#f5f5f5',
     paddingVertical: 8,        // increased padding
     height: 40,
     paddingHorizontal: 16,
@@ -130,7 +137,7 @@ const styles = StyleSheet.create({
   },
   weatherLink: {
     fontSize: 12,
-    color: '#000000',
+    color: '#6AB42D',
     fontWeight: '500',
   },
   searchContainer: {
@@ -165,5 +172,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#ddd',
     alignItems: 'center',
+    backgroundColor: '#DAFDE7'
   },
 });
