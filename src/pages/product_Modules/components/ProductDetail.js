@@ -367,6 +367,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F9FAFB',
+        marginTop: 35
     },
     imageContainer: {
         alignItems: 'center',

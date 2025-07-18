@@ -46,20 +46,27 @@ export const TabNavigator = () => {
         name={appLanguage?.my_crop_advisory ?? Screen.cropAdvisory}
         component={Advisory}
       />
-      {farmerAddress?.features?.isFeedsEnabled && (
-        <Tab.Screen
-          name={appLanguage?.lblFeeds ?? Screen.postFeed}
-          component={CropDoctor}
-        />
-      )}
+      {/* {farmerAddress?.features?.isFeedsEnabled && ( */}
+
+      {/* )} */}
       <Tab.Screen
-        name={appLanguage?.buy_products ?? Screen.product}
+        name={appLanguage?.Shop ?? Screen.Shop}
         component={Products}
       />
       <Tab.Screen
+        name={appLanguage?.cropDocktore ?? Screen.cropDocktore}
+        component={CropDoctor}
+      />
+      {/* <Tab.Screen
         name={appLanguage?.market_value ?? Screen.marketValue}
         component={MarketValue}
+      /> */}
+
+      <Tab.Screen
+        name={appLanguage?.Community ?? Screen.Community}
+        component={MarketValue}
       />
+
     </Tab.Navigator>
   );
 };

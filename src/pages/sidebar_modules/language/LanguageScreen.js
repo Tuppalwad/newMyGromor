@@ -14,6 +14,7 @@ import { createLoadingSelector } from '../../../redux/loading-reducer';
 import { useIsFocused } from '@react-navigation/native';
 import { UserType } from '../../../redux/user/type';
 import { FarmerType } from '../../../redux/farmer/type';
+import Indicator from '../../../components/common/Indicator';
 
 const LanguageScreen = ({ navigation }) => {
 
@@ -34,7 +35,6 @@ const LanguageScreen = ({ navigation }) => {
         }
     }, [isFocussed]);
 
-    console.log('appLanguage', appLanguage)
 
     useEffect(() => {
         setSelectedLanguage(languageList[0]);
@@ -46,7 +46,7 @@ const LanguageScreen = ({ navigation }) => {
         dispatch(operation.user.getAppMultiLanguage({
             language: selectedLanguageData?.id ?? 1
         })).then((res) => {
-            navigation.navigate(Screen.homes, {
+            navigation.navigate(Screen.login, {
                 selectedLanguage: selectedLanguageData,
                 selectedLanguageResponse: res,
             })
@@ -90,6 +90,8 @@ const LanguageScreen = ({ navigation }) => {
                 style={styles.button}
                 disabled={!selectedLanguage}
             />
+            <Indicator show={isLoading} />
+
         </View>
     );
 };

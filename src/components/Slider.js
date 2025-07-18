@@ -1,36 +1,27 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Image } from 'react-native';
 import Carousel from 'react-native-reanimated-carousel';
+import { useSelector } from 'react-redux';
 
 const { width } = Dimensions.get('window');
 
-const sliderData = [
-    {
-        id: '1',
-        title: 'Book your DBT Fertilizer',
-        description: 'Dummy text dummy text',
-        buttonText: 'Book Now',
-    },
-    {
-        id: '2',
-        title: 'Top Inputs',
-        description: 'Dummy text dummy text',
-        buttonText: 'Buy Now',
-    },
-];
-
 const Slider = () => {
     const [activeIndex, setActiveIndex] = useState('');
+    const bannerDataFromReducer = useSelector(state => state.product.bannerData);
+    const imageBaseUrl = bannerDataFromReducer?.imageBaseURL
+
     const renderItem = ({ item }) => (
+
         <View style={[styles.slide, { marginHorizontal: 8 }]}>
             <View style={styles.slideContent}>
-                <View>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.description}>{item.description}</Text>
-                </View>
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>{item.buttonText}</Text>
-                </TouchableOpacity>
+                {item?.bannerImage ? (
+                    <Image
+                        source={{ uri: imageBaseUrl + item.bannerImage }}
+                        resizeMode="contain"
+                        style={{ width: '100%', height: 200 }} // Add appropriate dimensions
+                    />
+                ) : null}
+
             </View>
         </View>
 
@@ -40,16 +31,16 @@ const Slider = () => {
         <View>
             <Carousel
                 width={width}
-                height={130}
+                height={160}
                 autoPlay
-                data={sliderData}
+                data={bannerDataFromReducer?.data || []}
                 scrollAnimationDuration={1000}
                 renderItem={renderItem}
                 onSnapToItem={index => setActiveIndex(index)}  // track current index
             />
 
             <View style={styles.paginationContainer}>
-                {sliderData.map((_, index) => (
+                {(bannerDataFromReducer?.data || []).map((_, index) => (
                     <View
                         key={index}
                         style={[
@@ -70,7 +61,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#F5F5F5',
         borderRadius: 12,
         paddingHorizontal: 16,
-        height: 130,
+        height: 150,
         justifyContent: 'center',
     },
     slideContent: {

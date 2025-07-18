@@ -1,15 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, ScrollView } from 'react-native';
 import CustomHeader from '../../../components/common/CustomHeader';
-// import SearchBar from '../../component/common/SearchBar';
-// import CategoryCard from '../../components/shop/CategoryCard'; // You'll create this
-import NewLaunch from '../../../components/shop/NewLaunch';
-import PopularProduct from '../../../components/shop/PopularProduct';
 import CustomButton from '../../../components/common/CustomButton';
 import SearchBar from '../../../components/common/SearchBar';
 import { useNavigation } from '@react-navigation/native';
-import CategoryCard from '../../../components/shop/CategoryCard';
-// import CategoryCard from '../../../components/CategoryCard';
+import CategoryCard from '../components/CategoryCard';
+import NewLaunch from '../components/NewLaunch';
+import PopularProduct from '../components/PopularProduct';
+
 
 const categories = [
     { id: '1', title: 'All', icon: require('../../../assets/images/shop/all.png') },
@@ -20,7 +18,7 @@ const categories = [
     { id: '6', title: 'Organic', icon: require('../../../assets/images/shop/organic.png') },
     { id: '7', title: 'Speciality Nutrients', icon: require('../../../assets/images/shop/speacialityNutrents.png') },
     { id: '8', title: 'Veterinary', icon: require('../../../assets/images/shop/veterinary.png') },
-    // { id: '9', title: ' ' },
+    { id: '9', title: ' ' },
 ];
 
 export default function ShopScreen() {
@@ -28,43 +26,34 @@ export default function ShopScreen() {
     return (
 
         <>
-            <CustomHeader
-                type="shop"
-                title="Shop"
-                subtitle="Store Code: S0584 | Mana Gromor Centre Akola"
-                onBackPress={() => console.log('Back pressed')}
-                onCartPress={() => console.log('Cart pressed')}
-                onNotificationPress={() => console.log('Notification pressed')}
-            />
+            <View style={{ marginTop: 30 }}>
+                <CustomHeader
+                    type="shop"
+                    topTitle="Shop"
+                    showLocation={true}
+                    subtitle="Store Code: S0584 | Mana Gromor Centre Akola"
+                    onBackPress={() => navigation.goBack()}
+                    onCartPress={() => console.log('Cart pressed')}
+                    onNotificationPress={() => console.log('Notification pressed')}
+                />
+            </View>
 
             {/* Search */}
             <SearchBar placeholder="Search for Seeds" />
             <SafeAreaView style={styles.container}>
-                {/* Header */}
-
 
                 <ScrollView>
-                    {/* Grid */}
                     <FlatList
                         data={categories}
                         renderItem={({ item }) => (
-                            <CategoryCard title={item.title} icon={item.icon} />
+                            item.id != 9 ? <CategoryCard title={item.title} icon={item.icon} /> : <View style={{ width: '30%' }}> </View>
                         )}
                         keyExtractor={(item) => item.id}
                         numColumns={3}
-                        contentContainerStyle={styles.gridContainer}
-                        columnWrapperStyle={{ justifyContent: 'space-between' }}
+                        columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 10 }}
+                        contentContainerStyle={{ paddingVertical: 10 }}
 
                     />
-                    {/* <View style={{ backgroundColor: '#fff' }}>
-                <Text style={{ margin: 16, fontSize: 16, fontWeight: 'bold' }}>New Launch</Text>
-                <NewLaunchSlider />
-            </View>
-            <View>
-                <Text>popular</Text>
-            </View> */}
-
-
                     <NewLaunch />
                     <PopularProduct />
                     <CustomButton title={"View All Product"} onPress={() => navigation.navigate('AllProduct')} />
@@ -78,7 +67,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F8F8F8',
-        paddingHorizontal: 16
+        // paddingHorizontal: 16
     },
     gridContainer: {
         margin: 20

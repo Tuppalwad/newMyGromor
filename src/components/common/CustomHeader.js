@@ -22,61 +22,58 @@ export default function CustomHeader({
     onNotificationPress,
     onSearch,
     subtitle = '',
+    topTitle,
 }) {
     return (
-        <LinearGradient
-            colors={['#ecdc96ff', '#FFFFFF']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={styles.container}
-        >
-            <View >
-                <View style={styles.headerContainer}>
-                    <View style={styles.leftSection}>
-                        {type === 'home' ? (
-                            <TouchableOpacity onPress={onMenuPress}>
-                                <Image source={menuIcon} style={styles.icon} resizeMode='contain' />
-                            </TouchableOpacity>
-                        ) : (
-                            <TouchableOpacity onPress={onBackPress}>
-                                <Image source={leftArrow} style={styles.icon} resizeMode='contain' />
-                            </TouchableOpacity>
-                        )}
-                        {type === 'home' ? (
-                            <View style={styles.welcomeBox}>
-                                <Image source={require('../../assets/images/splash/logo.png')} style={styles.logo} resizeMode='contain' />
-                                <View style={{ marginLeft: 8 }}>
-                                    <Text style={styles.welcome}>Welcome</Text>
-                                    <Text style={styles.username}>{welcomeText}</Text>
+        <View>
+            <View style={{
+                ...styles.headerContainer,
+                backgroundColor: type == "home" ? "transperent" : '#fff',
+
+            }}>
+                <View style={styles.leftSection}>
+                    {type === 'home' ? (
+                        <TouchableOpacity onPress={onMenuPress}>
+                            <Image source={menuIcon} style={styles.icon} resizeMode='contain' />
+                        </TouchableOpacity>
+                    ) : (
+                        <TouchableOpacity onPress={onBackPress}>
+                            <Image source={leftArrow} style={styles.icon} resizeMode='contain' />
+                        </TouchableOpacity>
+                    )}
+                    {type === 'home' ? (
+                        <View style={styles.welcomeBox}>
+                            <Image source={require('../../assets/images/splash/logo.png')} style={styles.logo} resizeMode='contain' />
+                            <View style={{ marginLeft: 8 }}>
+                                <Text style={styles.welcome}>Welcome</Text>
+                                <Text style={styles.username}>{welcomeText}</Text>
+                            </View>
+                        </View>
+                    ) : (
+                        <View style={{ marginLeft: 10 }}>
+                            <Text style={styles.shopTitle}>{topTitle}</Text>
+                            {showLocation && (
+                                <View style={styles.storeDetails}>
+                                    <Image source={locationIcon} style={styles.locationIcon} resizeMode='contain' />
+                                    <Text style={styles.shopSubTitle}>{subtitle}</Text>
                                 </View>
-                            </View>
-                        ) : (
-                            <View>
-                                <Text style={styles.shopTitle}>Shop</Text>
-                                <Text style={styles.shopSubTitle}>{subtitle}</Text>
+                            )}
+                        </View>
+                    )}
+                </View>
 
-                                {showLocation && (
-                                    <View style={styles.storeDetails}>
-                                        <Image source={locationIcon} style={styles.locationIcon} resizeMode='contain' />
-                                        <Text style={styles.storeText}>Store Code: {storeCode} | {locationName}</Text>
-                                    </View>
-                                )}
-                            </View>
-                        )}
-                    </View>
-
-                    <View style={styles.rightSection}>
-                        <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
-                            <Image source={bellIcon} style={styles.icon} resizeMode='contain' />
-                            {/* <Image source={redDot} style={styles.redDot} resizeMode='contain' /> */}
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={onCartPress}>
-                            <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
-                        </TouchableOpacity>
-                    </View>
+                <View style={styles.rightSection}>
+                    <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
+                        <Image source={bellIcon} style={styles.icon} resizeMode='contain' />
+                        {/* <Image source={redDot} style={styles.redDot} resizeMode='contain' /> */}
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onCartPress}>
+                        <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
+                    </TouchableOpacity>
                 </View>
             </View>
-        </LinearGradient>
+        </View>
+        // </LinearGradient>
     );
 }
 
@@ -86,9 +83,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: 16,
-        paddingTop: 20,
+        paddingTop: 14,
         paddingBottom: 10,
-        // backgroundColor: '#fff',
     },
     leftSection: {
         flexDirection: 'row',
@@ -125,14 +121,16 @@ const styles = StyleSheet.create({
         lineHeight: 10,
         fontWeight: 'bold',
         color: '#222',
-        marginLeft: 8,
+        marginLeft: 2,
+        // marginTop: 10
 
     },
     storeDetails: {
         flexDirection: 'row',
         alignItems: 'center',
         marginLeft: 8,
-        marginTop: 2,
+        marginTop: 10,
+        alignItems: 'center'
     },
     locationIcon: {
         width: 12,
@@ -159,8 +157,8 @@ const styles = StyleSheet.create({
         right: -2,
     },
     icon: {
-        width: 22,
-        height: 22,
+        width: 20,
+        height: 20,
         resizeMode: 'contain',
     },
 

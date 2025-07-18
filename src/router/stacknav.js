@@ -75,7 +75,7 @@ import { height } from '../config/resposiveSize';
 // import PlantixRecommndation from '../pages/sidebar_Modules/plantix/plantixSummary/recommndation.screen';
 // import ServiceDetailsScreen from '../pages/dashboard_Modules/tabs/my-services/Components/ServiceDetailsScreen';
 // import CTText from '../components/ctText';
-import HomeScreen from '../pages/dashboard_Modules/tabs/home';
+import Home from '../pages/dashboard_Modules/tabs/home';
 import LanguageScreen from '../pages/sidebar_modules/language/LanguageScreen';
 import WelcomeScreen from '../pages/prelogin_Modules/welcome_screen';
 import SplashScreen from '../pages/prelogin_Modules/splash_screen';
@@ -139,7 +139,7 @@ const StackNav = ({ navigation }) => {
       {/* <Stack.Screen
         options={{ headerShown: false }}
         name={Screen.homes}
-        component={HomeScreen}
+        component={Home}
       /> */}
 
       <Stack.Screen
@@ -203,10 +203,6 @@ const StackNav = ({ navigation }) => {
         name={Screen.createFeed}
         component={createFeedScreen}
       />
-
-    
-      
-
     
      
       <Stack.Screen
@@ -430,7 +426,7 @@ export const HomeStack = () => {
       screenOptions={{
         headerShown: false,
       }}>
-      <HomeStack.Screen name={Screen.dashboardHome} component={HomeScreen} />
+      <HomeStack.Screen name={Screen.dashboardHome} component={Home} />
     </HomeStack.Navigator>
   );
 };
@@ -480,6 +476,23 @@ export const GromorStack = () => {
     </GromorStack.Navigator>
   );
 };
+
+export const CropDoctor = () => {
+  const GromorStack = createNativeStackNavigator();
+
+  return (
+    <GromorStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <GromorStack.Screen
+        name={Screen.dashboardStore}
+        component={GromorStore}
+      />
+    </GromorStack.Navigator>
+  );
+};
+
 
 export default StackNav;
 

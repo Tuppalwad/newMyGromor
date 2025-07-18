@@ -1,4 +1,4 @@
-package com.mygromor
+package com.coromandel.gromor
 
 import android.app.Application
 import com.facebook.react.PackageList

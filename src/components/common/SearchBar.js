@@ -24,19 +24,17 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#fff',
-        // borderWidth: 1,
-        // borderColor: '#ddd',
         borderRadius: 0,
-        paddingHorizontal: 1,
-        height: 40,
-        // width: '100%',
+        paddingHorizontal: 10,
+        paddingVertical: 12
 
     },
     input: {
         flex: 1,
         fontSize: 14,
         color: '#333',
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
+        paddingVertical: 5
     },
     placeholderText: {
         fontSize: 14,

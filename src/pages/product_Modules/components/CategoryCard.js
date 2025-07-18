@@ -19,17 +19,18 @@ const styles = StyleSheet.create({
         padding: 16,
         marginBottom: 16,
         width: '30%',
-        aspectRatio: 1,
+        aspectRatio: .9,
     },
     icon: {
-        width: 50,
-        height: 50,
+        width: 60,
+        height: 60,
         resizeMode: 'contain',
         marginBottom: 8,
     },
     title: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#333',
+        fontWeight: 400,
         textAlign: 'center',
     },
 });

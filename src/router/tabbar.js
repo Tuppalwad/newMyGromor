@@ -1,10 +1,13 @@
 import { Text, TouchableOpacity, View, Image, StyleSheet } from 'react-native';
 import React, { useRef, useState } from 'react';
 import { Icon } from '../../assets/images';
-// import { palette } from '../theme';
-// import CTText from '../components/ctText';
 import { RFValue } from 'react-native-responsive-fontsize';
-// import { palette } from '../theme/color';
+import home from '../assets/images/common/home.png'
+import advisory from '../assets/images/common/advisory.png'
+import shop from '../assets/images/common/shop.png'
+import cropDrop from '../assets/images/common/cropDoctor.png'
+import community from '../assets/images/common/community.png'
+
 export const TabBar = ({ state, descriptors, navigation }) => {
     const styles = style({
         white: '#FFFFFF',
@@ -18,11 +21,11 @@ export const TabBar = ({ state, descriptors, navigation }) => {
     });
 
     const tabIcon = [
-        Icon.home,
-        Icon.crop,
-        Icon.Feeds,
-        Icon.product,
-        Icon.marketValue,
+        home,
+        advisory,
+        shop,
+        cropDrop,
+        community,
     ];
 
     return (
@@ -46,23 +49,12 @@ export const TabBar = ({ state, descriptors, navigation }) => {
                         <Image
                             source={tabIcon[index]}
                             resizeMode={'contain'}
-                            style={[styles.image, isFocused && { tintColor: "orange" }]}
+                            style={[styles.image, { tintColor: isFocused ? "#fff" : '#C3DED7', }]}
                         />
-
-                        {/* <CTText
-                            text={label}
-                            semiBold={isFocused}
-                            fontSize={RFValue(7.3)}
-                            style={{
-                                color: isFocused ? palette.green : 'rgba(69, 69, 85, 0.7)',
-                                marginTop: 5, textAlign: 'center',
-                            }}
-                            numberOfLines={1}
-                        /> */}
 
                         <Text
                             style={[styles.text, {
-                                color: isFocused ? "orange" : 'rgba(69, 69, 85, 0.7)',
+                                color: isFocused ? "#fff" : '#C3DED7',
                                 fontSize: RFValue(7.3),
                             }]}
                             numberOfLines={1}>
@@ -81,8 +73,8 @@ const style = props =>
     StyleSheet.create({
         container: {
             flexDirection: 'row',
-            backgroundColor: props.white,
-            height: 50,
+            backgroundColor: "#1A6148",
+            height: 60,
             // backgroundColor: 'red',
             elevation: 20,
             shadowColor: props.black,
@@ -94,10 +86,9 @@ const style = props =>
             flex: 1,
             alignItems: 'center',
             height: 50,
-
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: props.white,
+            backgroundColor: "#1A6148",
             alignSelf: 'flex-end',
         },
         item: {
@@ -125,7 +116,7 @@ const style = props =>
         image: {
             width: 15,
             height: 15,
-            tintColor: 'rgba(69, 69, 85, 0.4)',
+            tintColor: '#fff',
             alignSelf: 'center',
         },
         imageContainer: {

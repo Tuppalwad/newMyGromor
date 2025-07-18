@@ -441,89 +441,86 @@ import edit from '../../src/assets/drawer/edit.png'
 import location from '../../src/assets/images/common/location.png';
 import phone from '../../src/assets/images/common/phone.png';
 import { height } from '../config/resposiveSize';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
-const DrawerContent = () => {
+const DrawerContent = (props) => {
+
+  const navigation = useNavigation();
+
+  const handleCloseDrawer = () => {
+    props.navigation.closeDrawer()
+  };
   return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      {/* <View style={styles.header}>
-        <Image source={require('../../src/assets/drawer/userProfile.png')} style={styles.avatar} />
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-          <Text style={styles.name}>Ramachandra</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView >
+        <View style={styles.header}>
+          <View style={{ flexDirection: 'row' }}>
+            <Image source={require('../../src/assets/drawer/userProfile.png')} style={styles.avatar} />
 
-          <Text style={styles.phone}>
-            <Image source={phone} style={{ height: 10, width: 10, marginRight: 4 }} />
-            +91-7021234567
-          </Text>
+            <View style={{ flex: 1, marginLeft: 12 }}>
+              <Text style={styles.name}>Ramachandra</Text>
 
-          <Text style={styles.location}>
-            <Image source={location} style={{ width: 10, height: 10, marginRight: 4 }} />
-            Anantapur, Andhra Pradesh
-          </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                <Image source={phone} style={{ width: 12, height: 12, marginRight: 6 }} />
+                <Text style={styles.phone}>+91-7021234567</Text>
+              </View>
 
-          <TouchableOpacity style={styles.editButton}>
-            <Image source={edit} style={{ width: 16, height: 16 }} />
-            <Text style={styles.editText}>EDIT</Text>
-          </TouchableOpacity>
-        </View>
-      </View> */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                <Image source={location} style={{ width: 12, height: 12, marginRight: 6 }} />
+                <Text style={styles.location}>Anantapur, Andhra Pradesh</Text>
+              </View>
 
-      <View style={styles.header}>
-        <Image source={require('../../src/assets/drawer/userProfile.png')} style={styles.avatar} />
-
-        <View style={{ flex: 1, marginLeft: 12 }}>
-          <Text style={styles.name}>Ramachandra</Text>
-
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-            <Image source={phone} style={{ width: 12, height: 12, marginRight: 6 }} />
-            <Text style={styles.phone}>+91-7021234567</Text>
-          </View>
-
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-            <Image source={location} style={{ width: 12, height: 12, marginRight: 6 }} />
-            <Text style={styles.location}>Anantapur, Andhra Pradesh</Text>
+            </View>
           </View>
 
           <TouchableOpacity style={styles.editButton}>
             <Image source={edit} style={{ width: 14, height: 14, marginRight: 6 }} />
             <Text style={styles.editText}>EDIT</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={styles.closeIcon} onPress={handleCloseDrawer}>
+            <Image source={require('../../src/assets/images/common/close.png')} style={{ width: 16, height: 16 }} resizeMode='contain' />
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.closeIcon}>
-          <Image source={require('../../src/assets/images/common/close.png')} style={{ width: 16, height: 16 }} />
-        </TouchableOpacity>
-      </View>
+        {/* Language Selection */}
+        <View style={styles.languageRow}>
 
-      {/* Language Selection */}
-      <View style={styles.languageRow}>
-        <Text style={styles.languageLabel}><Image source={language} style={{ height: 15, width: 15 }} /> Language:</Text>
-        <Text style={styles.languageValue}>English</Text>
-        <Image source={require('../../src/assets/drawer/forwardArrow.png')} style={{ width: 9, height: 9, objectFit: 'contain' }} />
+          <View style={{ alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+            <Image source={language} style={{ height: 15, width: 15 }} />
+            <Text style={styles.languageLabel}> Language:</Text>
+          </View>
+          <View style={{ alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
 
-      </View>
+            <Text style={styles.languageValue}>English</Text>
+            <Image source={require('../../src/assets/drawer/forwardArrow.png')} style={{ width: 9, height: 9, objectFit: 'contain' }} />
 
-      {/* Menu Options */}
-      <View style={styles.section}>
-        {renderOption('Home', require('../../src/assets/drawer/homeIcon.png'))}
-        {renderOption('My Account', require('../../src/assets/drawer/accountIcon.png'))}
-        {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'))}
-        {renderOption('My Cart', require('../../src/assets/drawer/cart.png'))}
-        {renderOption('Favourite Products', require('../../src/assets/drawer/favourite.png'))}
-      </View>
+          </View>
+        </View>
 
-      <View style={styles.gridSection}>
-        {renderGridOption('Shop', require('../../src/assets/drawer/shop.png'))}
-        {renderGridOption('My Services', require('../../src/assets/drawer/service.png'))}
-        {renderGridOption('Crop Advisory', require('../../src/assets/drawer/crop.png'))}
-        {renderGridOption('Crop Doctor', require('../../src/assets/drawer/cropZoom.png'))}
-      </View>
+        {/* Menu Options */}
+        <View style={styles.section}>
+          {renderOption('Home', require('../../src/assets/drawer/homeIcon.png'))}
+          {renderOption('My Account', require('../../src/assets/drawer/accountIcon.png'))}
+          {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'))}
+          {renderOption('My Cart', require('../../src/assets/drawer/cart.png'))}
+          {renderOption('Favourite Products', require('../../src/assets/drawer/favourite.png'))}
+        </View>
 
-      <View style={styles.section}>
-        {renderOption('Terms & Conditions', require('../../src/assets/drawer/terms.png'))}
-        {renderOption('Share App', require('../../src/assets/drawer/share.png'))}
-      </View>
-    </ScrollView>
+        <View style={styles.gridSection}>
+          {renderGridOption('Shop', require('../../src/assets/drawer/shop.png'))}
+          {renderGridOption('My Services', require('../../src/assets/drawer/service.png'))}
+          {renderGridOption('Crop Advisory', require('../../src/assets/drawer/crop.png'))}
+          {renderGridOption('Crop Doctor', require('../../src/assets/drawer/cropZoom.png'))}
+        </View>
+
+        <View style={styles.section}>
+          {renderOption('Terms & Conditions', require('../../src/assets/drawer/terms.png'))}
+          {renderOption('Share App', require('../../src/assets/drawer/share.png'))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -548,20 +545,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderTopRightRadius: 12,
     borderTopLeftRadius: 12,
+    // marginTop: 30
 
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#0A8F43',
     padding: 16,
     borderTopRightRadius: 12,
     borderTopLeftRadius: 12,
+    paddingVertical: 30
   },
+
+  closeIcon: {
+    position: "absolute",
+    top: 14,
+    right: 15,
+
+  },
+
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     marginRight: 12,
   },
   name: {
@@ -579,11 +586,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   editButton: {
+    marginLeft: 80,
+    marginTop: 12,
     flexDirection: 'row',
-    marginLeft: 'auto',
+    marginRight: 'auto',
     borderWidth: 1,
     borderColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 12,
     paddingVertical: 4,
     paddingHorizontal: 10,
   },
@@ -601,11 +610,14 @@ const styles = StyleSheet.create({
   languageLabel: {
     fontSize: 14,
     color: '#000',
+    marginLeft: 10
+
   },
   languageValue: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#000',
+    marginRight: 10
   },
   section: {
     marginTop: 10,

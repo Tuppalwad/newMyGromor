@@ -34,11 +34,12 @@ const CustomButton = ({ title, onPress, style, textStyle, disabled }) => {
 const styles = StyleSheet.create({
     button: {
         paddingVertical: 10,
-        paddingHorizontal: 24,
+        paddingHorizontal: 30,
         borderRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
+        
     },
     buttonText: {
         lineHeight: 20,

@@ -24,7 +24,7 @@ const ProductCard = ({
                     <Text style={styles.heart}>♡</Text>
                 </TouchableOpacity>
             </View>
-
+        
             <Image source={productImage} style={styles.productImage} />
 
             <Text style={styles.type}>{productType}</Text>
@@ -83,6 +83,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         paddingVertical: 4,
         borderRadius: 4,
+        borderTopRightRadius: 10,
+        borderBottomEndRadius: 10,
+        borderBottomLeftRadius: 10,
+        borderBottomRightRadius: 10
     },
     heart: {
         fontSize: 14,
@@ -91,7 +95,7 @@ const styles = StyleSheet.create({
     },
     productImage: {
         width: '100%',
-        height: 80,
+        height: 120,
         resizeMode: 'contain',
         marginBottom: 8,
     },
@@ -99,12 +103,12 @@ const styles = StyleSheet.create({
         fontSize: 10,
         color: '#888',
         textTransform: 'uppercase',
-        marginBottom: 2,
+        marginBottom: 8,
     },
     cropType: {
         fontSize: 10,
         color: '#1E8153',
-        marginBottom: 4,
+        marginBottom: 8,
     },
     productName: {
         fontSize: 12,
@@ -118,6 +122,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         marginBottom: 6,
         overflow: 'hidden',
+        marginTop: 6
     },
     dropdownButton: {
         paddingVertical: 4,
@@ -136,15 +141,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
     },
     priceContainer: {
+        paddingVertical: 5,
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 6,
     },
     price: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 'bold',
         marginRight: 8,
-        lineHeight: 10,
+        lineHeight: 20,
     },
     originalPrice: {
         fontSize: 12,

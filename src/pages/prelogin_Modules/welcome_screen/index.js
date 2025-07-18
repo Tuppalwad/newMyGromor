@@ -14,7 +14,12 @@ import { UserManager } from '../../../storage';
 import { getVersion } from 'react-native-device-info';
 import { Linking } from 'react-native';
 import { Isplatform_IOS } from '../../../config/resposiveSize';
+// import PushNotification from "react-native-push-notification";
 import { UserType } from '../../../redux/user/type';
+// import PushNotification from 'react-native-push-notification';
+
+
+
 
 
 const WelcomeScreen = ({ navigation }) => {
@@ -29,6 +34,35 @@ const WelcomeScreen = ({ navigation }) => {
     const loadingSelector = createLoadingSelector([UserType.versionHistory]);
     // const isLoading = useSelector(state => loadingSelector(state));
     const appLanguage = UserManager?.getAppMultiLanguage;
+
+    useEffect(() => {
+        if (isFocussed) {
+            dispatch(operation.user.getAppLanguage());
+            // createChannels()
+        }
+    }, [isFocussed]);
+
+    // useEffect(() => {
+    //     PushNotification.configure({
+    //         onRegister: function (token) {
+    //             console.log("TOKEN:", token);
+    //         },
+    //         onNotification: function (notification) {
+    //             console.log("NOTIFICATION:", notification);
+    //         },
+    //         requestPermissions: true, // 👈 request on configure
+    //     });
+
+    //     // Create channel (Android only)
+    //     PushNotification.createChannel(
+    //         {
+    //             channelId: "my-gromor",
+    //             channelName: "Gromor Notification Channel",
+    //         },
+    //         (created) => console.log(`createChannel returned '${created}'`)
+    //     );
+    // }, []);
+
 
     useEffect(() => {
         try {
@@ -100,6 +134,15 @@ const WelcomeScreen = ({ navigation }) => {
     const onPressDone = () => {
         Linking.openURL(Isplatform_IOS ? Constants.ios : Constants.android);
     };
+
+
+    // const createChannels = () => {
+    //     PushNotification.createChannel({
+    //         channelId: "my-gromor",
+    //         channelName: "Gromor Notificaiton Channel"
+    //     })
+    // }
+
 
     return (
         <View style={styles.container}>

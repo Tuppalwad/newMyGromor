@@ -19,6 +19,8 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
 
     <application
       android:name=".MainApplication"
@@ -28,6 +30,10 @@
       android:allowBackup="false"
       android:theme="@style/AppTheme"
       android:supportsRtl="true">
+
+       <meta-data android:name="com.dieam.reactnativepushnotification.notification_foreground"
+                   android:value="false"/>
+
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
@@ -40,5 +46,36 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+
+      <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBE022JrjIektibAaxb-leMdt7VjVXD13Y"/>
+
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+        <receiver
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions"
+            android:exported="false" />
+        <receiver
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher"
+            android:exported="false" />
+        <service
+            android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.dieam.reactnativepushnotification.notification_foreground"
+            android:value="false"/>
+        <meta-data
+            android:name="com.dieam.reactnativepushnotification.notification_color"
+            android:resource="@color/white"/>
+       <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher_round" />
+
     </application>
 </manifest>

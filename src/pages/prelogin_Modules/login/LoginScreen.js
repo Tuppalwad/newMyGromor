@@ -17,6 +17,7 @@ import { useOperation } from '../../../redux/operation';
 import { isEmpty, isValidPhone, minLength } from '../../../utils/validator';
 import { HEToast } from '../../../components/toast';
 import { useForm } from 'react-hook-form';
+import Indicator from '../../../components/common/Indicator';
 
 export default function LoginScreen() {
     const route = useRoute();
@@ -181,6 +182,8 @@ export default function LoginScreen() {
 
                 <Text style={styles.text}>©2025 MyGromor | Version 1.0 </Text>
             </View>
+            <Indicator show={isLoading} />
+
         </KeyboardAvoidingView>
     );
 

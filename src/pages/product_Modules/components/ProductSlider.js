@@ -4,6 +4,7 @@ import product1 from '../../../assets/images/shop/product1.png'
 // import CustomButton from '../../../common/CustomButton';
 import DownArrow from '../../../assets/images/common/downArrow.png'
 import CustomButton from '../../../components/common/CustomButton';
+import ProductCard from './ProductCard';
 
 const newLaunchData = [
     {
@@ -15,6 +16,8 @@ const newLaunchData = [
         weightOptions: ['25 kg', '50 kg'],
         price: 3618,
         originalPrice: 3999,
+        badge: 'NEW',
+
     },
     {
         id: '2',
@@ -25,6 +28,8 @@ const newLaunchData = [
         weightOptions: ['25 kg', '50 kg'],
         price: 3618,
         originalPrice: 3999,
+        badge: 'NEW',
+
     },
     {
         id: '3',
@@ -35,6 +40,8 @@ const newLaunchData = [
         weightOptions: ['25 kg', '50 kg'],
         price: 3618,
         originalPrice: 3999,
+        badge: 'NEW',
+
     },
     {
         id: '4',
@@ -45,6 +52,8 @@ const newLaunchData = [
         weightOptions: ['25 kg', '50 kg'],
         price: 3618,
         originalPrice: 3999,
+        badge: 'NEW',
+
     },
     // Add more items if needed
 ];
@@ -106,12 +115,15 @@ const NewLaunchCard = ({
 };
 
 export default function ProductSlider() {
+
+    const renderProduct = ({ item }) => <ProductCard {...item} />;
+
     return (
         <View style={{ marginVertical: 16 }}>
             <FlatList
                 data={newLaunchData}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => <NewLaunchCard {...item} />}
+                renderItem={renderProduct}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ paddingHorizontal: 16 }}

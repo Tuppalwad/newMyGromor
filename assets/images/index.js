@@ -77,6 +77,7 @@ export const Icon = {
   emptyOrder: require('./Icons/empty_orders.png'),
   time: require('./Icons/time.png'),
   marketValue: require('./Icons/m_value.png'),
+  CropDoctore: require('./Icons/m_value.png'),
   marketIcon: require('./Icons/marketvalue_g.png'),
   undoCircle: require('./Icons/undoCircle.png'),
   menu3: require('./Icons/menu_3.png'),

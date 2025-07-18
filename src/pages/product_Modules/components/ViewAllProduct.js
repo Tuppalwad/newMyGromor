@@ -7,6 +7,7 @@ import FilterModal from './FilterModal';
 import product1 from '../../../assets/images/shop/product1.png'
 import SearchBar from '../../../components/common/SearchBar';
 import CustomHeader from '../../../components/common/CustomHeader';
+import { useNavigation } from '@react-navigation/native';
 const productData = [
     {
         id: '1',
@@ -80,14 +81,14 @@ const productData = [
 const ViewAllProduct = () => {
     const renderProduct = ({ item }) => <ProductCard {...item} />;
     const [filterVisible, setFilterVisible] = useState(false);
-
+    const navigation = useNavigation();
     return (
         <SafeAreaView style={styles.container}>
             <CustomHeader
                 type="shop"
-                title="All"
+                topTitle="All"
                 subtitle="Store Code: S0584 | Mana Gromor Centre Akola"
-                onBackPress={() => console.log('Back pressed')}
+                onBackPress={() => navigation.goBack()}
                 onCartPress={() => console.log('Cart pressed')}
                 onNotificationPress={() => console.log('Notification pressed')}
             />
@@ -119,8 +120,8 @@ const ViewAllProduct = () => {
                     <Text style={styles.bottomText}>Filters</Text>
                     <View style={styles.dot} />
                 </TouchableOpacity>
-
             </View>
+            
             <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
 
         </SafeAreaView>
@@ -132,6 +133,7 @@ export default ViewAllProduct;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginTop: 30,
         backgroundColor: '#F9FAFB',
     },
     itemCount: {

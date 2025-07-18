@@ -66,4 +66,7 @@ export const Screen = {
   myServicesDelivery: 'myServicesDelivery',
   SprayingServicsDetail: 'SprayingServicsDetail',
   serviceDetails: 'serviceDetails',
+  cropDocktore:"Crop Droctor",
+  Shop:'Shop',
+  Community:'Community'
 };

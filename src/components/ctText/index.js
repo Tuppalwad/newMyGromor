@@ -2,8 +2,7 @@ import React from 'react';
 import { StyleSheet, Text } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import { palette } from '../../theme/color';
-import { typography } from '../../theme/typograph';
-// import { palette, typography } from '../../theme';
+import { typography } from '../../theme/typography';
 
 const CTText = ({ style, textColor = '#505050',
   text, numberOfLines, nestedtext = "", nestedtext_textColor,

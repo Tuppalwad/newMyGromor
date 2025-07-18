@@ -1,6 +1,6 @@
 // AgriVideo.js
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -11,6 +11,14 @@ import {
     ScrollView,
 } from 'react-native';
 import { WebView } from 'react-native-webview'; // ✅ WebView import
+import { useOperation } from '../../../../redux/operation';
+import { useDispatch, useSelector } from 'react-redux';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { createLoadingSelector } from '../../../../redux/loading-reducer';
+import { UserManager } from '../../../../storage';
+import { ProductType } from '../../../../redux/product/type';
+import { isEmpty } from '../../../../utils/validator';
+import CustomHeader from '../../../../components/common/CustomHeader';
 
 const categories = ['All', 'Newest', 'Most Viewed', 'Learning', 'Advisory'];
 
@@ -91,15 +99,91 @@ const AgriVideo = () => {
         );
     };
 
+    const navigate = useNavigation()
+
+    const operation = useOperation();
+    const dispatch = useDispatch();
+    const isFocussed = useIsFocused();
+    const appLanguage = UserManager?.getAppMultiLanguage
+    const [params, setParams] = useState({ page: 1, pageSize: 5 })
+    const [adsData, setAdsData] = useState([])
+    const [adsResponse, setAdsResponse] = useState(null)
+    const loadingSelector = createLoadingSelector([ProductType.video]);
+    const isLoading = useSelector(state => loadingSelector(state));
+    const videoArray = useSelector((state) => state.product.videoArray);
+
+
+    useEffect(() => {
+        if (isFocussed && isEmpty(videoArray)) {
+            getVideoAds(params)
+        } else {
+            setAdsData(videoArray?.data ?? [])
+            setAdsResponse({ totalRecords: videoArray?.totalRecords })
+        }
+    }, [isFocussed])
+
+    const getVideoAds = (params, isEnd = false) => {
+        try {
+            dispatch(operation.product.getProductVideo(params)).then((res) => {
+                if (res?.data) {
+                    if (isEnd) {
+                        tempArr = [...adsData, ...res?.data]
+                    } else {
+                        tempArr = [...res?.data]
+                    }
+                } else {
+                    if (isEnd) {
+                        tempArr = [...adsData]
+                    }
+                }
+                setAdsData(tempArr)
+                setAdsResponse({ totalRecords: res?.totalRecords })
+            }).catch((err) => {
+                dispatch(operation.user.getErrorHandling(err, "getProductVideo"));
+            })
+        } catch (e) {
+
+        }
+    }
+
+    const onEndReached = () => {
+        let total = adsResponse?.totalRecords ?? 0
+        let count = adsData?.length
+        if (!isLoading && (count < total)) {
+            let param = {
+                page: params?.page + 1,
+                pageSize: params?.pageSize,
+            };
+            setParams(param)
+            getVideoAds(param, true)
+        }
+    };
+
+
+
+    const renderFetchSpinner = () => {
+        if (isLoading) {
+            return (
+                <View style={{ flex: 1, marginVertical: height / 100 * 10 }}>
+                    <Indicator isSmall={true} show={isLoading} Indicator={true} />
+                </View>
+            );
+        }
+    };
+
+
+
     return (
         <View style={styles.container}>
-            {/* Header */}
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>Agri Video</Text>
-                <View style={styles.headerIcons}>
-                    <Text style={styles.iconText}>🔔</Text>
-                    <Text style={styles.iconText}>🛒</Text>
-                </View>
+            <View style={{ marginTop: 15 }}>
+                <CustomHeader
+                    type="video"
+                    topTitle="Agri Video"
+                    subtitle=""
+                    onBackPress={() => navigate.goBack()}
+                    onCartPress={() => console.log('Cart pressed')}
+                    onNotificationPress={() => console.log('Notification pressed')}
+                />
             </View>
 
             {/* Category Filters */}
@@ -111,6 +195,8 @@ const AgriVideo = () => {
             <FlatList
                 data={videos}
                 renderItem={renderVideoCard}
+                onEndReached={() => { onEndReached() }}
+
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={{ paddingBottom: 100 }}
                 showsVerticalScrollIndicator={false}
@@ -167,6 +253,7 @@ const styles = StyleSheet.create({
         gap: 10,
         paddingHorizontal: 16,
         marginBottom: 16,
+        marginTop: 20
     },
 
     categoryButton: {
@@ -274,7 +361,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: '#DFF6E7',
-        paddingVertical: 12,
+        paddingVertical: 20,
         paddingHorizontal: 24,
         flexDirection: 'row',
         justifyContent: 'space-between',
