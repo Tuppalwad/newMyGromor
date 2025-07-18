@@ -447,7 +447,15 @@ import { useNavigation } from '@react-navigation/native';
 const DrawerContent = (props) => {
 
   const navigation = useNavigation();
-
+  const renderOption = (title, icon, path) => (
+    <TouchableOpacity style={styles.option}
+      onPress={() => navigation.navigate(path)}
+    >
+      <Image source={icon} style={styles.icon} />
+      <Text style={styles.optionText}>{title}</Text>
+      <Image source={require('../../src/assets/drawer/forwardArrow.png')} style={{ width: 9, height: 9, marginLeft: 'auto', objectFit: 'contain' }} />
+    </TouchableOpacity>
+  );
   const handleCloseDrawer = () => {
     props.navigation.closeDrawer()
   };
@@ -503,7 +511,7 @@ const DrawerContent = (props) => {
         <View style={styles.section}>
           {renderOption('Home', require('../../src/assets/drawer/homeIcon.png'))}
           {renderOption('My Account', require('../../src/assets/drawer/accountIcon.png'))}
-          {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'))}
+          {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'), "Order")}
           {renderOption('My Cart', require('../../src/assets/drawer/cart.png'))}
           {renderOption('Favourite Products', require('../../src/assets/drawer/favourite.png'))}
         </View>
@@ -524,13 +532,7 @@ const DrawerContent = (props) => {
   );
 };
 
-const renderOption = (title, icon) => (
-  <TouchableOpacity style={styles.option}>
-    <Image source={icon} style={styles.icon} />
-    <Text style={styles.optionText}>{title}</Text>
-    <Image source={require('../../src/assets/drawer/forwardArrow.png')} style={{ width: 9, height: 9, marginLeft: 'auto', objectFit: 'contain' }} />
-  </TouchableOpacity>
-);
+
 
 const renderGridOption = (title, icon) => (
   <TouchableOpacity style={styles.gridItem}>

@@ -25,6 +25,7 @@ import fertilizerCal from '../../../../assets/images/common/fertilizerCalculator
 import BuyProduct from '../../../../assets/images/common/buyProduct.png';
 import downarrow from '../../.././../assets/images/common/downArrow.png'
 import { useSelector } from 'react-redux';
+import Cart from '../../../product_Modules/my-cart';
 
 const services = [
     { title: 'Buy Products', screen: 'ShopScreen', icon: BuyProduct }, // Replace with actual icon if different
@@ -91,7 +92,7 @@ const HomeScreen = () => {
                     type="home"
                     welcomeText="Ramachandra"
                     onMenuPress={() => navigation.openDrawer()}
-                    onCartPress={() => console.log('Cart pressed')}
+                    onCartPress={() => navigation.navigate('Cart')}
                     onNotificationPress={() => console.log('Notification pressed')}
                 // onSearch={(text) => console.log('Search:', text)}
                 />

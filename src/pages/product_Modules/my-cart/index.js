@@ -41,7 +41,7 @@ const Cart = () => {
 
             <CustomHeader
                 type="cart"
-                title="My Cart"
+                topTitle="My Cart"
                 subtitle=""
                 onBackPress={() => navigation.goBack()}
                 onCartPress={() => console.log('Cart pressed')}

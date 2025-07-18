@@ -91,6 +91,7 @@ import ProductDetail from '../pages/product_Modules/components/ProductDetail';
 import AgriVideo from '../pages/dashboard_Modules/tabs/ad-video/AgriVideo';
 import Cart from '../pages/product_Modules/my-cart';
 import MyOrdersScreen from '../pages/product_Modules/order/orderScreen';
+import purchases from '../pages/product_Modules/order/component/purchases';
 
 const Stack = createNativeStackNavigator();
 
@@ -192,6 +193,12 @@ const StackNav = ({ navigation }) => {
         options={{ headerShown: false }}
         // name={Screen.myCart}
         component={MyOrdersScreen}
+      />
+      <Stack.Screen
+        name='Purchase'
+        options={{ headerShown: false }}
+        // name={Screen.dashboardHome}
+        component={purchases}
       />
       {/* <Stack.Screen
         options={{headerShown: false}}
