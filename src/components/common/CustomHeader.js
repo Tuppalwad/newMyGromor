@@ -13,6 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
 import Share from '../../assets/images/common/share.png';
 import Hart from '../../assets/drawer/favourite.png';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function CustomHeader({
@@ -23,7 +24,7 @@ export default function CustomHeader({
     locationName = '',
     onBackPress,
     onMenuPress,
-    onCartPress,
+    // onCartPress,
     onNotificationPress,
     onSearch,
     subtitle = '',
@@ -33,13 +34,14 @@ export default function CustomHeader({
         state => state.farmer.farmerStoreCodeDetails,
     );
     const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
-
+    const navigation = useNavigation()
+    const onCartPress = () => { navigation.navigate('myCart') }
 
     return (
         <View>
             <View style={{
                 ...styles.headerContainer,
-                backgroundColor: type == "home" ? "transperent" : '#fff',
+                backgroundColor: ["home", "profile"].includes(type) ? "transperent" : '#fff',
 
             }}>
                 <View style={styles.leftSection}>
@@ -49,7 +51,11 @@ export default function CustomHeader({
                         </TouchableOpacity>
                     ) : (
                         <TouchableOpacity onPress={onBackPress}>
-                            <Image source={leftArrow} style={styles.icon} resizeMode='contain' />
+                            <Image source={leftArrow} style={{
+                                ...styles.icon,
+                                tintColor: type == "profile" ? "#fff" : '#222',
+
+                            }} resizeMode='contain' />
                         </TouchableOpacity>
                     )}
 
@@ -64,7 +70,11 @@ export default function CustomHeader({
                         </View>
                     ) : (
                         <View style={{ marginLeft: 10 }}>
-                            <Text style={styles.shopTitle}>{topTitle}</Text>
+                            <Text style={{
+                                ...styles.shopTitle,
+                                color: type == "profile" ? "#fff" : '#222',
+
+                            }}>{topTitle}</Text>
                             {showLocation && (
                                 <View style={styles.storeDetails}>
                                     <Image source={locationIcon} style={styles.locationIcon} resizeMode='contain' />
@@ -93,10 +103,18 @@ export default function CustomHeader({
                         ) :
                             <>
                                 <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
-                                    <Image source={bellIcon} style={styles.icon} resizeMode='contain' />
+                                    <Image source={bellIcon} style={{
+                                        ...styles.icon,
+                                        tintColor: type == "profile" ? "#fff" : '#222',
+
+                                    }} resizeMode='contain' />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={onCartPress}>
-                                    <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
+                                    <Image source={cartIcon} style={{
+                                        ...styles.icon,
+                                        tintColor: type == "profile" ? "#fff" : '#222',
+
+                                    }} resizeMode='contain' />
                                 </TouchableOpacity>
                             </>
                     }
@@ -143,7 +161,6 @@ const styles = StyleSheet.create({
     shopTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#222',
         marginLeft: 8,
     },
     shopSubTitle: {

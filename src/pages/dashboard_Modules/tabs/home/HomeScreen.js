@@ -27,7 +27,8 @@ import downarrow from '../../.././../assets/images/common/downArrow.png'
 import { useSelector } from 'react-redux';
 import { Screen } from '../../../../router/screen';
 import Cart from '../../../product_Modules/my-cart';
-
+import callIcon from '../../../../assets/images/common/homeCallIcon.png'
+import wheat from '../../../../assets/images/common/wheat.png'
 const services = [
     { title: 'Buy Products', screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
     { title: 'Spraying Services', screen: '', icon: SprayingService },
@@ -123,8 +124,24 @@ const HomeScreen = () => {
                         contentContainerStyle={{ paddingVertical: 10 }}
                     />
                     {/* Any Other Sections */}
-                </ScrollView>
+                    <View style={styles.BottomContainer}>
+                        <Text style={styles.line1}>
+                            <Text style={styles.bold}>30,00,000+ </Text>
+                            farmers
+                        </Text>
+                        <Text style={styles.line2}>
+                            trust <Text style={styles.brand}>MyGromor</Text> for
+                        </Text>
+                        <Text style={styles.line3}>
+                            their <Image source={wheat} style={{ height: 20, width: 30, resizeMode: 'contain' }} /> agricultural needs.
+                        </Text>
 
+                        <Text style={styles.callLine}>We are just a call away 👉</Text>
+                    </View>
+                </ScrollView>
+                <View>
+                    <Image source={callIcon} style={{ width: 46, height: 46, backgroundColor: 'none', position: 'absolute', bottom: 20, right: 10 }} />
+                </View>
                 {/* Bottom Footer */}
                 <TouchableOpacity onPress={() => setStoreModalVisible(true)}>
                     <View style={styles.footerBar}>
@@ -275,5 +292,42 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 10,
         borderTopLeftRadius: 10
 
+    },
+    BottomContainer: {
+        padding: 20,
+        marginBottom: 30,
+        alignItems: 'center',
+        // backgroundColor: '#F7FAF9', // optional light background
+    },
+    line1: {
+        fontSize: 22,
+        lineHeight: 40,
+        color: '#A5C2BB',
+        fontWeight: '600',
+    },
+    line2: {
+        lineHeight: 40,
+        fontSize: 22,
+        color: '#A5C2BB',
+        fontWeight: '600',
+    },
+    line3: {
+        lineHeight: 40,
+        fontSize: 22,
+        color: '#A5C2BB',
+        fontWeight: '600',
+    },
+    bold: {
+        fontWeight: '700',
+    },
+    brand: {
+        fontWeight: '700',
+        color: '#A5C2BB', // Optional branding color for "MyGromor"
+    },
+    callLine: {
+        marginTop: 40,
+        fontSize: 16,
+        color: '#A0B3AC',
+        fontWeight: '600',
     },
 });

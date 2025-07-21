@@ -445,6 +445,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { Screen } from './screen';
 import HomeIcong from '../../src/assets/drawer/homeIcon.png'
+// import call from '../assets/drawer/call.png'
+import signout from '../assets/drawer/signOut.png'
 
 const DrawerContent = (props) => {
 
@@ -512,7 +514,7 @@ const DrawerContent = (props) => {
         {/* Menu Options */}
         <View style={styles.section}>
           {renderOption('Home', require('../../src/assets/drawer/homeIcon.png'), Screen.homes)}
-          {renderOption('My Account', require('../../src/assets/drawer/accountIcon.png'))}
+          {renderOption('My Account', require('../../src/assets/drawer/accountIcon.png'), Screen.myAccount)}
           {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'), Screen.myOrderHistory)}
           {renderOption('My Cart', require('../../src/assets/drawer/cart.png'), Screen.myCart)}
           {renderOption('Favourite Products', require('../../src/assets/drawer/favourite.png'))}
@@ -528,12 +530,12 @@ const DrawerContent = (props) => {
         <View style={styles.section}>
           {renderOption('Terms & Conditions', require('../../src/assets/drawer/terms.png'))}
           {renderOption('Share App', require('../../src/assets/drawer/share.png'))}
-          {renderOption('Call 1800 425 2828', require('../../src/assets/drawer/share.png'))}
+          {renderOption('Call 1800 425 2828', require('../assets/drawer/call.png'))}
         </View>
         <TouchableOpacity style={styles.signOutButton}>
           <View style={styles.row}>
             <Text style={styles.signOutText}>Sign Out</Text>
-            {/* <Image source={signOutIcon} style={styles.signOutIcon} /> */}
+            <Image source={signout} style={styles.signOutIcon} />
           </View>
         </TouchableOpacity>
       </ScrollView>

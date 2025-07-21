@@ -307,7 +307,7 @@ export default function VerifyOtp({ route }) {
             </View>
             <Text style={styles.footerText}>©2025 MyGromor | Version 1.0 </Text>
 
-            <Indicator Indicator={isLoading} />
+            {/* <Indicator Indicator={isLoading} /> */}
 
         </View>
     );

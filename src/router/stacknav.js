@@ -96,6 +96,7 @@ import ProductDetails from '../pages/product_Modules/product-details';
 import purchases from '../pages/product_Modules/order/component/purchases';
 import MyBooking from '../pages/product_Modules/order/component/MyBooking';
 import PurchaseDetail from '../pages/product_Modules/order/component/purchases';
+import MyAccountScreen from '../pages/sidebar_modules/language/MyAccountScreen';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
 
 const Stack = createNativeStackNavigator();
@@ -208,6 +209,13 @@ const StackNav = ({ navigation }) => {
         options={{ headerShown: false }}
         // name={Screen.dashboardHome}
         component={MyBooking}
+      />
+      <Stack.Screen
+        name='MyAccount'
+        options={{ headerShown: false }}
+        // name={Screen.dashboardHome}
+
+        component={MyAccountScreen}
       />
       {/* <Stack.Screen
         options={{headerShown: false}}

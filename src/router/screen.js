@@ -13,7 +13,7 @@ export const Screen = {
   favouriteProduct: 'favouriteProduct',
   dashboard: 'dashboard',
   logout: 'logout',
-  myAccount: 'myAccount',
+  myAccount: 'MyAccount',
   viewAllProduct: 'viewAllProduct',
   viewAllCategory: 'viewAllCategory',
   reviewProduct: 'reviewProduct',
@@ -66,9 +66,9 @@ export const Screen = {
   myServicesDelivery: 'myServicesDelivery',
   SprayingServicsDetail: 'SprayingServicsDetail',
   serviceDetails: 'serviceDetails',
-  cropDocktore:"Crop Droctor",
-  Shop:'Shop',
-  Community:'Community',
-  Purchase:'Purchase'
-  
+  cropDocktore: "Crop Droctor",
+  Shop: 'Shop',
+  Community: 'Community',
+  Purchase: 'Purchase'
+
 };

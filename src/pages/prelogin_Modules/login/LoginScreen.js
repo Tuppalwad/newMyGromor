@@ -73,23 +73,23 @@ export default function LoginScreen() {
         });
     }, [appLanguages]);
 
-    // useEffect(() => {
-    //     if (mobileNumber?.length == 10) {
-    //         dispatch(operation.farmer.farmerTypeAction(mobileNumber))
-    //             .then(res => {
-    //                 for (let i = 0; i < cfArrayDetails.length; i++) {
-    //                     if (cfArrayDetails[i].classificationCode === res) {
-    //                         setFarmerType(cfArrayDetails[i]);
-    //                     }
-    //                 }
-    //             })
-    //             .catch(err => {
-    //                 dispatch(operation.user.getErrorHandling(err, 'farmerTypeAction'));
-    //             });
-    //     } else {
-    //         setFarmerType({});
-    //     }
-    // }, [mobileNumber]);
+    useEffect(() => {
+        if (mobileNumber?.length == 10) {
+            dispatch(operation.farmer.farmerTypeAction(mobileNumber))
+                .then(res => {
+                    for (let i = 0; i < cfArrayDetails.length; i++) {
+                        if (cfArrayDetails[i].classificationCode === res) {
+                            setFarmerType(cfArrayDetails[i]);
+                        }
+                    }
+                })
+                .catch(err => {
+                    dispatch(operation.user.getErrorHandling(err, 'farmerTypeAction'));
+                });
+        } else {
+            setFarmerType({});
+        }
+    }, [mobileNumber]);
 
 
 
