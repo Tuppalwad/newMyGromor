@@ -10,11 +10,16 @@ import redDot from '../../assets/images/splash/redDot.png';
 import searchIcon from '../../assets/images/splash/search.png';
 import locationIcon from '../../assets/images/splash/location.png';
 import LinearGradient from 'react-native-linear-gradient';
+import { useSelector } from 'react-redux';
+import Share from '../../assets/images/common/share.png';
+import Hart from '../../assets/drawer/favourite.png';
+
+
 export default function CustomHeader({
     type = 'home', // 'home' or 'shop'
     welcomeText = '',
     showLocation = false,
-    storeCode = '',
+    // storeCode = '',
     locationName = '',
     onBackPress,
     onMenuPress,
@@ -24,6 +29,12 @@ export default function CustomHeader({
     subtitle = '',
     topTitle,
 }) {
+    const StoreCodeDetails = useSelector(
+        state => state.farmer.farmerStoreCodeDetails,
+    );
+    const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
+
+
     return (
         <View>
             <View style={{
@@ -41,6 +52,8 @@ export default function CustomHeader({
                             <Image source={leftArrow} style={styles.icon} resizeMode='contain' />
                         </TouchableOpacity>
                     )}
+
+
                     {type === 'home' ? (
                         <View style={styles.welcomeBox}>
                             <Image source={require('../../assets/images/splash/logo.png')} style={styles.logo} resizeMode='contain' />
@@ -55,7 +68,8 @@ export default function CustomHeader({
                             {showLocation && (
                                 <View style={styles.storeDetails}>
                                     <Image source={locationIcon} style={styles.locationIcon} resizeMode='contain' />
-                                    <Text style={styles.shopSubTitle}>{subtitle}</Text>
+                                    <Text style={{ marginLeft: 5 }}>Store Code: {storeCode} | {storeName?.slice(0, 10) + "..."}</Text>
+
                                 </View>
                             )}
                         </View>
@@ -63,13 +77,29 @@ export default function CustomHeader({
                 </View>
 
                 <View style={styles.rightSection}>
-                    <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
-                        <Image source={bellIcon} style={styles.icon} resizeMode='contain' />
-                        {/* <Image source={redDot} style={styles.redDot} resizeMode='contain' /> */}
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onCartPress}>
-                        <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
-                    </TouchableOpacity>
+                    {
+                        type == "detail" ? (
+                            <View style={{ flexDirection: 'row' }}>
+                                <TouchableOpacity onPress={Share} style={{ marginRight: 15 }}>
+                                    <Image source={Share} style={styles.icon} resizeMode='contain' />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={Hart} style={{ marginRight: 15 }}>
+                                    <Image source={Hart} style={styles.icon} resizeMode='contain' />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
+                                    <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
+                                </TouchableOpacity>
+                            </View>
+                        ) :
+                            <>
+                                <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
+                                    <Image source={bellIcon} style={styles.icon} resizeMode='contain' />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={onCartPress}>
+                                    <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
+                                </TouchableOpacity>
+                            </>
+                    }
                 </View>
             </View>
         </View>
@@ -157,8 +187,8 @@ const styles = StyleSheet.create({
         right: -2,
     },
     icon: {
-        width: 20,
-        height: 20,
+        width: 16,
+        height: 16,
         resizeMode: 'contain',
     },
 

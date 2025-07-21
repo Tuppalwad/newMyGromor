@@ -2,34 +2,45 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import CustomButton from "../../../components/common/CustomButton";
-
-const ProductCard = ({
-    productImage,
-    productName,
-    productType,
-    cropType,
-    weightOptions,
-    price,
-    originalPrice,
-    badge,
-}) => {
-    const [selectedWeight, setSelectedWeight] = useState(weightOptions[0]);
+import { defConfigImageURL } from "../../dashboard_Modules/tabs/home/index.service";
+import { useSelector } from "react-redux";
+import { Screen } from "../../../router/screen";
+import HartIcon from '../../../assets/drawer/favourite.png'
+const ProductCard = ({ item, onPressProductItem, index, onPressFavourite, type, onPressDeleteFav }) => {
+    const weightOptions = ['30 Kg', '50 Kg', '100 Kg']
+    const [selectedWeight, setSelectedWeight] = useState(item.size);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigation = useNavigation();
+    const BannerData = useSelector(state => state.product.bannerData);
+    const productCategoryData = useSelector(
+        state => state.product.productCategory,
+    );
+
+    const productType = productCategoryData?.filter((id) => id.id == item.categoryId)[0]?.code;
+
     return (
         <View style={styles.card}>
             <View style={styles.badgeContainer}>
-                <Text style={styles.badgeText}>{badge}</Text>
-                <TouchableOpacity>
-                    <Text style={styles.heart}>♡</Text>
+                <Text style={styles.badgeText}>{item?.brand}</Text>
+                <TouchableOpacity
+                    onPress={() => { item.isFavouriteProduct ? onPressDeleteFav(item, index, type) : onPressFavourite(item, index, type) }}
+                >
+                    <Image
+                        source={HartIcon}
+                        style={{
+                            width: 15, height: 15,
+                            tintColor: item.isFavouriteProduct ? 'green' : 'gray'
+                        }}
+                        resizeMode="contain"
+                    />
                 </TouchableOpacity>
             </View>
-        
-            <Image source={productImage} style={styles.productImage} />
+
+            <Image source={{ uri: defConfigImageURL(BannerData.imageBaseURL, item?.side1) }} style={styles.productImage} resizeMode={'contain'} />
 
             <Text style={styles.type}>{productType}</Text>
-            <Text style={styles.cropType}>{cropType}</Text>
-            <Text style={styles.productName}>{productName}</Text>
+            <Text style={styles.cropType}>{item?.cropType}</Text>
+            <Text style={styles.productName}>{item?.productName}</Text>
 
             <View style={styles.dropdownContainer}>
                 <TouchableOpacity onPress={() => setShowDropdown(!showDropdown)} style={styles.dropdownButton}>
@@ -48,12 +59,12 @@ const ProductCard = ({
             </View>
 
             <View style={styles.priceContainer}>
-                <Text style={styles.price}>₹{price}</Text>
-                <Text style={styles.originalPrice}>₹{originalPrice}</Text>
+                <Text style={styles.price}>₹{item?.sellingPrice}</Text>
+                <Text style={styles.originalPrice}>₹{item?.mrp}</Text>
             </View>
 
             <View style={styles.addButton}>
-                <CustomButton title={"Add to Cart"} onPress={() => navigation.navigate('ProductDetail')} />
+                <CustomButton title={"Add to Cart"} onPress={() => onPressProductItem(item)} />
             </View>
         </View>
     );
@@ -154,7 +165,7 @@ const styles = StyleSheet.create({
     },
     originalPrice: {
         fontSize: 12,
-        color: '#888',
+        color: '#f52f2f',
         textDecorationLine: 'line-through',
         lineHeight: 10,
     },

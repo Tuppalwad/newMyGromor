@@ -85,12 +85,14 @@ import GromorStore from '../pages/dashboard_Modules/tabs/gromo-store';
 import VerifyOtp from '../pages/prelogin_Modules/otp_verify/VerifyOtp';
 import LoginScreen from '../pages/prelogin_Modules/login/LoginScreen';
 import { TabNavigator } from './tab-router';
-import ShopScreen from '../pages/product_Modules/product-category/ShopScreen';
+
 import ViewAllProduct from '../pages/product_Modules/components/ViewAllProduct';
-import ProductDetail from '../pages/product_Modules/components/ProductDetail';
+// import ProductDetail from '../pages/product_Modules/product-details/ProductDetailContainer';
 import AgriVideo from '../pages/dashboard_Modules/tabs/ad-video/AgriVideo';
 import Cart from '../pages/product_Modules/my-cart';
 import MyOrdersScreen from '../pages/product_Modules/order/orderScreen';
+import ProductCategories from '../pages/product_Modules/product-category';
+import ProductDetails from '../pages/product_Modules/product-details';
 import purchases from '../pages/product_Modules/order/component/purchases';
 
 const Stack = createNativeStackNavigator();
@@ -161,43 +163,40 @@ const StackNav = ({ navigation }) => {
         component={TabNavigator}
       />
 
-      <Stack.Screen name='ShopScreen'
+      <Stack.Screen name={Screen.viewAllCategory}
         options={{ headerShown: false }}
-        component={ShopScreen} />
+        component={ProductCategories} />
 
-      <Stack.Screen name='AllProduct'
+      <Stack.Screen name={Screen.viewAllProduct}
         options={{ headerShown: false }}
         component={ViewAllProduct}
       />
 
-      <Stack.Screen name='ProductDetail'
+      <Stack.Screen name={Screen.productDetails}
         options={{ headerShown: false }}
-        component={ProductDetail}
+        component={ProductDetails}
       />
 
-      <Stack.Screen name='AgriVideo'
+      <Stack.Screen name={Screen.adVideo}
         options={{ headerShown: false }}
         component={AgriVideo}
       />
 
 
       <Stack.Screen
-        name='Cart'
+        name={Screen.myCart}
         options={{ headerShown: false }}
-        // name={Screen.myCart}
         component={Cart}
       />
 
       <Stack.Screen
-        name='Order'
+        name={Screen.myOrderHistory}
         options={{ headerShown: false }}
-        // name={Screen.myCart}
         component={MyOrdersScreen}
       />
       <Stack.Screen
-        name='Purchase'
+        name={Screen.Purchase}
         options={{ headerShown: false }}
-        // name={Screen.dashboardHome}
         component={purchases}
       />
       {/* <Stack.Screen

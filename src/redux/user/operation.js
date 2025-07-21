@@ -26,6 +26,7 @@ import { HEToast } from '../../components/toast';
 import { isEmpty } from '../../utils/validator';
 
 export const generateOTP = param => {
+
   return dispatch => {
     return new Promise(async (resolve, reject) => {
       try {

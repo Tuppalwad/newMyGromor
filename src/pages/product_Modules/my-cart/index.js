@@ -22,31 +22,16 @@ const Cart = () => {
     const navigation = useNavigation();
     return (
         <>
-
-            {/* <View style={styles.rightSection}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image source={leftArrow} style={{ height: 18, width: 18, objectFit: 'contain', marginBottom: 10 }} />
-                    <Text style={styles.title}>My Cart</Text>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <TouchableOpacity style={styles.iconWrapper}>
-                        <Image source={bellIcon} style={styles.icon} resizeMode='contain' />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconWrapper}>
-                        <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
-                        <Image source={redDot} style={styles.redDot} resizeMode='contain' />
-                    </TouchableOpacity>
-                </View>
-            </View> */}
-
-            <CustomHeader
-                type="cart"
-                topTitle="My Cart"
-                subtitle=""
-                onBackPress={() => navigation.goBack()}
-                onCartPress={() => console.log('Cart pressed')}
-                onNotificationPress={() => console.log('Notification pressed')}
-            />
+            <View style={{ marginTop: 30 }}>
+                <CustomHeader
+                    type="cart"
+                    topTitle="My Cart"
+                    subtitle=""
+                    onBackPress={() => navigation.goBack()}
+                    onCartPress={() => console.log('Cart pressed')}
+                    onNotificationPress={() => console.log('Notification pressed')}
+                />
+            </View>
             <View style={styles.tabContainer}>
                 <TouchableOpacity
                     onPress={() => setActiveCategory('non-fertilizers')}

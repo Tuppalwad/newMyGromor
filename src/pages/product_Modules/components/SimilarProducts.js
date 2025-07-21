@@ -1,8 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import ProductSlider from './ProductSlider';
+import ProductCard from './ProductCard';
 
-const SimilarProducts = () => {
+const SimilarProducts = ({ productdata, onPressProductItem, onPressFavourite, onPressDeleteFav }) => {
+
+    const renderProduct = ({ item, index, isSimilar }) => <ProductCard item={item} index={index} onPressProductItem={onPressProductItem} onPressFavourite={onPressFavourite} onPressDeleteFav={onPressDeleteFav} type={isSimilar} />;
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -12,8 +16,18 @@ const SimilarProducts = () => {
                 </TouchableOpacity>
             </View>
 
-            {/* Render the ProductSlider horizontally */}
-            <ProductSlider />
+            <View style={{ marginVertical: 16 }} >
+                <View style={{ marginVertical: 16 }}>
+                    <FlatList
+                        data={productdata || []}
+                        keyExtractor={(item) => item.id}
+                        renderItem={({ item, index }) => renderProduct({ item, index, isSimilar: true })}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={{ paddingHorizontal: 16 }}
+                    />
+                </View>
+            </View>
         </View>
     );
 };

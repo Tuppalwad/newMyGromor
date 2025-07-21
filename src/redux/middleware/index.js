@@ -1,12 +1,8 @@
 import { isUndefined } from 'lodash';
-import { UserManager } from '../../storage';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import { Alert } from "react-native";
-// import { CommonActions, useNavigation } from '@react-navigation/native';
 import { getHttpClient } from "../../service";
 import { HEToast } from '../../components/toast';
-// import { Screen } from '../../router/screen';
-// import { push } from '../../router/root-navigation';
+import { UserManager } from '../../storage';
 
 const apiMiddleware = (store) => (next) => (action) => {
   if (action?.hasOwnProperty('request')) {
@@ -28,15 +24,6 @@ const apiMiddleware = (store) => (next) => (action) => {
         headerData,
         request?.baseUrl
       ).then((response) => {
-
-        // console.log( request.path,
-        //   request.method,
-        //   request.data,
-        //   params,
-        //   headerData,
-        //   request?.baseUrl)
-
-        // console.log("request.path,request.method,request.data,params,headerData,request?.baseUrl")
 
         store.dispatch({ type: action.type + '_SUCCESS', payload: response.data, });
         /* offline save data */
@@ -65,6 +52,8 @@ const apiMiddleware = (store) => (next) => (action) => {
           reject(e);
         } else {
           store.dispatch({ type: action.type + '_FAIL', error: e, payload: e, });
+
+          console.log(e,'eeeeeeeeeeee')
           reject(e);
         }
       });

@@ -1,6 +1,6 @@
 // src/screens/LoginScreen.js
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import Logo from '../../../assets/images/splash/logo.png'
 import CustomLoginRadioButton from '../../../components/CustomLoginRadioButton';
 import CustomButton from '../../../components/common/CustomButton';
@@ -18,6 +18,8 @@ import { isEmpty, isValidPhone, minLength } from '../../../utils/validator';
 import { HEToast } from '../../../components/toast';
 import { useForm } from 'react-hook-form';
 import Indicator from '../../../components/common/Indicator';
+import Webview_popup from '../../../components/common/WebViewPopup';
+import constants from '../../../config/constants';
 
 export default function LoginScreen() {
     const route = useRoute();
@@ -71,23 +73,23 @@ export default function LoginScreen() {
         });
     }, [appLanguages]);
 
-    useEffect(() => {
-        if (mobileNumber?.length == 10) {
-            dispatch(operation.farmer.farmerTypeAction(mobileNumber))
-                .then(res => {
-                    for (let i = 0; i < cfArrayDetails.length; i++) {
-                        if (cfArrayDetails[i].classificationCode === res) {
-                            setFarmerType(cfArrayDetails[i]);
-                        }
-                    }
-                })
-                .catch(err => {
-                    dispatch(operation.user.getErrorHandling(err, 'farmerTypeAction'));
-                });
-        } else {
-            setFarmerType({});
-        }
-    }, [mobileNumber]);
+    // useEffect(() => {
+    //     if (mobileNumber?.length == 10) {
+    //         dispatch(operation.farmer.farmerTypeAction(mobileNumber))
+    //             .then(res => {
+    //                 for (let i = 0; i < cfArrayDetails.length; i++) {
+    //                     if (cfArrayDetails[i].classificationCode === res) {
+    //                         setFarmerType(cfArrayDetails[i]);
+    //                     }
+    //                 }
+    //             })
+    //             .catch(err => {
+    //                 dispatch(operation.user.getErrorHandling(err, 'farmerTypeAction'));
+    //             });
+    //     } else {
+    //         setFarmerType({});
+    //     }
+    // }, [mobileNumber]);
 
 
 
@@ -105,7 +107,6 @@ export default function LoginScreen() {
             } else {
                 dispatch(operation.user.generateOTP(param))
                     .then(res => {
-                        console.log('res_generateOTP', res);
                         if (res.errors == null || res.errors.length === 0) {
                             navigation.navigate(Screen.otpscreen, {
                                 mobileNumber: mobileNumber,
@@ -113,10 +114,12 @@ export default function LoginScreen() {
                                 classificationCode: farmerType,
                             });
                         } else {
-                            // dispatch(operation.user.getErrorHandling(res, 'res_generateOTP'));
+                            console.log(res)
+                            dispatch(operation.user.getErrorHandling(res, 'res_generateOTP'));
                         }
                     })
                     .catch(err => {
+                        console.log(err)
                         dispatch(operation.user.getErrorHandling(err, 'generateOTP'));
                     });
             }
@@ -125,66 +128,111 @@ export default function LoginScreen() {
         }
     };
 
-    const handleSubmitOtp = () => onSubmit();
+    const [showTerms_Conditions, setShowTerms_Conditions] = useState({
+        visible: false,
+        type: null,
+    });
 
+
+    console.log(showTerms_Conditions, 'kkkkkkkkk')
 
     return (
+        <View style={{ flex: 1 }}>
 
-        <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-            <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                {/* Logo */}
-                <Image source={Logo} style={styles.logo} />
+            <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+                <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+                    {/* Logo */}
+                    <Image source={Logo} style={styles.logo} />
 
-                {/* Welcome */}
-                <Text style={styles.welcome}>Welcome Back!</Text>
+                    {/* Welcome */}
+                    <Text style={styles.welcome}>Welcome Back!</Text>
 
-                {/* Phone Number */}
-                <View style={styles.inputBox}>
-                    <Image source={Phone} style={styles.phone} resizeMode='contain' />
-                    <TextInput
-                        placeholder="Mobile Number"
-                        keyboardType="phone-pad"
-                        style={styles.input}
-                        value={mobileNumber}  // <-- bind to mobileNumber from logic
-                        onChangeText={setMobileNumber}
-                        placeholderTextColor={'#999'}
-                        maxLength={10}
-                    />
+                    {/* Phone Number */}
+                    <View style={styles.inputBox}>
+                        <Image source={Phone} style={styles.phone} resizeMode='contain' />
+                        <TextInput
+                            placeholder="Mobile Number"
+                            keyboardType="phone-pad"
+                            style={styles.input}
+                            value={mobileNumber}
+                            onChangeText={setMobileNumber}
+                            placeholderTextColor={'#999'}
+                            maxLength={10}
+                        />
+                    </View>
+
+                    {/* Who I am */}
+                    <View style={styles.sectionLabel}>
+                        <Text style={styles.sectionLabelText}>Who I am*</Text>
+                    </View>
+
+                    {/* Radio Buttons */}
+                    <View style={styles.radioContainer}>
+                        {(cfArrayDetails || [])?.map((option) => (
+                            <View key={option.classificationCode} style={styles.radioItem}>
+                                <CustomLoginRadioButton
+                                    selected={farmerType?.classificationCode === option.classificationCode}
+                                    onPress={() => setFarmerType(option)}
+                                    label={option.name}
+                                />
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
+
+                {/* Login Button at Bottom */}
+                <View style={styles.footer}>
+                    {/* Terms */}
+                    <Text style={styles.termsText}>
+                        By logging in, I accept the MyGromor{' '}
+                        <Text
+                            style={styles.link}
+                            onPress={() => setShowTerms_Conditions({ visible: true, type: 'TERM' })}
+                        >
+                            Terms & Conditions
+                        </Text>{' '}
+                        and{' '}
+                        <Text
+                            style={styles.link}
+                            onPress={() => setShowTerms_Conditions({ visible: true, type: 'PRIVACY' })}
+                        >
+                            Privacy Policy
+                        </Text>
+                        .
+                    </Text>
+
+                    <CustomButton title="Login" onPress={onSubmit} disabled={disableSend} />
+
+                    <Text style={styles.text}>©2025 MyGromor | Version 1.0</Text>
                 </View>
 
-                {/* Who I am */}
-                <View style={styles.sectionLabel}>
-                    <Text style={styles.sectionLabelText}>Who I am*</Text>
-                </View>
-
-                {/* Radio Buttons */}
-                <View style={styles.radioContainer}>
-                    {(cfArrayDetails || [])?.map((option) => (
-                        <View key={option.classificationCode} style={styles.radioItem}>
-                            <CustomLoginRadioButton
-                                selected={farmerType?.classificationCode === option.classificationCode}
-                                onPress={() => setFarmerType(option)}
-                                label={option.name}
-                            />
-                        </View>
-                    ))}
-                </View>
-            </ScrollView>
-
-            {/* Login Button at Bottom */}
-            <View style={styles.footer}>
-                {/* Terms */}
-                <Text style={styles.termsText}>
-                    By logging in, I accept the MyGromor <Text style={styles.link}>Terms & Conditions</Text> and <Text style={styles.link}>Privacy Policy</Text>.
-                </Text>
-                <CustomButton title="Login" onPress={handleSubmitOtp} disabled={disableSend} />
+                <Indicator show={isLoading} />
 
 
-                <Text style={styles.text}>©2025 MyGromor | Version 1.0 </Text>
-            </View>
-            <Indicator show={isLoading} />
 
-        </KeyboardAvoidingView>
+            </KeyboardAvoidingView>
+
+            <Webview_popup
+                isPopupHidden={false}
+                popupTitle={
+                    showTerms_Conditions?.type === 'TERM'
+                        ? appLanguage?.terms ?? 'Terms and Conditions'
+                        : appLanguage?.lblprivacypolicy ?? 'Privacy Policy'
+                }
+                popupVisible={showTerms_Conditions?.visible}
+
+                onPressClose={() => {
+                    setShowTerms_Conditions({ visible: false, type: null });
+                }}
+
+                WebViewURL={
+                    showTerms_Conditions?.type === 'TERM'
+                        ? constants.termsAndCondition
+                        : constants.privacyPolicy
+                }
+            />
+        </View>
+
     );
 
 

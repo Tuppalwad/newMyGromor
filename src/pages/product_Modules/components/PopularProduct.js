@@ -4,7 +4,7 @@ import ProductSlider from './ProductSlider';  // adjust path if needed
 import LinearGradient from 'react-native-linear-gradient';
 
 
-const PopularProduct = () => {
+const PopularProduct = ({ popularProductData, onPressProductItem }) => {
     return (
 
         <LinearGradient
@@ -21,8 +21,7 @@ const PopularProduct = () => {
                     </TouchableOpacity>
                 </View>
 
-                {/* Render the ProductSlider here */}
-                <ProductSlider />
+                <ProductSlider data={popularProductData} onPressProductItem={onPressProductItem} />
             </View>
         </LinearGradient>
     );

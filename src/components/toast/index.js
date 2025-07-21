@@ -3,9 +3,11 @@ import {View, StyleSheet, Text, Image} from 'react-native';
 import Toast from 'react-native-toast-message';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {isNil, isEmpty, isEqual} from 'lodash';
-import {Icon} from "../../../assets/images";
-import { UserManager } from '../../storage'
-
+// import { UserManager } from '../../storage';
+import { palette } from '../../theme/color';
+import { typography } from '../../theme/typography';
+import { Icon } from '../../../assets/images';
+import { UserManager } from '../../storage';
 
 
 export const ToastConfig = {
@@ -40,17 +42,17 @@ export const HEToast = (text, type = 'info') => {
 };
 
 const ToastComponent = ({state}) => {
-  const colors = "";
+  const colors = palette;
   const {text1} = state; // with its type we can handle different types of toast
   const {type}=state
 
   const renderColor = ()=>{
     if(type === 'error'){
-      return "red"
+      return colors.red
     }else if(type==='info'){
-      return "green"
+      return colors.green
     }else{
-      return "#00BFFF"
+      return colors.green
     }
   }
 
@@ -66,13 +68,13 @@ const ToastComponent = ({state}) => {
 
   return (
     <View style={styles.mainContainer}>
-      <View style={[ styles.container,{borderColor: renderColor(),backgroundColor:"#ffff",shadowColor:"#000"}]}>
+      <View style={[ styles.container,{borderColor: renderColor(),backgroundColor:colors.white,shadowColor: colors.gray}]}>
         <Image
           source={renderImage()}
           style={[styles.imageStyle, {tintColor: renderColor()}]}
           resizeMode='contain'
         />
-        <Text numberOfLines={6} style={[styles.textStyle, {color:"#999"}]}>{text1}</Text>
+        <Text numberOfLines={6} style={[styles.textStyle, {color: colors.gray}]}>{text1}</Text>
       </View>
     </View>
   );
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     flex: 1,
     marginRight: 10,
-    // fontFamily: typography.medium
+    fontFamily: typography.medium
   },
   imageStyle: {
     width: 25,

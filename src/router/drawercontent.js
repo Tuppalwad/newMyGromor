@@ -443,6 +443,8 @@ import phone from '../../src/assets/images/common/phone.png';
 import { height } from '../config/resposiveSize';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Screen } from './screen';
+import HomeIcong from '../../src/assets/drawer/homeIcon.png'
 
 const DrawerContent = (props) => {
 
@@ -509,10 +511,10 @@ const DrawerContent = (props) => {
 
         {/* Menu Options */}
         <View style={styles.section}>
-          {renderOption('Home', require('../../src/assets/drawer/homeIcon.png'))}
+          {renderOption('Home', require('../../src/assets/drawer/homeIcon.png'), Screen.homes)}
           {renderOption('My Account', require('../../src/assets/drawer/accountIcon.png'))}
-          {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'), "Order")}
-          {renderOption('My Cart', require('../../src/assets/drawer/cart.png'))}
+          {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'), Screen.myOrderHistory)}
+          {renderOption('My Cart', require('../../src/assets/drawer/cart.png'), Screen.myCart)}
           {renderOption('Favourite Products', require('../../src/assets/drawer/favourite.png'))}
         </View>
 

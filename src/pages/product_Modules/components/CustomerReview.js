@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -7,50 +7,56 @@ import {
     Image,
     FlatList
 } from 'react-native';
-import RatingSummaryCard from './RatingSummaryCard'; // This is your custom progress circle component
+import RatingSummaryCard from './RatingSummaryCard';
+// import { Circle } from 'react-native-progress'; // if using a progress circle
+// import RatingSummaryCard from './RatingSummaryCard';
 
-const reviews = [
-    {
-        id: '1',
-        rating: 3,
-        date: '27 Apr 2025',
-        comment:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra.',
-        productImage: require('../../../assets/images/shop/mygrow.png'),
-        userName: 'Kissanlal Yadav',
-        verified: true,
-        userImage: require('../../../assets/images/shop/user.png'),
-    },
-    // Add more reviews as needed
-];
+const backendData = {
+    data: [
+        {
+            id: 27,
+            name: "Khajavali",
+            description: "",
+            fiveStartRating: 5,
+            createdOn: "2024-08-22T12:31:17.4317912",
+            farmerIdentityId: "d49892e4-ebdb-4069-8f0d-d4bda8565b1f"
+        }
+    ],
+    average: 5
+};
 
 const CustomerReviews = () => {
-    const renderStars = (count) => {
-        const filledStars = '★'.repeat(count);
-        const emptyStars = '☆'.repeat(5 - count);
+    const [selectedRating, setSelectedRating] = useState(0);
+    const average = backendData.average;
+    const reviewCount = backendData.data.length;
+
+    const renderStars = (count, interactive = false) => {
         return (
-            <Text style={styles.starRating}>
-                {filledStars}
-                {emptyStars}
-            </Text>
+            <View style={{ flexDirection: 'row' }}>
+                {[1, 2, 3, 4, 5].map((i) => (
+                    <TouchableOpacity
+                        key={i}
+                        disabled={!interactive}
+                        onPress={() => setSelectedRating(i)}
+                    >
+                        <Text style={{ fontSize: 20, color: i <= count ? '#FFC107' : '#ccc' }}>
+                            ★
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
         );
     };
 
+
     const renderReview = ({ item }) => (
         <View style={styles.reviewCard}>
-            {renderStars(item.rating)}
-            <Text style={styles.reviewDate}>{item.date}</Text>
-            <Text style={styles.reviewComment}>{item.comment}</Text>
-            <Image source={item.productImage} style={styles.reviewProductImage} />
-            <View style={styles.reviewerInfo}>
-                <Image source={item.userImage} style={styles.userImage} />
-                <View>
-                    <Text style={styles.reviewerName}>{item.userName}</Text>
-                    {item.verified && (
-                        <Text style={styles.verifiedText}>✔ Verified Purchase</Text>
-                    )}
-                </View>
-            </View>
+            {renderStars(item.fiveStartRating)}
+            <Text style={styles.reviewDate}>
+                {new Date(item.createdOn).toDateString()}
+            </Text>
+            <Text style={styles.reviewerName}>{item.name}</Text>
+            <Text style={styles.reviewComment}>{item.description || 'No comment provided.'}</Text>
         </View>
     );
 
@@ -64,14 +70,13 @@ const CustomerReviews = () => {
                 </TouchableOpacity>
             </View>
 
-            {/* Rating Summary */}
-            <RatingSummaryCard />
+            <RatingSummaryCard average={3} selectedRating={selectedRating} reviewCount={reviewCount} setSelectedRating={setSelectedRating} />
 
-            {/* Reviews */}
+            {/* Render Reviews */}
             <FlatList
-                data={reviews}
+                data={backendData.data}
                 renderItem={renderReview}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id.toString()}
                 scrollEnabled={false}
             />
         </View>
@@ -79,6 +84,7 @@ const CustomerReviews = () => {
 };
 
 export default CustomerReviews;
+
 
 
 const styles = StyleSheet.create({

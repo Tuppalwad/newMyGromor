@@ -53,7 +53,7 @@ export default function App() {
 
   return (
     <CProvider>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <StatusBar barStyle="dark-content" backgroundColor="#000" />
       <AppStack />
       <Toast config={ToastConfig} />
     </CProvider>
@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-    backgroundColor: '#fff', // Match your app background
+    backgroundColor: '#000', // Match your app background
   },
 });

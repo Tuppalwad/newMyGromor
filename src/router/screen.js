@@ -68,5 +68,7 @@ export const Screen = {
   serviceDetails: 'serviceDetails',
   cropDocktore:"Crop Droctor",
   Shop:'Shop',
-  Community:'Community'
+  Community:'Community',
+  Purchase:'Purchase'
+  
 };

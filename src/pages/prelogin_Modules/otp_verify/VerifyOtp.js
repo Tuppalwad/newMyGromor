@@ -30,6 +30,8 @@ import { FarmerType } from '../../../redux/farmer/type';
 import { HEToast } from '../../../components/toast';
 import { getVersion } from 'react-native-device-info';
 import { isEmpty } from 'lodash';
+import Indicator from '../../../components/common/Indicator';
+import { palette } from '../../../theme/color';
 
 export default function VerifyOtp({ route }) {
     const appLanguage = UserManager?.getAppMultiLanguage;
@@ -213,6 +215,8 @@ export default function VerifyOtp({ route }) {
                                     routes: [{ name: Screen.homes }]
                                 })
                             );
+                            clearInterval(intervalId);
+
                         })
                         .catch(err => {
                             dispatch(operation.user.getErrorHandling(err, 'getFarmerpostLogin'));
@@ -225,12 +229,11 @@ export default function VerifyOtp({ route }) {
                 dispatch(operation.user.getErrorHandling(err, 'verifyOTP'));
             });
 
-        clearInterval(intervalId);
     };
 
     const startTimer = () => {
         if (intervalId) clearInterval(intervalId);
-        let time = 91;
+        let time = 180;
         const interval = setInterval(() => {
             if (time === 0) {
                 setTimer(null);
@@ -291,12 +294,21 @@ export default function VerifyOtp({ route }) {
                         <Image source={timerIcon} style={styles.timerIcon} />
                         <Text style={styles.timerText}>{timer ? `${timer} Sec` : '00 Sec'}</Text>
                     </View>
-                    <TouchableOpacity onPress={handleResend}>
-                        <Text style={styles.resendText}>{appLanguage?.resend_otp ?? "RESEND OTP"}</Text>
+                    <TouchableOpacity onPress={handleResend}
+                        disabled={timer > 0}
+                    >
+                        <Text style={{
+                            ...styles.resendText,
+                            color: timer > 0 ? palette.disabled_Button : colors.primary,
+
+                        }}>{appLanguage?.resend_otp ?? "RESEND OTP"}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
             <Text style={styles.footerText}>©2025 MyGromor | Version 1.0 </Text>
+
+            <Indicator Indicator={isLoading} />
+
         </View>
     );
 }
@@ -389,7 +401,6 @@ const styles = StyleSheet.create({
     },
     resendText: {
         fontSize: 14,
-        color: colors.primary,
         fontWeight: '600',
         lineHeight: 10
     },

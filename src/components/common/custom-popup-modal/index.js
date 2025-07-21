@@ -9,21 +9,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Icon} from '../../../assets/images';
-// import CTButton from '../CTButton';
+// import {Icon} from '../../../assets/images';
+// import CTButton from '../custombutton';
 // import CTText from '../ctText';
-import {ToastConfig} from '../toast';
+// import {ToastConfig} from '../toast';
 import Toast from 'react-native-toast-message';
 // import Indicator from '../indicator';
-import {RFValue} from 'react-native-responsive-fontsize';
-import {width, height, View_Spacing} from '../../config/resposiveSize';
-import { palette } from '../../theme/color';
-import { typography } from '../../theme/typography';
-import CTButton from './CTButton';
-import Indicator from './Indicator';
-import CTText from '../ctText';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { width, height, View_Spacing } from '../../../config/resposiveSize';
 
-// import {palette, typography} from '../../theme';
+// import { palette, typography } from '../../theme';
+import { Icon } from '../../../../assets/images';
+import CTText from '../../ctText';
+import { ToastConfig } from '../../toast';
+import Indicator from '../Indicator';
+import CTButton from '../CTButton';
+import { palette } from '../../../theme/color';
+import { typography } from '../../../theme/typography';
 
 const CustomPopupModal = ({
   onPressClose,
@@ -77,7 +79,7 @@ const CustomPopupModal = ({
       animationType={'slide'}
       onRequestClose={onPressClose}>
       <KeyboardAvoidingView
-        style={{flex: 1}}
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : null}>
         <ScrollView
           nestedScrollEnabled={true}
@@ -120,7 +122,7 @@ const CustomPopupModal = ({
               </TouchableOpacity>
             )}
 
-            <View style={{height: marginTop_Status ? View_Spacing.VS_H2 : 0}} />
+            <View style={{ height: marginTop_Status ? View_Spacing.VS_H2 : 0 }} />
             {icon && !iconHideStatus && (
               <View style={[addIconBorder && styles.borderedIcon]}>
                 <Image
@@ -130,8 +132,8 @@ const CustomPopupModal = ({
                     Icon_status
                       ? styles.like_OTP
                       : isRed
-                      ? styles.RedLike
-                      : styles.like,
+                        ? styles.RedLike
+                        : styles.like,
                     addIconBorder && {
                       width: Icon_status
                         ? (width / 100) * 15
@@ -149,12 +151,12 @@ const CustomPopupModal = ({
             {!titleHideStatus && (
               <>
                 {(title || !hideLine) && (
-                  <View style={{width: '100%'}}>
+                  <View style={{ width: '100%' }}>
                     {title && (
                       <CTText
                         text={title}
                         semiBold
-                        style={{textAlign: 'center'}}
+                        style={{ textAlign: 'center' }}
                         textColor={isRed ? colors.red : colors.titleGreen}
                         fontSize={RFValue(14)}
                       />
@@ -219,7 +221,7 @@ const CustomPopupModal = ({
                 medium
                 text={bottomDescription}
                 fontSize={RFValue(11)}
-                style={{textAlign: 'center', marginTop: 15}}
+                style={{ textAlign: 'center', marginTop: 15 }}
               />
             )}
           </View>
@@ -227,9 +229,9 @@ const CustomPopupModal = ({
 
         <Toast
           config={ToastConfig}
-          // ref={ref => {
-          //   Toast.setRef(ref);
-          // }}
+        // ref={ref => {
+        //   Toast.setRef(ref);
+        // }}
         />
 
         <Indicator show={loading} />

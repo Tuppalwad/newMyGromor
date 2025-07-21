@@ -1,45 +1,52 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import ProgressCircle from './ProgressCircle';
 
-const RatingSummaryCard = () => {
-    const rating = 4.6;
-    const totalRatings = 21;
+const RatingSummaryCard = ({ average, selectedRating, reviewCount, setSelectedRating }) => {
+    const rating = average;
     const percentage = (rating / 5) * 100;
-
-    const filledStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.3 && rating % 1 <= 0.7;
-    const emptyStars = 5 - filledStars - (hasHalfStar ? 1 : 0);
 
     const rotation = percentage > 50 ? 180 : (percentage / 100) * 360;
     const secondRotation = percentage > 50 ? ((percentage - 50) / 50) * 180 : 0;
 
+    const getRatingLabel = (rating) => {
+        if (rating >= 4.5) return 'Excellent';
+        if (rating >= 3.5) return 'Good';
+        if (rating >= 2.5) return 'Average';
+        if (rating > 0) return 'Poor';
+        return '';
+    };
+
+    const renderStars = (count, interactive = false) => {
+        return (
+            <View style={{ flexDirection: 'row' }}>
+                {[1, 2, 3, 4, 5].map((i) => (
+                    <TouchableOpacity
+                        key={i}
+                        disabled={!interactive}
+                        onPress={() => setSelectedRating(i)}
+                    >
+                        <Text style={{ fontSize: 20, color: i <= count ? '#FFC107' : '#ccc' }}>
+                            ★
+                        </Text>
+                    </TouchableOpacity>
+                ))}
+            </View>
+        );
+    };
+
+
     return (
         <View style={styles.card}>
             <View style={styles.row}>
-                {/* Custom Progress Circle */}
-                <View style={styles.circleWrapper}>
-                    <View style={styles.baseCircle} />
-                    <View style={[styles.progressCircle, { transform: [{ rotateZ: `${(rating / 5) * 360}deg` }] }]} />
-                    <View style={styles.innerCircle}>
-                        <Text style={styles.ratingText}>{rating}</Text>
-                        <Text style={styles.outOf}>Out of 5</Text>
-                    </View>
-                </View>
 
+                <ProgressCircle average={4.2} size={120} strokeWidth={10} />
 
                 {/* Rating Details */}
                 <View style={styles.details}>
-                    <Text style={styles.excellent}>Excellent</Text>
-                    <View style={styles.stars}>
-                        {Array.from({ length: filledStars }).map((_, i) => (
-                            <Text key={`f-${i}`} style={styles.star}>★</Text>
-                        ))}
-                        {hasHalfStar && <Text style={styles.star}>☆</Text>}
-                        {Array.from({ length: emptyStars }).map((_, i) => (
-                            <Text key={`e-${i}`} style={styles.star}>☆</Text>
-                        ))}
-                    </View>
-                    <Text style={styles.ratingCount}>{totalRatings} ratings</Text>
+                    <Text style={styles.excellent}>{getRatingLabel(selectedRating)}</Text>
+                    {renderStars(selectedRating, true)}
+                    <Text style={styles.ratingCount}>{reviewCount} ratings</Text>
                 </View>
             </View>
 
@@ -66,21 +73,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 16,
     },
-    circleWrapper: {
-        width: 100,
-        height: 100,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
+    // circleWrapper: {
+    //     width: 100,
+    //     height: 100,
+    //     justifyContent: 'center',
+    //     alignItems: 'center',
+    // },
 
-    baseCircle: {
-        position: 'absolute',
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        borderWidth: 8,
-        borderColor: '#D1D1D1',
-    },
+    // baseCircle: {
+    //     position: 'absolute',
+    //     width: 100,
+    //     height: 100,
+    //     borderRadius: 50,
+    //     borderWidth: 8,
+    //     borderColor: '#D1D1D1',
+    // },
 
     progressCircle: {
         position: 'absolute',
@@ -93,6 +100,20 @@ const styles = StyleSheet.create({
         borderBottomColor: 'transparent',
         borderRightColor: 'transparent',
     },
+    progressHalf: {
+        position: 'absolute',
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        borderWidth: 8,
+        borderColor: '#00A651',
+        borderLeftColor: 'transparent',
+        borderBottomColor: 'transparent',
+        borderRightColor: 'transparent',
+        top: 0,
+        left: 0,
+    },
+
 
     innerCircle: {
         width: 70,
@@ -124,15 +145,8 @@ const styles = StyleSheet.create({
         color: '#00A651',
         marginBottom: 6,
     },
-    stars: {
-        flexDirection: 'row',
-        marginBottom: 4,
-    },
-    star: {
-        fontSize: 18,
-        color: '#FFC107',
-        marginRight: 2,
-    },
+
+
     ratingCount: {
         fontSize: 13,
         color: '#777',
@@ -149,4 +163,52 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         fontSize: 14,
     },
+
+    circleWrapper: {
+        width: 100,
+        height: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    baseCircle: {
+        position: 'absolute',
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        borderWidth: 8,
+        borderColor: '#D1D1D1',
+    },
+
+    rightWrap: {
+        position: 'absolute',
+        width: 100,
+        height: 100,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    leftWrap: {
+        position: 'absolute',
+        width: 100,
+        height: 100,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        transform: [{ rotate: '180deg' }],
+    },
+
+    halfCircle: {
+        position: 'absolute',
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        borderWidth: 8,
+        borderColor: '#00A651',
+        borderLeftColor: 'transparent',
+        borderBottomColor: 'transparent',
+        borderRightColor: 'transparent',
+    },
+
 });

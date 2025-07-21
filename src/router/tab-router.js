@@ -16,6 +16,8 @@ import Advisory from '../pages/dashboard_Modules/tabs/advisory-dashboard';
 import CropDoctor from '../pages/dashboard_Modules/tabs/crop-doctor';
 import Products from '../pages/product_Modules/products';
 import MarketValue from '../pages/dashboard_Modules/tabs/market-value';
+import ShopScreen from '../pages/product_Modules/product-category/ShopScreen';
+import ProductCategories from '../pages/product_Modules/product-category';
 
 const Tab = createBottomTabNavigator();
 
@@ -51,7 +53,7 @@ export const TabNavigator = () => {
       {/* )} */}
       <Tab.Screen
         name={appLanguage?.Shop ?? Screen.Shop}
-        component={Products}
+        component={ProductCategories}
       />
       <Tab.Screen
         name={appLanguage?.cropDocktore ?? Screen.cropDocktore}

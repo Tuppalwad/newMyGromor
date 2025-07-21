@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import CTText from '../ctText';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { height, width } from '../../config/resposiveSize';
 import { palette } from '../../theme/color';
 import { typography } from '../../theme/typography';
+import CTText from '../ctText';
 
 
 const CTButton = ({

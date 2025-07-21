@@ -1,11 +1,13 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { Icon } from '../../../assets/images/index';
-import CTText from '../ctText';
+// import CTText from '../ctText';
 import { View_Spacing, width } from "../../config/resposiveSize";
 import { RFValue } from "react-native-responsive-fontsize";
-import { palette, textSize, typography } from '../../theme';
+// import { palette, textSize, typography } from '../../theme';
 import CTButton from "../custombutton"
+import CTText from '../../ctText';
+import { palette } from '../../../theme/color';
 
 const Errordisplaycomponent = ({ Error_Title, Error_Message = "", Error_Method, Error_Status = false,
     Error_Image, Error_ButtonName = "" }) => {

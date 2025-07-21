@@ -11,6 +11,7 @@ import failed from '../../../assets/images/common/failed.png'; // Assuming you h
 import rightArrow from '../../../assets/images/common/rightArrow.png'; // Assuming you have a right arrow icon
 import { useNavigation } from '@react-navigation/native';
 import filterIcon from '../../../assets/images/common/filter.png'; // Assuming you have a filter icon
+import { Screen } from '../../../router/screen';
 
 const orders = [
     { id: 1, status: 'In-progress', color: '#FFF3CD', textColor: '#856404', image: timerIcon },
@@ -94,7 +95,7 @@ export default function MyOrdersScreen() {
                                 <Text style={styles.amount}>Order Amount: ₹3618</Text>
                                 <Text style={styles.date}>Order Date: 06-05-2025</Text>
                             </View>
-                            <TouchableOpacity onPress={() => navigation.navigate('Purchase')}>
+                            <TouchableOpacity onPress={() => navigation.navigate(Screen.Purchase)}>
                                 <Image source={rightArrow} style={{ width: 16, height: 16, tintColor: '#000', resizeMode: 'contain', }} />
                             </TouchableOpacity>
                         </View>
@@ -122,6 +123,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F4F4F4',
+        marginTop: 30,
     },
     header: {
         flexDirection: 'row',

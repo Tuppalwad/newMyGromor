@@ -25,17 +25,18 @@ import fertilizerCal from '../../../../assets/images/common/fertilizerCalculator
 import BuyProduct from '../../../../assets/images/common/buyProduct.png';
 import downarrow from '../../.././../assets/images/common/downArrow.png'
 import { useSelector } from 'react-redux';
+import { Screen } from '../../../../router/screen';
 import Cart from '../../../product_Modules/my-cart';
 
 const services = [
-    { title: 'Buy Products', screen: 'ShopScreen', icon: BuyProduct }, // Replace with actual icon if different
+    { title: 'Buy Products', screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
     { title: 'Spraying Services', screen: '', icon: SprayingService },
     { title: 'Door Delivery', screen: '', icon: DoorDelivery },
     { title: 'Gromor Store', screen: '', icon: GromorStore },
     { title: 'Crop Doctor', screen: '', icon: CropDoctore },
     { title: 'Ask the Experts', screen: '', icon: AskTheExperts },
     { title: 'My Crop Advisory', screen: '', icon: CropAdvisory },
-    { title: 'Agri Video', screen: 'AgriVideo', icon: AgriVideo },
+    { title: 'Agri Video', screen: Screen.adVideo, icon: AgriVideo },
     { title: 'My Crops', screen: '', icon: MyCrop },
     { title: 'Gromor Connect', screen: '', icon: GromorConnect },
     { title: 'Mandi Rates', screen: '', icon: MandiRates },
@@ -53,8 +54,7 @@ const HomeScreen = () => {
     const StoreCodeDetails = useSelector(
         state => state.farmer.farmerStoreCodeDetails,
     );
-    const numColumns = 3; // or 2 depending on your design
-
+    const numColumns = 3;
     const renderItem = ({ item }) => (
         <ServiceCard
             title={item.title}
@@ -65,7 +65,6 @@ const HomeScreen = () => {
 
     const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
 
-    console.log(StoreCodeDetails, 'kkksssssssssskkkkkk')
 
     return (
         <SafeAreaView style={styles.container}>
@@ -130,12 +129,11 @@ const HomeScreen = () => {
                 <TouchableOpacity onPress={() => setStoreModalVisible(true)}>
                     <View style={styles.footerBar}>
                         <Image source={location} style={{ width: 16, height: 18 }} resizeMode='contain' />
-                        <Text style={{ marginLeft: 10 }}>Store Code: <Text style={{ fontWeight: 600, fontSize: 16, color: '#267c2cff' }}>S0584</Text> | Mana Gromor Centre Ak..</Text>
+                        <Text style={{ marginLeft: 10 }}>Store Code: <Text style={{ fontWeight: 600, fontSize: 16, color: '#267c2cff' }}>{storeCode}</Text> | {storeName?.slice(0, 24) + "..."}</Text>
                         <Image
                             source={downarrow}
                             style={{ marginLeft: 10, width: 15, height: 15, tintColor: '#22a12aff' }}
                             resizeMode='contain'
-
                         />
                     </View>
                 </TouchableOpacity>
@@ -171,27 +169,27 @@ const HomeScreen = () => {
                             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 6 }}>
                                 <Image source={location} style={{ width: 15, height: 15 }} resizeMode='contain' />
                                 <Text style={{ fontWeight: 'bold', fontSize: 14, marginLeft: 8, color: '#1B5E20' }}>
-                                    Store Code: <Text style={{ fontWeight: 'bold' }}>S0584</Text>
+                                    Store Code: <Text style={{ fontWeight: 'bold' }}>{storeCode}</Text>
                                 </Text>
                             </View>
 
                             {/* Store Name */}
                             <Text style={{ fontWeight: 'bold', fontSize: 16, color: '#1B5E20', marginBottom: 8 }}>
-                                Mana Gromor Centre A.kondapuram
+                                {storeName}
                             </Text>
 
                             {/* Address */}
                             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
                                 {/* <Image source={require('./assets/address_icon.png')} style={{ width: 16, height: 16, marginTop: 2 }} /> */}
                                 <Text style={{ marginLeft: 8, color: '#333', flex: 1 }}>
-                                    Coromandel International Ltd, c/o Mana Gromor Center, Building No. 110/1, A.kondapuram, Putlur Mandal, Anantapur
+                                    {address}
                                 </Text>
                             </View>
 
                             {/* Phone */}
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 {/* <Image source={require('./assets/phone_icon.png')} style={{ width: 16, height: 16 }} /> */}
-                                <Text style={{ marginLeft: 8, color: '#333' }}>+91 8978780010</Text>
+                                <Text style={{ marginLeft: 8, color: '#333' }}>+91 {contactDetails}</Text>
                             </View>
                         </View>
                     </View>
