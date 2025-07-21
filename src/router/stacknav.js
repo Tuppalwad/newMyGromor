@@ -94,6 +94,9 @@ import MyOrdersScreen from '../pages/product_Modules/order/orderScreen';
 import ProductCategories from '../pages/product_Modules/product-category';
 import ProductDetails from '../pages/product_Modules/product-details';
 import purchases from '../pages/product_Modules/order/component/purchases';
+import MyBooking from '../pages/product_Modules/order/component/MyBooking';
+import PurchaseDetail from '../pages/product_Modules/order/component/purchases';
+// import MyBookings from '../pages/product_Modules/order/MyBooking';
 
 const Stack = createNativeStackNavigator();
 
@@ -197,7 +200,14 @@ const StackNav = ({ navigation }) => {
       <Stack.Screen
         name={Screen.Purchase}
         options={{ headerShown: false }}
-        component={purchases}
+        // name={Screen.dashboardHome}
+        component={PurchaseDetail}
+      />
+      <Stack.Screen
+        name='MyBooking'
+        options={{ headerShown: false }}
+        // name={Screen.dashboardHome}
+        component={MyBooking}
       />
       {/* <Stack.Screen
         options={{headerShown: false}}

@@ -528,7 +528,14 @@ const DrawerContent = (props) => {
         <View style={styles.section}>
           {renderOption('Terms & Conditions', require('../../src/assets/drawer/terms.png'))}
           {renderOption('Share App', require('../../src/assets/drawer/share.png'))}
+          {renderOption('Call 1800 425 2828', require('../../src/assets/drawer/share.png'))}
         </View>
+        <TouchableOpacity style={styles.signOutButton}>
+          <View style={styles.row}>
+            <Text style={styles.signOutText}>Sign Out</Text>
+            {/* <Image source={signOutIcon} style={styles.signOutIcon} /> */}
+          </View>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -674,6 +681,33 @@ const styles = StyleSheet.create({
     color: '#000',
     fontWeight: '500',
     marginLeft: 16,
+  },
+  signOutButton: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginHorizontal: 16,
+    marginVertical: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    elevation: 1,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  signOutText: {
+    color: '#01AD41',
+    fontSize: 16,
+    fontWeight: '600',
+    marginRight: 8,
+  },
+  signOutIcon: {
+    width: 18,
+    height: 18,
+    tintColor: '#01AD41',
   },
 });
 
