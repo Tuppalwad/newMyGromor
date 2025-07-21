@@ -92,6 +92,9 @@ import AgriVideo from '../pages/dashboard_Modules/tabs/ad-video/AgriVideo';
 import Cart from '../pages/product_Modules/my-cart';
 import MyOrdersScreen from '../pages/product_Modules/order/orderScreen';
 import purchases from '../pages/product_Modules/order/component/purchases';
+import MyBooking from '../pages/product_Modules/order/component/MyBooking';
+import PurchaseDetail from '../pages/product_Modules/order/component/purchases';
+// import MyBookings from '../pages/product_Modules/order/MyBooking';
 
 const Stack = createNativeStackNavigator();
 
@@ -198,7 +201,13 @@ const StackNav = ({ navigation }) => {
         name='Purchase'
         options={{ headerShown: false }}
         // name={Screen.dashboardHome}
-        component={purchases}
+        component={PurchaseDetail}
+      />
+      <Stack.Screen
+        name='MyBooking'
+        options={{ headerShown: false }}
+        // name={Screen.dashboardHome}
+        component={MyBooking}
       />
       {/* <Stack.Screen
         options={{headerShown: false}}

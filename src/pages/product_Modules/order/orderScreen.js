@@ -23,6 +23,25 @@ export default function MyOrdersScreen() {
     const navigation = useNavigation();
     const [activeCategory, setActiveCategory] = useState('purchases');
 
+
+    const NumberComponent = ({ text, num, item }) => {
+        return (
+            <View style={{ flexDirection: "column" }}>
+
+                <View style={styles.cardHeader}>
+                    <Text style={styles.orderLabel}>{text}.</Text>
+                    <View style={[styles.statusBadge, { backgroundColor: item.color }]}>
+                        <Image source={item.image} style={{ width: 13, height: 13, tintColor: item.textColor, resizeMode: 'contain' }} />
+                        <Text style={[styles.statusText, { color: item.textColor }]}>{item.status}</Text>
+                    </View>
+
+                </View>
+                <Text style={styles.orderNumber}>{num}</Text>
+
+            </View>
+        )
+    }
+
     return (
         <View style={styles.container}>
             <CustomHeader
@@ -56,7 +75,10 @@ export default function MyOrdersScreen() {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => setActiveCategory('bookings')}
+                    onPress={() => {
+                        setActiveCategory('bookings');
+                        // navigation.navigate('MyBookings');
+                    }}
                     style={styles.tabButton}
                 >
                     <View style={styles.tabInner}>
@@ -79,14 +101,11 @@ export default function MyOrdersScreen() {
 
                 {orders.map((item, index) => (
                     <View key={index} style={styles.card}>
-                        <View style={styles.cardHeader}>
-                            <Text style={styles.orderLabel}>Order No.</Text>
-                            <View style={[styles.statusBadge, { backgroundColor: item.color }]}>
-                                <Image source={item.image} style={{ width: 13, height: 13, tintColor: item.textColor, resizeMode: 'contain' }} />
-                                <Text style={[styles.statusText, { color: item.textColor }]}>{item.status}</Text>
-                            </View>
-                        </View>
-                        <Text style={styles.orderNumber}>PP250506844158</Text>
+                        <NumberComponent text={activeCategory === 'purchases' ? "Order No" : "So No"
+                        }
+                            num={activeCategory === 'purchases' ? "PP38987oslkf" : "BD92482628"}
+                            item={item}
+                        />
                         {/* add here horizontal line */}
                         < View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
                         <View style={styles.footerRow}>
@@ -94,7 +113,7 @@ export default function MyOrdersScreen() {
                                 <Text style={styles.amount}>Order Amount: ₹3618</Text>
                                 <Text style={styles.date}>Order Date: 06-05-2025</Text>
                             </View>
-                            <TouchableOpacity onPress={() => navigation.navigate('Purchase')}>
+                            <TouchableOpacity onPress={() => activeCategory.toLowerCase() == "purchases" ? navigation.navigate('Purchase') : navigation.navigate('MyBooking')}>
                                 <Image source={rightArrow} style={{ width: 16, height: 16, tintColor: '#000', resizeMode: 'contain', }} />
                             </TouchableOpacity>
                         </View>
@@ -114,9 +133,10 @@ export default function MyOrdersScreen() {
                     <Text style={styles.filterText}> Filters</Text>
                 </TouchableOpacity>
             </LinearGradient>
-        </View>
+        </View >
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
