@@ -84,7 +84,7 @@ export default ProductCard;
 
 const styles = StyleSheet.create({
     card: {
-        width: 200,
+        width: 180,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#eee',

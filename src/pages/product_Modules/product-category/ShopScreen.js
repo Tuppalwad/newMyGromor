@@ -40,7 +40,7 @@ export default function ShopScreen({ onPressSeeAll, onPressDeleteFav, newProduct
                     <FlatList
                         data={productCategoryData}
                         renderItem={({ item }) => (
-                            item.id != 9 ? <CategoryCard title={item.code} icon={item.imageKey} /> : <View style={{ width: '30%' }} />
+                            item.id != 9 ? <CategoryCard title={item.code} icon={item.imageKey} /> : <View style={{ width: '20%' }} />
                         )}
                         keyExtractor={(item) => item.id}
                         numColumns={3}

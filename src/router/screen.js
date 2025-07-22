@@ -69,6 +69,6 @@ export const Screen = {
   cropDocktore: "Crop Droctor",
   Shop: 'Shop',
   Community: 'Community',
-  Purchase: 'Purchase'
-
+  Purchase: 'Purchase',
+  MyServicesScreen: 'MyServicesScreen'
 };

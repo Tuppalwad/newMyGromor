@@ -32,7 +32,7 @@ import wheat from '../../../../assets/images/common/wheat.png'
 const services = [
     { title: 'Buy Products', screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
     { title: 'Spraying Services', screen: '', icon: SprayingService },
-    { title: 'Door Delivery', screen: '', icon: DoorDelivery },
+    { title: 'Door Delivery', screen: Screen.MyServicesScreen, icon: DoorDelivery },
     { title: 'Gromor Store', screen: '', icon: GromorStore },
     { title: 'Crop Doctor', screen: '', icon: CropDoctore },
     { title: 'Ask the Experts', screen: '', icon: AskTheExperts },

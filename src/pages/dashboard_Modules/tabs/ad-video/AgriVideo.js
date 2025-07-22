@@ -20,6 +20,7 @@ import { ProductType } from '../../../../redux/product/type';
 import { isEmpty } from '../../../../utils/validator';
 import CustomHeader from '../../../../components/common/CustomHeader';
 import { extractVideoData } from '../../../../utils/utils';
+import FilterModal from '../../../product_Modules/components/FilterModal';
 
 const categories = ['All', 'Newest', 'Most Viewed', 'Learning', 'Advisory'];
 
@@ -114,7 +115,7 @@ const AgriVideo = () => {
     const loadingSelector = createLoadingSelector([ProductType.video]);
     const isLoading = useSelector(state => loadingSelector(state));
     const videoArray = useSelector((state) => state.product.videoArray);
-
+    const [filterVisible, setFilterVisible] = useState(false);
 
     useEffect(() => {
         if (isFocussed && isEmpty(videoArray)) {
@@ -210,16 +211,22 @@ const AgriVideo = () => {
             </ScrollView>
 
             {/* Sort & Filter */}
-            <View style={styles.bottomFilterBar}>
-                <TouchableOpacity style={styles.sortButton}>
-                    <Text style={styles.sortIcon}>⇅</Text>
-                    <Text style={styles.sortText}>Sort by</Text>
+            <View style={styles.bottomBar}>
+                <TouchableOpacity style={styles.bottomButton} onPress={() => console.log('Sort pressed')}>
+                    <Text style={styles.bottomIcon}>⇅</Text>
+                    <Text style={styles.bottomText}>Sort by</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.filterButton}>
-                    <Text style={styles.sortIcon}>☰</Text>
-                    <Text style={styles.sortText}>Filters</Text>
+
+                <View style={styles.divider} />
+
+                <TouchableOpacity style={styles.bottomButton} onPress={() => setFilterVisible(true)}>
+                    <Text style={styles.bottomIcon}>≡</Text>
+                    <Text style={styles.bottomText}>Filters</Text>
+                    <View style={styles.dot} />
                 </TouchableOpacity>
             </View>
+            <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
+
         </View>
     );
 };
@@ -361,33 +368,56 @@ const styles = StyleSheet.create({
         color: '#000',
         fontWeight: '500',
     },
-    bottomFilterBar: {
+    bottomBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#0A8F43', // fallback for gradient
+        paddingHorizontal: 16,
+        paddingVertical: 10,
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#DFF6E7',
-        paddingVertical: 20,
-        paddingHorizontal: 24,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        borderTopWidth: 1,
+        borderColor: '#ddd',
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
     },
-    sortButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 6,
-    },
-    filterButton: {
+
+    bottomButton: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 6,
+        flex: 1,
+        justifyContent: 'center',
+        paddingVertical: 8,
     },
-    sortIcon: {
+
+    bottomIcon: {
         fontSize: 16,
-        color: '#000',
+        color: '#fff',
+        marginRight: 8,
+        lineHeight: 15
     },
-    sortText: {
+
+    bottomText: {
         fontSize: 14,
-        color: '#000',
+        color: '#fff',
+        fontWeight: '500',
+    },
+
+    divider: {
+        width: 1,
+        height: '80%',
+        backgroundColor: '#fff',
+        opacity: 0.3,
+    },
+
+    dot: {
+        width: 4,
+        height: 4,
+        borderRadius: 6,
+        backgroundColor: '#FFD700',
+        marginLeft: 6,
     },
 });

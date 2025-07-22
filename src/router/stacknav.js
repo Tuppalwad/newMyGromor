@@ -98,6 +98,7 @@ import MyBooking from '../pages/product_Modules/order/component/MyBooking';
 import PurchaseDetail from '../pages/product_Modules/order/component/purchases';
 import MyAccountScreen from '../pages/sidebar_modules/language/MyAccountScreen';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
+import MyServicesScreen from '../pages/service_module/myServices';
 
 const Stack = createNativeStackNavigator();
 
@@ -217,6 +218,17 @@ const StackNav = ({ navigation }) => {
 
         component={MyAccountScreen}
       />
+      <Stack.Screen
+        name={Screen.MyServicesScreen}
+        options={{ headerShown: false }}
+        // name={Screen.dashboardHome}
+
+        component={MyServicesScreen}
+      />
+
+
+
+
       {/* <Stack.Screen
         options={{headerShown: false}}
         name={Screen.FeedProfile}

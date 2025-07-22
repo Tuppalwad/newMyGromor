@@ -12,8 +12,8 @@ export const BuildTypes = {
   PreProduction: 'PreProduction',
 };
 
-export const BUILD = BuildTypes.Production;
-// export const BUILD = BuildTypes.Development;
+// export const BUILD = BuildTypes.Production;
+export const BUILD = BuildTypes.Development;
 
 
 export const DEV_BASE_URL = 'https://mygromor20uatazure.coromandel.biz';
