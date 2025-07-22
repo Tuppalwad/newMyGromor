@@ -9,7 +9,7 @@ import phone from '../../../../assets/images/common/phone.png'
 import CustomHeader from '../../../../components/common/CustomHeader'
 const MyBooking = () => {
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginTop: 30 }}>
             <View>
                 <CustomHeader
                     type="BookingDetails"
@@ -21,7 +21,6 @@ const MyBooking = () => {
                 />
             </View>
             <ScrollView style={styles.container}>
-
                 {/* Header Section */}
                 <View style={styles.headerCard}>
                     <Image source={bookingIcon} style={styles.bookingIcon} />

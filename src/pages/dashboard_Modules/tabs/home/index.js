@@ -202,7 +202,7 @@
 // });
 
 
-import { StyleSheet, Text, View } from 'react-native'
+import { Linking, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import HomeScreen from './HomeScreen';
 import { useDispatch, useSelector } from 'react-redux';
@@ -217,7 +217,7 @@ import { Isplatform_IOS } from '../../../../config/resposiveSize';
 import Geolocation from '@react-native-community/geolocation';
 import { PERMISSIONS } from 'react-native-permissions';
 import { HEToast } from '../../../../components/toast';
-import { WEATHER_APP_KEY } from '../../../../config';
+import { Configuration, WEATHER_APP_KEY } from '../../../../config';
 import { FarmerType } from '../../../../redux/farmer/type';
 import { WeatherType } from '../../../../redux/weather-report/type';
 import { ProductType } from '../../../../redux/product/type';
@@ -330,6 +330,9 @@ const Home = () => {
   };
 
   const onPressCall = () => {
+
+    console.log('kkkkkkkkkk')
+
     let phoneNumber = Configuration.tollfreenumber_Linking;
     try {
       let param = {
@@ -599,8 +602,9 @@ const Home = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <HomeScreen 
-        
+      <HomeScreen
+        onPressCall={onPressCall}
+
       />
     </View>
   )

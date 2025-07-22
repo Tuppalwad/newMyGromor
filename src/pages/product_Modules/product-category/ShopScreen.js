@@ -9,8 +9,9 @@ import { useSelector } from 'react-redux';
 import Indicator from '../../../components/common/Indicator';
 import LinearGradient from 'react-native-linear-gradient';
 import ProductCard from '../components/ProductCard';
+import { Screen } from '../../../router/screen';
 
-export default function ShopScreen({ onPressDeleteFav, newProductData, popularProductData, onPressProductItem, onPressFavourite }) {
+export default function ShopScreen({ onPressSeeAll, onPressDeleteFav, newProductData, popularProductData, onPressProductItem, onPressFavourite }) {
 
     const navigation = useNavigation();
     const productCategoryData = useSelector(state => state.product.productCategory);
@@ -56,7 +57,7 @@ export default function ShopScreen({ onPressDeleteFav, newProductData, popularPr
                         <View style={{ marginVertical: 16 }}>
                             <View style={styles.header}>
                                 <Text style={styles.title}>New Lunch</Text>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => onPressSeeAll("newLunch")}>
                                     <Text style={styles.viewAll}>View All</Text>
                                 </TouchableOpacity>
                             </View>
@@ -86,7 +87,7 @@ export default function ShopScreen({ onPressDeleteFav, newProductData, popularPr
                         <View style={{ marginVertical: 16 }} >
                             <View style={styles.header}>
                                 <Text style={styles.title}>Popular Product</Text>
-                                <TouchableOpacity>
+                                <TouchableOpacity onPress={() => onPressSeeAll("popular")}>
                                     <Text style={styles.viewAll}>View All</Text>
                                 </TouchableOpacity>
                             </View>

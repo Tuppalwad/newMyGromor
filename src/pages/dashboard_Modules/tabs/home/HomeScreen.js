@@ -49,7 +49,7 @@ const screenWidth = Dimensions.get('window').width;
 const itemSize = screenWidth / numColumns;
 
 
-const HomeScreen = () => {
+const HomeScreen = ({ onPressCall }) => {
     const navigation = useNavigation();
     const [storeModalVisible, setStoreModalVisible] = useState(false);
     const StoreCodeDetails = useSelector(
@@ -139,9 +139,11 @@ const HomeScreen = () => {
                         <Text style={styles.callLine}>We are just a call away 👉</Text>
                     </View>
                 </ScrollView>
-                <View>
-                    <Image source={callIcon} style={{ width: 46, height: 46, backgroundColor: 'none', position: 'absolute', bottom: 20, right: 10 }} />
-                </View>
+                <TouchableOpacity
+                    onPress={onPressCall}
+                >
+                    <Image source={callIcon} style={{ width: 50, height: 50, backgroundColor: 'none', position: 'absolute', bottom: 20, right: 15 }} />
+                </TouchableOpacity>
                 {/* Bottom Footer */}
                 <TouchableOpacity onPress={() => setStoreModalVisible(true)}>
                     <View style={styles.footerBar}>

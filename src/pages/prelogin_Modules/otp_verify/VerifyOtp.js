@@ -53,6 +53,7 @@ export default function VerifyOtp({ route }) {
     const [intervalId, setIntervalId] = useState(null);
     const [notificationCode, setNotificationCode] = useState('');
     const [latlong, setLatlong] = useState({ latitude: 0, longitude: 0 });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         startTimer();
@@ -162,72 +163,93 @@ export default function VerifyOtp({ route }) {
     );
 
     const handleResend = () => {
-        let param = { mobile: mobileNumber };
-        dispatch(operation.user.resendOTP(param))
-            .then(res => {
-                startTimer();
-                HEToast(appLanguage?.otp_sent_successfully ?? 'OTP sent successfully', 'success');
-            })
-            .catch(err => {
-                dispatch(operation.user.getErrorHandling(err, 'handleResend'));
-            });
+
+        try {
+
+            setLoading(true)
+            let param = { mobile: mobileNumber };
+            dispatch(operation.user.resendOTP(param))
+                .then(res => {
+                    startTimer();
+                    HEToast(appLanguage?.otp_sent_successfully ?? 'OTP sent successfully', 'success');
+                })
+                .catch(err => {
+                    dispatch(operation.user.getErrorHandling(err, 'handleResend'));
+                });
+
+        } catch (error) {
+            setLoading(false)
+        }
+        finally {
+            setLoading(false)
+        }
+
     };
 
     const handleSubmit = () => {
-        if (!code || code.length < 4) {
-            HEToast(appLanguage?.otp_sent_please ?? 'Please enter valid OTP', 'error');
-            return;
+        try {
+            if (!code || code.length < 4) {
+                HEToast(appLanguage?.otp_sent_please ?? 'Please enter valid OTP', 'error');
+                return;
+            }
+
+            setLoading(true)
+
+            let param = {
+                mobile: mobileNumber,
+                otp: code,
+                platform: Isplatform_IOS ? 'IOS' : 'ANDROID',
+                version: getVersion() ?? '',
+                token: notificationCode,
+                selectedLanguage: selectedLanguage
+            };
+
+            dispatch(operation.user.verifyOTP(param))
+                .then(res => {
+                    let Otp_Response = res?.data ?? {};
+                    if (!isEmpty(Otp_Response?.id)) {
+                        dispatch(
+                            operation.farmer.getFarmerpostLogin({
+                                mobileNumber: param.mobile,
+                                farmerIdentityId: Otp_Response?.id ?? '',
+                                classificationCode: classificationCode.classificationCode,
+                                latitude: latlong.latitude ?? 0,
+                                longitude: latlong.longitude ?? 0,
+                                loginFrom: Isplatform_IOS ? 'IOS' : 'ANDROID'
+                            })
+                        )
+                            .then(res => {
+                                let userData = {
+                                    ...UserManager.user,
+                                    identity: res?.data ?? {}
+                                };
+                                UserManager.updateFcmToken(param.token);
+                                UserManager.saveUser(userData);
+                                navigation.dispatch(
+                                    CommonActions.reset({
+                                        index: 1,
+                                        routes: [{ name: Screen.homes }]
+                                    })
+                                );
+                                clearInterval(intervalId);
+
+                            })
+                            .catch(err => {
+                                dispatch(operation.user.getErrorHandling(err, 'getFarmerpostLogin'));
+                            });
+                    } else {
+                        dispatch(operation.user.getErrorHandling('Invalid Identifier for Farmer', 'InvalidFarmerpostLogin'));
+                    }
+                })
+                .catch(err => {
+                    dispatch(operation.user.getErrorHandling(err, 'verifyOTP'));
+                });
+        } catch (error) {
+            setLoading(false)
         }
-
-        let param = {
-            mobile: mobileNumber,
-            otp: code,
-            platform: Isplatform_IOS ? 'IOS' : 'ANDROID',
-            version: getVersion() ?? '',
-            token: notificationCode,
-            selectedLanguage: selectedLanguage
-        };
-
-        dispatch(operation.user.verifyOTP(param))
-            .then(res => {
-                let Otp_Response = res?.data ?? {};
-                if (!isEmpty(Otp_Response?.id)) {
-                    dispatch(
-                        operation.farmer.getFarmerpostLogin({
-                            mobileNumber: param.mobile,
-                            farmerIdentityId: Otp_Response?.id ?? '',
-                            classificationCode: classificationCode.classificationCode,
-                            latitude: latlong.latitude ?? 0,
-                            longitude: latlong.longitude ?? 0,
-                            loginFrom: Isplatform_IOS ? 'IOS' : 'ANDROID'
-                        })
-                    )
-                        .then(res => {
-                            let userData = {
-                                ...UserManager.user,
-                                identity: res?.data ?? {}
-                            };
-                            UserManager.updateFcmToken(param.token);
-                            UserManager.saveUser(userData);
-                            navigation.dispatch(
-                                CommonActions.reset({
-                                    index: 1,
-                                    routes: [{ name: Screen.homes }]
-                                })
-                            );
-                            clearInterval(intervalId);
-
-                        })
-                        .catch(err => {
-                            dispatch(operation.user.getErrorHandling(err, 'getFarmerpostLogin'));
-                        });
-                } else {
-                    dispatch(operation.user.getErrorHandling('Invalid Identifier for Farmer', 'InvalidFarmerpostLogin'));
-                }
-            })
-            .catch(err => {
-                dispatch(operation.user.getErrorHandling(err, 'verifyOTP'));
-            });
+        finally {
+            setLoading(false)
+        }
 
     };
 
@@ -272,7 +294,10 @@ export default function VerifyOtp({ route }) {
                 {/* Heading */}
                 <Text style={styles.title}>{appLanguage.verify_otp ?? "Verify OTP"}</Text>
                 <Text style={styles.subtitle}>{appLanguage.enter_otp_that_we_sent_to ?? "Enter OTP that we sent to"}</Text>
-                <Text style={styles.phoneNumber}>{mobileNumber}</Text>
+                <Text style={styles.phoneNumber}>
+                    {"xxxxxx" + (mobileNumber?.toString().slice(-4) || "")}
+                </Text>
+
 
                 {/* OTPInputView replaces manual inputs */}
                 <OTPInputView
@@ -307,7 +332,7 @@ export default function VerifyOtp({ route }) {
             </View>
             <Text style={styles.footerText}>©2025 MyGromor | Version 1.0 </Text>
 
-            {/* <Indicator Indicator={isLoading} /> */}
+            <Indicator Indicator={!isLoading} />
 
         </View>
     );

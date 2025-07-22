@@ -4,11 +4,12 @@ import { useNavigation } from "@react-navigation/native";
 import CustomButton from "../../../components/common/CustomButton";
 import { defConfigImageURL } from "../../dashboard_Modules/tabs/home/index.service";
 import { useSelector } from "react-redux";
-import { Screen } from "../../../router/screen";
 import HartIcon from '../../../assets/drawer/favourite.png'
+import LikeIcon from '../../../assets/images/common/LikeIcon.png'
+
 const ProductCard = ({ item, onPressProductItem, index, onPressFavourite, type, onPressDeleteFav }) => {
     const weightOptions = ['30 Kg', '50 Kg', '100 Kg']
-    const [selectedWeight, setSelectedWeight] = useState(item.size);
+    const [selectedWeight, setSelectedWeight] = useState(item?.size);
     const [showDropdown, setShowDropdown] = useState(false);
     const navigation = useNavigation();
     const BannerData = useSelector(state => state.product.bannerData);
@@ -16,23 +17,32 @@ const ProductCard = ({ item, onPressProductItem, index, onPressFavourite, type, 
         state => state.product.productCategory,
     );
 
-    const productType = productCategoryData?.filter((id) => id.id == item.categoryId)[0]?.code;
+    const productType = productCategoryData?.filter((id) => id.id == item?.categoryId)[0]?.code;
 
     return (
         <View style={styles.card}>
             <View style={styles.badgeContainer}>
                 <Text style={styles.badgeText}>{item?.brand}</Text>
                 <TouchableOpacity
-                    onPress={() => { item.isFavouriteProduct ? onPressDeleteFav(item, index, type) : onPressFavourite(item, index, type) }}
+                    onPress={() => { item?.isFavouriteProduct ? onPressDeleteFav(item, index, type) : onPressFavourite(item, index, type) }}
                 >
-                    <Image
+                    {item?.isFavouriteProduct ? <Image
                         source={HartIcon}
                         style={{
                             width: 15, height: 15,
-                            tintColor: item.isFavouriteProduct ? 'green' : 'gray'
+                            tintColor: 'green'
                         }}
                         resizeMode="contain"
-                    />
+                    /> :
+                        <Image
+                            source={LikeIcon}
+                            style={{
+                                width: 15, height: 15,
+                                tintColor: 'green'
+                            }}
+                            resizeMode="contain"
+                        />}
+
                 </TouchableOpacity>
             </View>
 
@@ -74,13 +84,14 @@ export default ProductCard;
 
 const styles = StyleSheet.create({
     card: {
-        width: 180,
+        width: 200,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#eee',
         padding: 9,
         marginRight: 12,
         backgroundColor: '#fff',
+        paddingHorizontal: 10
     },
     badgeContainer: {
         flexDirection: 'row',

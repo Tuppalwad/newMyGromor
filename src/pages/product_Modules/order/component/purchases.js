@@ -8,7 +8,7 @@ import phone from '../../../../assets/images/common/phone.png'
 import progress from '../../../../assets/images/splash/timer.png'
 import CustomHeader from '../../../../components/common/CustomHeader';
 
-export default function PurchaseDetail() {
+export default function PurchaseDetail({ navigation }) {
 
     const steps = [
         {
@@ -41,7 +41,7 @@ export default function PurchaseDetail() {
     ];
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, marginTop: 30 }}>
             <View>
 
                 <CustomHeader
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F6F8',
         paddingHorizontal: 16,
+        marginTop: 30
     },
     cardCentered: {
         backgroundColor: '#fff',

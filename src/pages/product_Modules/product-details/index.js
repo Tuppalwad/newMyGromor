@@ -63,6 +63,7 @@ const ProductDetails = ({ navigation, route }) => {
   });
   const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
   const farmerLanguage = useSelector(state => state.farmer.FarmerLanguageID);
+  const [showNoDetails, setshowNoDetails] = useState(false);
 
   const [similarProductsParams, setSimilarProductsParams] = useState({
     categoryId: route?.params?.data?.categoryId,
@@ -72,7 +73,6 @@ const ProductDetails = ({ navigation, route }) => {
     pageNo: 1,
     pageSize: 20,
   });
-  const [showNoDetails, setshowNoDetails] = useState(false);
 
   useEffect(() => {
     if (isFocussed) {
@@ -613,8 +613,6 @@ const ProductDetails = ({ navigation, route }) => {
         onPressGoToAddress={onPressGoToAddress}
         appLanguage={appLanguage}
         showNoDetails={showNoDetails}
-
-
 
       />
     </View>

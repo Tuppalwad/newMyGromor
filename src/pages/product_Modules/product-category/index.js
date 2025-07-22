@@ -451,6 +451,7 @@ const ProductCategories = ({ navigation }) => {
                 onPressProductItem={onPressProductItem}
                 onPressFavourite={onPressFavourite}
                 onPressDeleteFav={onPressDeleteFav}
+                onPressSeeAll={onPressSeeAll}
             />
         </View>
     );

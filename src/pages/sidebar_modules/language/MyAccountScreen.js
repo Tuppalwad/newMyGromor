@@ -7,7 +7,7 @@ import rightArrow from '../../../assets/images/common/rightArrow.png'
 import LinearGradient from 'react-native-linear-gradient';
 import leftArrow from '../../../assets/images/splash/leftArrow.png'
 import CustomHeader from '../../../components/common/CustomHeader';
-const MyAccountScreen = () => {
+const MyAccountScreen = ({ navigation }) => {
     const menuItems = [
         { title: 'My Information', icon: require('../../../assets/images/account/accountUser.png') },
         { title: 'My Crops', icon: require('../../../assets/images/account/mycrop.png') },
@@ -36,29 +36,16 @@ const MyAccountScreen = () => {
                 end={{ x: 1, y: 0 }}
                 style={styles.headerContainer} // Ensure container has height and padding
             >
-                {/* Header */}
-                {/* <View style={styles.header}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
-                        <Image source={leftArrow} style={{ height: 14, width: 14, tintColor: '#fff', resizeMode: 'contain', marginRight: 10 }} />
-                        <Text style={styles.headerText}>My Account</Text>
 
-                    </View>
-                    <View style={styles.icons}>
-                        <Image source={require('../../../assets/images/splash/BellIcon.png')} style={styles.icon} />
-                        <Image source={require('../../../assets/images/splash/cart.png')} style={styles.icon} />
-                    </View>
-                </View> */}
                 <CustomHeader
                     type="profile"
-                    topTitle=" My Profile"
+                    topTitle="My Profile"
                     subtitle=""
                     onBackPress={() => navigation.goBack()}
                     onCartPress={() => console.log('Cart pressed')}
                     onNotificationPress={() => console.log('Notification pressed')}
 
                 />
-                {/* Profile Section */}
-
 
                 <View style={styles.profileSection}>
                     <Image source={require('../../../assets/drawer/userProfile.png')} style={styles.avatar} />
@@ -81,15 +68,7 @@ const MyAccountScreen = () => {
                     </View>
                 </View>
             </LinearGradient>
-            {/* Grid Menu */}
-            {/* <View style={styles.grid}>
-                {menuItems.map((item, index) => (
-                    <TouchableOpacity key={index} style={styles.gridItem}>
-                        <Image source={item.icon} style={styles.gridIcon} />
-                        <Text style={styles.gridText}>{item.title}</Text>
-                    </TouchableOpacity>
-                ))}
-            </View> */}
+
             <FlatList
                 data={menuItems || []}
                 renderItem={renderItem}
@@ -108,6 +87,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F2F5F4',
+        marginTop: 30,
     },
     header: {
         // backgroundColor: '#208b3a',
@@ -119,7 +99,7 @@ const styles = StyleSheet.create({
     headerContainer: {
         paddingTop: 20,
         paddingBottom: 30,
-        paddingHorizontal: 16,
+        // paddingHorizontal: 16,
     },
 
     headerText: {

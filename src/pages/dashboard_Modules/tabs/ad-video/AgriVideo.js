@@ -19,19 +19,20 @@ import { UserManager } from '../../../../storage';
 import { ProductType } from '../../../../redux/product/type';
 import { isEmpty } from '../../../../utils/validator';
 import CustomHeader from '../../../../components/common/CustomHeader';
+import { extractVideoData } from '../../../../utils/utils';
 
 const categories = ['All', 'Newest', 'Most Viewed', 'Learning', 'Advisory'];
 
 const videos = [
     {
         id: '1',
-        videoId: 'UhGfgh_cZSo',
+        videoId: '5bQlbxTBteQ',
         title: "Coromandel's Adhiraj Neem based product vs Others comparison video (Telugu)",
         tag: 'Neem',
     },
     {
         id: '2',
-        videoId: 'UhGfgh_cZSo',
+        videoId: '5bQlbxTBteQ',
         title: 'Fertilizer recommendation for cotton crops in June',
         tag: 'Cotton',
     },
@@ -64,7 +65,9 @@ const AgriVideo = () => {
 
     const renderVideoCard = ({ item }) => {
         const isPlaying = playingVideoId === item.id;
-        const thumbnailUri = `https://img.youtube.com/vi/${item.videoId}/hqdefault.jpg`;
+
+        const { videoId, title } = extractVideoData(item.videoUrl);
+
 
         return (
             <View style={styles.card}>
@@ -76,13 +79,13 @@ const AgriVideo = () => {
                                 domStorageEnabled={true}
                                 allowsFullscreenVideo={true}
                                 originWhitelist={['*']}
-                                source={{ uri: `https://www.youtube.com/embed/${item.videoId}` }}
+                                source={{ uri: `https://www.youtube.com/embed/${videoId}` }}
                                 style={styles.videoPlayer}
                             />
                         </View>
                     ) : (
                         <TouchableOpacity onPress={() => setPlayingVideoId(item.id)} activeOpacity={0.8}>
-                            <Image source={{ uri: `https://img.youtube.com/vi/${item.videoId}/hqdefault.jpg` }} style={styles.thumbnail} />
+                            <Image source={{ uri: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` }} style={styles.thumbnail} />
                             <Text style={styles.playIcon}>▶</Text>
                         </TouchableOpacity>
                     )}
@@ -93,7 +96,7 @@ const AgriVideo = () => {
                     <View style={styles.tagContainer}>
                         <Text style={styles.tag}>{item.tag}</Text>
                     </View>
-                    <Text style={styles.videoTitle}>{item.title}</Text>
+                    <Text style={styles.videoTitle}>{title}</Text>
                 </View>
             </View>
         );
@@ -171,9 +174,11 @@ const AgriVideo = () => {
         }
     };
 
+    console.log(videoArray, "cccccccccccccccc")
 
 
     return (
+
         <View style={styles.container}>
             <View style={{ marginTop: 15 }}>
                 <CustomHeader
@@ -192,16 +197,17 @@ const AgriVideo = () => {
             </View>
 
             {/* Video List */}
-            <FlatList
-                data={videos}
-                renderItem={renderVideoCard}
-                onEndReached={() => { onEndReached() }}
-
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{ paddingBottom: 100 }}
-                showsVerticalScrollIndicator={false}
-                scrollEnabled={false}
-            />
+            <ScrollView style={{ flex: 1 }}>
+                <FlatList
+                    data={videoArray?.data || []}
+                    renderItem={renderVideoCard}
+                    onEndReached={() => { onEndReached() }}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={{ paddingBottom: 100 }}
+                    showsVerticalScrollIndicator={false}
+                    scrollEnabled={false}
+                />
+            </ScrollView>
 
             {/* Sort & Filter */}
             <View style={styles.bottomFilterBar}>
