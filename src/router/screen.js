@@ -71,5 +71,7 @@ export const Screen = {
   Shop: 'Shop',
   Community: 'Community',
   Purchase: 'Purchase',
-  MyServicesScreen: 'MyServicesScreen'
+  MyServicesScreen: 'MyServicesScreen',
+  DoorDelivery: 'DoorDeliveryComponent',
+  SprayingService: 'SprayingServiceDetail'
 };
