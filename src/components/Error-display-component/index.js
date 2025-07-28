@@ -1,13 +1,13 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
-import { Icon } from '../../../assets/images/index';
-// import CTText from '../ctText';
-import { View_Spacing, width } from "../../config/resposiveSize";
+// import { Icon } from '../../../assets/images/index';
 import { RFValue } from "react-native-responsive-fontsize";
-// import { palette, textSize, typography } from '../../theme';
-import CTButton from "../custombutton"
-import CTText from '../../ctText';
-import { palette } from '../../../theme/color';
+import CTButton from '../common/CTButton';
+import CTText from '../ctText';
+import { palette } from '../../theme/color';
+import { View_Spacing, width } from '../../config/resposiveSize';
+import { Icon } from '../../../assets/images';
+import CustomButton from '../common/CustomButton';
 
 const Errordisplaycomponent = ({ Error_Title, Error_Message = "", Error_Method, Error_Status = false,
     Error_Image, Error_ButtonName = "" }) => {
@@ -51,13 +51,18 @@ const Errordisplaycomponent = ({ Error_Title, Error_Message = "", Error_Method, 
             {Error_ButtonName != "" && (
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <View style={{ marginTop: View_Spacing.VS_H5 }} />
-                    <CTButton
+                    {/* <CTButton
                         containerStyle={{ width: '45%', backgroundColor: palette.green, height: View_Spacing.VS_H5, paddingVertical: 0 }}
                         fontSize={RFValue(13)}
                         textColor={palette.white}
                         text={Error_ButtonName}
                         onPress={Error_Method}
+                    /> */}
+                    <CustomButton
+                        title={Error_ButtonName}
+                        onPress={Error_Method}
                     />
+
                 </View>
             )}
 

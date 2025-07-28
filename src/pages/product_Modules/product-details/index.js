@@ -9,6 +9,8 @@ import { useIsFocused } from '@react-navigation/native';
 import { isEmpty } from '../../../utils/validator';
 import { calculateOffer } from '../../../utils/utils';
 import { UserManager } from '../../../storage';
+import { HEToast } from '../../../components/toast';
+import { Screen } from '../../../router/screen';
 
 const ProductDetails = ({ navigation, route }) => {
 

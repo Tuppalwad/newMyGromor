@@ -75,30 +75,34 @@ import { height } from '../config/resposiveSize';
 // import PlantixRecommndation from '../pages/sidebar_Modules/plantix/plantixSummary/recommndation.screen';
 // import ServiceDetailsScreen from '../pages/dashboard_Modules/tabs/my-services/Components/ServiceDetailsScreen';
 // import CTText from '../components/ctText';
-import Home from '../pages/dashboard_Modules/tabs/home';
+import Home from '../pages/dashboard_modules/tabs/home';
 import LanguageScreen from '../pages/sidebar_modules/language/LanguageScreen';
-import WelcomeScreen from '../pages/prelogin_Modules/welcome_screen';
-import SplashScreen from '../pages/prelogin_Modules/splash_screen';
-import Advisory from '../pages/dashboard_Modules/tabs/advisory-dashboard';
-import Products from '../pages/product_Modules/products';
-import GromorStore from '../pages/dashboard_Modules/tabs/gromo-store';
-import VerifyOtp from '../pages/prelogin_Modules/otp_verify/VerifyOtp';
-import LoginScreen from '../pages/prelogin_Modules/login/LoginScreen';
+import WelcomeScreen from '../pages/prelogin_modules/welcome_screen';
+import SplashScreen from '../pages/prelogin_modules/splash_screen';
+import Advisory from '../pages/dashboard_modules/tabs/advisory-dashboard';
+import GromorStore from '../pages/dashboard_modules/tabs/gromo-store';
+import VerifyOtp from '../pages/prelogin_modules/otp_verify/VerifyOtp';
+import LoginScreen from '../pages/prelogin_modules/login/LoginScreen';
 import { TabNavigator } from './tab-router';
 
-import ViewAllProduct from '../pages/product_Modules/components/ViewAllProduct';
+import ViewAllProduct from '../pages/product_modules/components/ViewAllProduct';
 // import ProductDetail from '../pages/product_Modules/product-details/ProductDetailContainer';
-import AgriVideo from '../pages/dashboard_Modules/tabs/ad-video/AgriVideo';
-import Cart from '../pages/product_Modules/my-cart';
-import MyOrdersScreen from '../pages/product_Modules/order/orderScreen';
-import ProductCategories from '../pages/product_Modules/product-category';
-import ProductDetails from '../pages/product_Modules/product-details';
-import purchases from '../pages/product_Modules/order/component/purchases';
-import MyBooking from '../pages/product_Modules/order/component/MyBooking';
-import PurchaseDetail from '../pages/product_Modules/order/component/purchases';
+import AgriVideo from '../pages/dashboard_modules/tabs/ad-video/AgriVideo';
+import MyCart from '../pages/product_modules/my-cart';
+import MyOrdersScreen from '../pages/product_modules/order/orderScreen';
+import ProductCategories from '../pages/product_modules/product-category';
+import ProductDetails from '../pages/product_modules/product-details';
+import purchases from '../pages/product_modules/order/component/purchases';
+import MyBooking from '../pages/product_modules/order/component/MyBooking';
+import PurchaseDetail from '../pages/product_modules/order/component/purchases';
 import MyAccountScreen from '../pages/sidebar_modules/language/MyAccountScreen';
+import MyServicesScreen from '../pages/service_modules/my_services';
+import ViewAllCategory from '../pages/product_modules/view-all-category';
+import ViewAllCategoryData from '../pages/product_modules/view-all-category';
+import SimilarProudct from '../pages/product_modules/similar-product';
+// import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
-import MyServicesScreen from '../pages/service_module/myServices';
+// import MyServicesScreen from '../pages/service_module/myServices';
 
 const Stack = createNativeStackNavigator();
 
@@ -191,7 +195,7 @@ const StackNav = ({ navigation }) => {
       <Stack.Screen
         name={Screen.myCart}
         options={{ headerShown: false }}
-        component={Cart}
+        component={MyCart}
       />
 
       <Stack.Screen
@@ -202,31 +206,35 @@ const StackNav = ({ navigation }) => {
       <Stack.Screen
         name={Screen.Purchase}
         options={{ headerShown: false }}
-        // name={Screen.dashboardHome}
         component={PurchaseDetail}
       />
       <Stack.Screen
         name='MyBooking'
         options={{ headerShown: false }}
-        // name={Screen.dashboardHome}
         component={MyBooking}
       />
       <Stack.Screen
         name='MyAccount'
         options={{ headerShown: false }}
-        // name={Screen.dashboardHome}
-
         component={MyAccountScreen}
       />
       <Stack.Screen
         name={Screen.MyServicesScreen}
         options={{ headerShown: false }}
-        // name={Screen.dashboardHome}
-
         component={MyServicesScreen}
       />
 
+      <Stack.Screen
+        name={Screen.viewAllCategoryData}
+        options={{ headerShown: false }}
+        component={ViewAllCategoryData}
+      />
 
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.similarProduct}
+        component={SimilarProudct}
+      />
 
 
       {/* <Stack.Screen
@@ -269,11 +277,6 @@ const StackNav = ({ navigation }) => {
         component={ProductDetails}
       />
 
-      <Stack.Screen
-        options={{headerShown: false}}
-        name={Screen.similarProduct}
-        component={SimilarProudct}
-      />
       <Stack.Screen
         options={{headerShown: false}}
         name={Screen.favouriteProduct}
@@ -482,21 +485,21 @@ export const CropAdvStack = () => {
     </CropAdvStack.Navigator>
   );
 };
-export const ProductStack = () => {
-  const ProductStack = createNativeStackNavigator();
+// export const ProductStack = () => {
+//   const ProductStack = createNativeStackNavigator();
 
-  return (
-    <ProductStack.Navigator
-      screenOptions={{
-        headerShown: false,
-      }}>
-      <ProductStack.Screen
-        name={Screen.dashboardProduct}
-        component={Products}
-      />
-    </ProductStack.Navigator>
-  );
-};
+//   return (
+//     <ProductStack.Navigator
+//       screenOptions={{
+//         headerShown: false,
+//       }}>
+//       <ProductStack.Screen
+//         name={Screen.dashboardProduct}
+//         component={Products}
+//       />
+//     </ProductStack.Navigator>
+//   );
+// };
 export const GromorStack = () => {
   const GromorStack = createNativeStackNavigator();
 

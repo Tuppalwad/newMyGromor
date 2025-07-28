@@ -9,6 +9,7 @@ import {
     Image,
     FlatList,
     ScrollView,
+    RefreshControl,
 } from 'react-native';
 import { WebView } from 'react-native-webview'; // ✅ WebView import
 import { useOperation } from '../../../../redux/operation';
@@ -20,7 +21,8 @@ import { ProductType } from '../../../../redux/product/type';
 import { isEmpty } from '../../../../utils/validator';
 import CustomHeader from '../../../../components/common/CustomHeader';
 import { extractVideoData } from '../../../../utils/utils';
-import FilterModal from '../../../product_Modules/components/FilterModal';
+import FilterModal from '../../../product_modules/components/FilterModal';
+import Indicator from '../../../../components/common/Indicator';
 
 const categories = ['All', 'Newest', 'Most Viewed', 'Learning', 'Advisory'];
 
@@ -198,17 +200,26 @@ const AgriVideo = () => {
             </View>
 
             {/* Video List */}
-            <ScrollView style={{ flex: 1 }}>
-                <FlatList
-                    data={videoArray?.data || []}
-                    renderItem={renderVideoCard}
-                    onEndReached={() => { onEndReached() }}
-                    keyExtractor={(item) => item.id}
-                    contentContainerStyle={{ paddingBottom: 100 }}
-                    showsVerticalScrollIndicator={false}
-                    scrollEnabled={false}
-                />
-            </ScrollView>
+            <FlatList
+                data={adsData}
+                renderItem={renderVideoCard}
+                keyExtractor={(item) => item.id?.toString()}
+                contentContainerStyle={{ paddingBottom: 100 }}
+                showsVerticalScrollIndicator={false}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.5}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isLoading}
+                        onRefresh={() => {
+                            const refreshedParams = { page: 1, pageSize: 5 };
+                            setParams(refreshedParams);
+                            getVideoAds(refreshedParams);
+                        }}
+                    />
+                }
+            />
+
 
             {/* Sort & Filter */}
             <View style={styles.bottomBar}>
@@ -227,6 +238,7 @@ const AgriVideo = () => {
             </View>
             <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
 
+            <Indicator Indicator={!isLoading} />
         </View>
     );
 };

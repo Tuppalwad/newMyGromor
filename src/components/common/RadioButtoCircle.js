@@ -1,7 +1,7 @@
 // src/components/RadioButtonCircle.js
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import colors from '../utils/theam';
+import colors from '../../utils/theam';
 
 const RadioButtonCircle = ({ selected }) => {
     return (

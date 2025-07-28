@@ -302,7 +302,7 @@ const ProductCategories = ({ navigation }) => {
             setCategoryMoreStatus(!categoryMoreStatus);
         } else {
             setCategoryMoreStatus(false);
-            navigation.navigate(Screen.viewAllCategory, {
+            navigation.navigate(Screen.viewAllCategoryData, {
                 type: item?.name,
                 data: item,
             });
@@ -452,6 +452,9 @@ const ProductCategories = ({ navigation }) => {
                 onPressFavourite={onPressFavourite}
                 onPressDeleteFav={onPressDeleteFav}
                 onPressSeeAll={onPressSeeAll}
+                onPressCategory={onPressCategory}
+                setSearchData={setSearchData}
+                searchData={searchData}
             />
         </View>
     );

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Image, View, TouchableOpacity, TextInput, Platform, Dimensions, FlatList, StyleSheet } from 'react-native';
-import Errordisplaycomponent from '../Error-display-component';
+// import Errordisplaycomponent from '../Error-display-component';
 import { View_Spacing, width } from "../../config/resposiveSize";
+import Errordisplaycomponent from '../Error-display-component';
 
 const FlatlistComponent = ({ data, renderItemCard, EmptyContent = "", horizontal = false, dynamicFooterComponent,dynamicHeaderComponent,flatlistRef,
     numColumns = 1, ListFooterPadding = View_Spacing.VS_H2, loading = true, ListFooterComponentStatus = true,ListHeaderComponentStatus = true,Error_Image,

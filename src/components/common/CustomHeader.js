@@ -14,7 +14,8 @@ import { useSelector } from 'react-redux';
 import Share from '../../assets/images/common/share.png';
 import Hart from '../../assets/drawer/favourite.png';
 import { useNavigation } from '@react-navigation/native';
-
+import { Screen } from '../../router/screen';
+import LikeIcon from '../../assets/images/common/LikeIcon.png'
 
 export default function CustomHeader({
     type = 'home', // 'home' or 'shop'
@@ -29,14 +30,20 @@ export default function CustomHeader({
     onSearch,
     subtitle = '',
     topTitle,
+    onPressFavourite,
+    itemData,
+    isFav,
+    onPressDeleteFav
+
 }) {
     const StoreCodeDetails = useSelector(
         state => state.farmer.farmerStoreCodeDetails,
     );
     const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
     const navigation = useNavigation()
-    const onCartPress = () => { navigation.navigate('myCart') }
-
+    const onCartPress = () => { navigation.navigate(Screen.myCart) }
+    const cartDataArray = useSelector(state => state.product.cartData);
+    const cartCount = cartDataArray?.length || 0;
     return (
         <View>
             <View style={{
@@ -93,12 +100,28 @@ export default function CustomHeader({
                                 <TouchableOpacity onPress={Share} style={{ marginRight: 15 }}>
                                     <Image source={Share} style={styles.icon} resizeMode='contain' />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={Hart} style={{ marginRight: 15 }}>
-                                    <Image source={Hart} style={styles.icon} resizeMode='contain' />
+                                <TouchableOpacity onPress={() => {
+                                    isFav ? onPressDeleteFav(itemData) : onPressFavourite(itemData)
+                                }}
+                                    style={{ marginRight: 15 }} >
+                                    {isFav ? <Image source={LikeIcon} style={{ width: 25, height: 25 }} resizeMode='contain' /> : <Image source={Hart} style={styles.icon} resizeMode='contain' />}
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
+                                {/* <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
                                     <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
+                                </TouchableOpacity> */}
+
+                                <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
+                                    <View style={{ position: 'relative' }}>
+                                        <Image source={cartIcon} style={styles.carticon} resizeMode="contain" />
+
+                                        {cartCount > 0 && (
+                                            <View style={styles.badge}>
+                                                <Text style={styles.badgeText}>{cartCount}</Text>
+                                            </View>
+                                        )}
+                                    </View>
                                 </TouchableOpacity>
+
                             </View>
                         ) :
                             <>
@@ -109,13 +132,22 @@ export default function CustomHeader({
 
                                     }} resizeMode='contain' />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={onCartPress}>
-                                    <Image source={cartIcon} style={{
-                                        ...styles.icon,
-                                        tintColor: type == "profile" ? "#fff" : '#222',
 
-                                    }} resizeMode='contain' />
+                                <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
+                                    <View style={{ position: 'relative' }}>
+                                        <Image source={cartIcon} style={{
+                                            ...styles.carticon,
+                                            tintColor: type == "profile" ? "#fff" : '#222',
+                                        }} resizeMode="contain" />
+
+                                        {cartCount > 0 && (
+                                            <View style={styles.badge}>
+                                                <Text style={styles.badgeText}>{cartCount}</Text>
+                                            </View>
+                                        )}
+                                    </View>
                                 </TouchableOpacity>
+
                             </>
                     }
                 </View>
@@ -208,5 +240,31 @@ const styles = StyleSheet.create({
         height: 20,
         resizeMode: 'contain',
     },
+
+    carticon: {
+        width: 24,
+        height: 24,
+        resizeMode: 'contain',
+    },
+
+    badge: {
+        position: 'absolute',
+        top: -8,
+        right: -8,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        paddingHorizontal: 5,
+        minWidth: 18,
+        height: 18,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    badgeText: {
+        color: '#fff',
+        fontSize: 10,
+        fontWeight: 'bold',
+    },
+
 
 });

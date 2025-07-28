@@ -1,7 +1,7 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, Image, FlatList, Dimensions, Modal, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, TextInput, Image, FlatList, Dimensions, Modal, TouchableOpacity, TouchableWithoutFeedback, Linking } from 'react-native';
 import React, { useState } from 'react';
 import CustomHeader from '../../../../components/common/CustomHeader';
-import Slider from '../../../../components/Slider';
+import Slider from '../../../../components/common/Slider';
 import { useNavigation } from '@react-navigation/native';
 import ServiceCard from '../../../../components/home/ServiceCard';
 import searchIcon from '../../../../assets/images/splash/search.png'
@@ -24,11 +24,15 @@ import MandiRates from '../../../../assets/images/common/MandiRates.png'
 import fertilizerCal from '../../../../assets/images/common/fertilizerCalculator.png'
 import BuyProduct from '../../../../assets/images/common/buyProduct.png';
 import downarrow from '../../.././../assets/images/common/downArrow.png'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Screen } from '../../../../router/screen';
-import Cart from '../../../product_Modules/my-cart';
+import Cart from '../../../product_modules/my-cart';
 import callIcon from '../../../../assets/images/common/homeCallIcon.png'
 import wheat from '../../../../assets/images/common/wheat.png'
+import { Configuration } from '../../../../config';
+import { useOperation } from '../../../../redux/operation';
+import SearchBar from '../../../../components/common/SearchBar';
+import Indicator from '../../../../components/common/Indicator';
 const services = [
     { title: 'Buy Products', screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
     { title: 'Spraying Services', screen: '', icon: SprayingService },
@@ -49,13 +53,17 @@ const screenWidth = Dimensions.get('window').width;
 const itemSize = screenWidth / numColumns;
 
 
-const HomeScreen = ({ onPressCall }) => {
+const HomeScreen = ({ isloading }) => {
     const navigation = useNavigation();
     const [storeModalVisible, setStoreModalVisible] = useState(false);
     const StoreCodeDetails = useSelector(
         state => state.farmer.farmerStoreCodeDetails,
     );
     const numColumns = 3;
+    const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
+    const operation = useOperation();
+    const dispatch = useDispatch()
+
     const renderItem = ({ item }) => (
         <ServiceCard
             title={item.title}
@@ -66,6 +74,27 @@ const HomeScreen = ({ onPressCall }) => {
 
     const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
 
+    const onPressCall = () => {
+
+        console.log('kkkkkkkkkk')
+
+        let phoneNumber = Configuration.tollfreenumber_Linking;
+        try {
+            let param = {
+                farmerId: farmerAddress?.farmerIdentityId,
+                name: farmerAddress?.name,
+                mobileNumber: farmerAddress?.mobileNumber,
+                timeOfCall: new Date(),
+            };
+            dispatch(operation.farmer.postCallMethod(param)).then(res => {
+                Linking.openURL(`tel:${phoneNumber}`);
+            });
+        } catch (e) { }
+    };
+
+    const onChangeText = () => {
+
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -99,51 +128,57 @@ const HomeScreen = ({ onPressCall }) => {
 
                 {/* Search Bar */}
                 <View style={styles.searchContainer}>
-                    <TextInput
+                    {/* <TextInput
                         placeholder="Search for Seeds"
                         placeholderTextColor="#999"
                         style={styles.searchInput}
-                    // onChangeText={onSearch}
                     />
-                    <Image source={searchIcon} style={styles.searchIcon} />
+                    <Image source={searchIcon} style={styles.searchIcon} /> */}
+                    <SearchBar onChangeText={onChangeText} />
                 </View>
 
-                <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollView}>
-                    {/* Slider */}
-                    <View style={styles.sliderContainer}>
-                        <Slider />
-                    </View>
 
-                    {/* Service Section */}
-                    <FlatList
-                        data={services}
-                        renderItem={renderItem}
-                        keyExtractor={(item, index) => index.toString()}
-                        numColumns={numColumns}
-                        columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 10 }}
-                        contentContainerStyle={{ paddingVertical: 10 }}
-                    />
-                    {/* Any Other Sections */}
-                    <View style={styles.BottomContainer}>
-                        <Text style={styles.line1}>
-                            <Text style={styles.bold}>30,00,000+ </Text>
-                            farmers
-                        </Text>
-                        <Text style={styles.line2}>
-                            trust <Text style={styles.brand}>MyGromor</Text> for
-                        </Text>
-                        <Text style={styles.line3}>
-                            their <Image source={wheat} style={{ height: 20, width: 30, resizeMode: 'contain' }} /> agricultural needs.
-                        </Text>
+                <FlatList
+                    data={[{}]}
+                    renderItem={() => (<View style={{ flex: 1 }}>
+                        <View style={styles.sliderContainer}>
+                            <Slider />
+                        </View>
 
-                        <Text style={styles.callLine}>We are just a call away 👉</Text>
+                        {/* Service Section */}
+                        <FlatList
+                            data={services}
+                            renderItem={renderItem}
+                            keyExtractor={(item, index) => index.toString()}
+                            numColumns={numColumns}
+                            columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 10 }}
+                            contentContainerStyle={{ paddingVertical: 10 }}
+                        />
+                        {/* Any Other Sections */}
+                        <View style={styles.BottomContainer}>
+                            <Text style={styles.line1}>
+                                <Text style={styles.bold}>30,00,000+ </Text>
+                                farmers
+                            </Text>
+                            <Text style={styles.line2}>
+                                trust <Text style={styles.brand}>MyGromor</Text> for
+                            </Text>
+                            <Text style={styles.line3}>
+                                their <Image source={wheat} style={{ height: 20, width: 30, resizeMode: 'contain' }} /> agricultural needs.
+                            </Text>
+
+                            <Text style={styles.callLine}>We are just a call away 👉</Text>
+                        </View>
                     </View>
-                </ScrollView>
-                <TouchableOpacity
-                    onPress={onPressCall}
-                >
-                    <Image source={callIcon} style={{ width: 50, height: 50, backgroundColor: 'none', position: 'absolute', bottom: 20, right: 15 }} />
+                    )}
+                />
+
+
+
+                <TouchableOpacity onPress={onPressCall} style={{ position: 'absolute', bottom: 60, right: 15 }}>
+                    <Image source={callIcon} style={{ width: 50, height: 50 }} />
                 </TouchableOpacity>
+
                 {/* Bottom Footer */}
                 <TouchableOpacity onPress={() => setStoreModalVisible(true)}>
                     <View style={styles.footerBar}>
@@ -215,6 +250,7 @@ const HomeScreen = ({ onPressCall }) => {
                 </TouchableWithoutFeedback>
             </Modal>
 
+            <Indicator Indicator={!isloading} />
 
 
         </SafeAreaView>
@@ -261,10 +297,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#ffffff',
         marginHorizontal: 16,
-        marginBottom: 8,
+        // marginBottom: 8,
         borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
+        // paddingHorizontal: 12,
+        // paddingVertical: 8,
     },
     searchInput: {
         flex: 1,

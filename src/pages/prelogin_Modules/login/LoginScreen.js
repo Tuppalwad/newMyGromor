@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import Logo from '../../../assets/images/splash/logo.png'
-import CustomLoginRadioButton from '../../../components/CustomLoginRadioButton';
+import CustomLoginRadioButton from '../../../components/common/CustomLoginRadioButton';
 import CustomButton from '../../../components/common/CustomButton';
 import colors from '../../../utils/theam';
 import Phone from '../../../assets/images/splash/phone.png'

@@ -16,10 +16,16 @@ import { ProductType } from '../../../redux/product/type';
 import { isEmpty } from '../../../utils/validator';
 import Indicator from '../../../components/common/Indicator';
 import { Screen } from '../../../router/screen';
+import FlatlistComponent from '../../../components/common/FlatListComponent';
+import { Icon } from '../../../../assets/images';
+import SortModal from './SortModal';
+import Errordisplaycomponent from '../../../components/Error-display-component';
 
 
 const ViewAllProduct = () => {
     const [filterVisible, setFilterVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+
     const navigation = useNavigation();
     const route = useRoute()
 
@@ -273,7 +279,15 @@ const ViewAllProduct = () => {
     const renderProduct = ({ item, index, isSimilar }) => <ProductCard item={item} index={index} onPressProductItem={onPressProductItem} onPressFavourite={onPressFavourite} onPressDeleteFav={onPressDeleteFav} type={isSimilar} />;
 
 
-    console.log(productData, 'ddddddddd')
+    const renderFetchSpinner = () => {
+        if (isLoading) {
+            return (
+                <View style={{ flex: 1, marginVertical: height / 100 * 10 }}>
+                    <Indicator isSmall={true} show={isLoading} Indicator={true} />
+                </View>
+            );
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -285,7 +299,7 @@ const ViewAllProduct = () => {
                 onCartPress={() => console.log('Cart pressed')}
                 onNotificationPress={() => console.log('Notification pressed')}
             />
-            <SearchBar onChangeText={(text) => console.log('Search:', text)} />
+            <SearchBar onChangeText={(text) => setSearchData(text)} />
 
             <Text style={styles.itemCount}>{productData.length} items</Text>
 
@@ -298,11 +312,27 @@ const ViewAllProduct = () => {
                 columnWrapperStyle={styles.row}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingHorizontal: 8, paddingBottom: 80 }}
+                onEndReached={onEndReached}
+                ListEmptyComponent={() => {
+                    if (productData.length == 0) {
+                        return (
+                            <View style={{ flex: 1, justifyContent: "center", }}>
+                                <Errordisplaycomponent
+                                    Error_Title={appLanguage?.no_data_found ?? 'No data found'}
+                                    Error_Message={""}
+                                    Error_Image={Icon.store}
+                                    Error_Status={false}
+                                />
+                            </View>
+                        );
+                    }
+                    return null;
+                }}
             />
 
             {/* Bottom Bar with CustomButton */}
             <View style={styles.bottomBar}>
-                <TouchableOpacity style={styles.bottomButton} onPress={() => console.log('Sort pressed')}>
+                <TouchableOpacity style={styles.bottomButton} onPress={() => setModalVisible(true)}>
                     <Text style={styles.bottomIcon}>⇅</Text>
                     <Text style={styles.bottomText}>Sort by</Text>
                 </TouchableOpacity>
@@ -317,6 +347,7 @@ const ViewAllProduct = () => {
             </View>
 
             <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
+            <SortModal setModalVisible={setModalVisible} modalVisible={modalVisible} />
 
             <Indicator Indicator={!isLoading} />
 

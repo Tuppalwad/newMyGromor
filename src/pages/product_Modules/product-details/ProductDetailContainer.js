@@ -19,32 +19,29 @@ import CustomHeader from '../../../components/common/CustomHeader';
 import CustomButton from '../../../components/common/CustomButton';
 import { capitalizeAll } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
-import { defConfigImageURL } from '../../dashboard_Modules/tabs/home/index.service';
+import { defConfigImageURL } from '../../dashboard_modules/tabs/home/index.service';
 import ProductImageSlider from '../components/ProductImageSlider';
 import { useNavigation } from '@react-navigation/native';
-import LoadingInfo from '../../../components/common/loadingInfo';
+import LoadingInfo from '../../../components/loadingInfo';
 import Indicator from '../../../components/common/Indicator';
 import SizeSelector from './SizeSelector';
 
 
-export default function ProductDetailContainer(
-    {
-        productData,
-        isLoading,
-        specificationData,
-        similarProductData,
-        onPressFavourite, onPressAddToCart, onPressDeleteFav,
-        reviewData
-    }
-) {
-
-    console.log(reviewData,'kkkkkkkkkkrrrrrrrrrrr')
-
+export default function ProductDetailContainer({
+    isFav,
+    productData,
+    specificationData,
+    similarProductData,
+    onPressFavourite,
+    onPressAddToCart,
+    onPressDeleteFav,
+    onPressBuy,
+    onPressSeeAll,
+    onPressItem
+}) {
 
     const [selectedSizeId, setSelectedSizeId] = useState(productData?.costings?.[0] ?? null);
-
     const navigation = useNavigation()
-
     const [quantity, setQuantity] = useState(1);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [isDosageExpanded, setIsDosageExpanded] = useState(false);
@@ -55,10 +52,10 @@ export default function ProductDetailContainer(
     const howToUseRef = React.useRef(null);
     const scrollViewRef = React.useRef(null);
     const handleIncrement = () => setQuantity(quantity + 1);
+
     const handleDecrement = () => {
         if (quantity > 1) setQuantity(quantity - 1);
     };
-
 
     const data = [
         { crop: 'Cotton', dose: '0.5 - 1 ml' },
@@ -72,7 +69,6 @@ export default function ProductDetailContainer(
 
     const BannerData = useSelector(state => state.product.bannerData);
 
-    console.log(productData, 'kkkkkkkkkkk')
 
     return (
         <>
@@ -85,10 +81,13 @@ export default function ProductDetailContainer(
                     onBackPress={() => navigation.goBack()}
                     onCartPress={() => console.log('Order pressed')}
                     onNotificationPress={() => console.log('Notification pressed')}
+                    onPressFavourite={onPressFavourite}
+                    itemData={productData}
+                    isFav={isFav}
+                    onPressDeleteFav={onPressDeleteFav}
                 />
             </View>
             <View style={styles.container}>
-
 
                 <ScrollView
                     ref={scrollViewRef}
@@ -275,9 +274,7 @@ export default function ProductDetailContainer(
                     </View>
                     {/* Advantage  - Collapsible  */}
 
-                    <View
-                        ref={(ref) => (advantagesRef.current = ref)} // Attach ref for scrolling
-                    >
+                    <View ref={(ref) => (advantagesRef.current = ref)} >
                         <TouchableOpacity
                             style={styles.advantagesContainer}
                             onPress={() => {
@@ -355,9 +352,10 @@ export default function ProductDetailContainer(
 
                     <SimilarProducts
                         productdata={similarProductData}
-                        onPressProductItem={onPressAddToCart}
+                        onPressProductItem={onPressItem}
                         onPressFavourite={onPressFavourite}
                         onPressDeleteFav={onPressDeleteFav}
+                        onPressSeeAll={onPressSeeAll}
                     />
                     {/* <FarmersAlsoBought
                         productdata={ }
@@ -374,7 +372,7 @@ export default function ProductDetailContainer(
 
                     <TouchableOpacity
                         style={[styles.footerButton, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#0A8F43' }]}
-                        onPress={() => console.log('Buy Now pressed')}
+                        onPress={() => onPressAddToCart('BUY')}
                     >
                         <Text style={[styles.footerButtonText, { color: '#004F34' }]}>Buy Now</Text>
                     </TouchableOpacity>
@@ -383,6 +381,7 @@ export default function ProductDetailContainer(
                         title="Add to Cart"
                         buttonStyle={[styles.footerButton, { backgroundColor: '#0A8F43' }]}
                         textStyle={[styles.footerButtonText, { color: '#fff' }]}
+                        onPress={onPressAddToCart}
                     />
 
                 </View>

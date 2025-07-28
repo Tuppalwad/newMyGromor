@@ -1,11 +1,12 @@
 import { Image, StyleSheet, View } from 'react-native';
-import CustomPopupModal from './custom-popup-modal';
+// import CustomPopupModal from './custom-popup-modal';
 // import 'react-native-get-random-values'
 import WebView from "react-native-webview";
 import React, { useEffect, useState } from "react";
 import { width, height } from '../../../src/config/resposiveSize';
 import { palette } from '../../theme/color';
 import { typography } from '../../theme/typography';
+import CustomPopupModal from './CustomPopupModal';
 
 const Webview_popup = ({ popupVisible = false, popupTitle = "", onPressClose, WebViewURL = "",
     isPopupHidden = false, isfullScreen = false, isHtml = false }) => {

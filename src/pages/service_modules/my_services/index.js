@@ -10,7 +10,7 @@ import doorDelivery from '../../../assets/images/common/doorService.png'
 import sprayService from '../../../assets/images/common/SprayingService.png'
 import shop from '../../../assets/images/common/shop.png'
 
-function MyServicesScreen() {
+function MyServicesScreen({ navigation }) {
     // const [selectedTab, setSelectedTab] = useState('Door Delivery');
     const [soNumber, setSoNumber] = useState('');
     const [activeCategory, setActiveCategory] = useState('Door Delivery');
@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F4F4F4',
+        marginTop: 30
     },
     header: {
         flexDirection: 'row',

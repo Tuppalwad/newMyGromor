@@ -1,7 +1,7 @@
 // src/components/CustomLoginRadioButton.js
 import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
-import colors from '../utils/theam';
+import colors from '../../utils/theam';
 import RadioButtonCircle from './RadioButtoCircle';
 
 const CustomLoginRadioButton = ({ selected, onPress, label }) => {

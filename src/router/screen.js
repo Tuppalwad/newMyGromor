@@ -16,6 +16,7 @@ export const Screen = {
   myAccount: 'MyAccount',
   viewAllProduct: 'viewAllProduct',
   viewAllCategory: 'viewAllCategory',
+  viewAllCategoryData: "viewAllCategoryData",
   reviewProduct: 'reviewProduct',
   myCart: 'myCart',
   myServiceslist: 'myServiceslist',

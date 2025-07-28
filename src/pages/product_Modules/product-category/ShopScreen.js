@@ -11,7 +11,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import ProductCard from '../components/ProductCard';
 import { Screen } from '../../../router/screen';
 
-export default function ShopScreen({ onPressSeeAll, onPressDeleteFav, newProductData, popularProductData, onPressProductItem, onPressFavourite }) {
+export default function ShopScreen({ searchData, setSearchData, onPressCategory, onPressSeeAll, onPressDeleteFav, newProductData, popularProductData, onPressProductItem, onPressFavourite }) {
 
     const navigation = useNavigation();
     const productCategoryData = useSelector(state => state.product.productCategory);
@@ -33,14 +33,15 @@ export default function ShopScreen({ onPressSeeAll, onPressDeleteFav, newProduct
                 />
             </View>
             {/* Search */}
-            <SearchBar placeholder="Search for Seeds" />
+            <SearchBar value={searchData} placeholder="Search for Seeds" onChangeText={(text) => setSearchData(text)} />
 
-            <SafeAreaView style={styles.container}>
-                <ScrollView>
+            <FlatList
+                data={[{}]}
+                renderItem={() => (<SafeAreaView style={styles.container}>
                     <FlatList
-                        data={productCategoryData}
+                        data={[...productCategoryData, { id: 9 }]}
                         renderItem={({ item }) => (
-                            item.id != 9 ? <CategoryCard title={item.code} icon={item.imageKey} /> : <View style={{ width: '20%' }} />
+                            item.id != 9 ? <CategoryCard item={item} onPressCategory={onPressCategory} /> : <View style={{ width: '30%' }} />
                         )}
                         keyExtractor={(item) => item.id}
                         numColumns={3}
@@ -52,9 +53,9 @@ export default function ShopScreen({ onPressSeeAll, onPressDeleteFav, newProduct
                         colors={['#FFFBDF', '#EEF2F1']}  // light blue to white gradient
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
-                        style={{ marginVertical: 16 }}
+                        style={{ marginTop: 10 }}
                     >
-                        <View style={{ marginVertical: 16 }}>
+                        <View style={{ marginVertical: 10 }}>
                             <View style={styles.header}>
                                 <Text style={styles.title}>New Lunch</Text>
                                 <TouchableOpacity onPress={() => onPressSeeAll("newLunch")}>
@@ -81,10 +82,10 @@ export default function ShopScreen({ onPressSeeAll, onPressDeleteFav, newProduct
                         colors={['#E3F3FF', '#FFFFFF']}  // light blue to white gradient
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
-                        style={{ marginVertical: 16 }}
+                        style={{ marginVertical: 0 }}
 
                     >
-                        <View style={{ marginVertical: 16 }} >
+                        <View style={{ marginVertical: 10 }} >
                             <View style={styles.header}>
                                 <Text style={styles.title}>Popular Product</Text>
                                 <TouchableOpacity onPress={() => onPressSeeAll("popular")}>
@@ -106,13 +107,15 @@ export default function ShopScreen({ onPressSeeAll, onPressDeleteFav, newProduct
                         </View>
                     </LinearGradient>
 
-                </ScrollView>
 
-                {/* <CustomButton title={"View All Product"} onPress={() => navigation.navigate('AllProduct')} /> */}
+                    {/* <CustomButton title={"View All Product"} onPress={() => navigation.navigate('AllProduct')} /> */}
 
-                <Indicator Indicator={newProductData?.length > 0 ? true : false} />
+                    <Indicator Indicator={newProductData?.length > 0 ? true : false} />
 
-            </SafeAreaView>
+                </SafeAreaView>)}
+            />
+
+
         </>
     );
 }
@@ -120,7 +123,8 @@ export default function ShopScreen({ onPressSeeAll, onPressDeleteFav, newProduct
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F8F8F8',
+        marginTop: 10,
+        // backgroundColor: '#F8F8F8',
         // paddingHorizontal: 16
     },
     gridContainer: {

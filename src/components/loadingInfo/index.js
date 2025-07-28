@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Modal, Text, Image, Platform } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useSelector } from 'react-redux';
-import CTText from '../../ctText';
-import { UserManager } from '../../../storage';
-import { getLoadingInfo,numberFormat } from '../../../utils/utils';
-import { isEmpty } from '../../../utils/validator';
-import { palette } from '../../../theme/color';
-import { height } from '../../../config/resposiveSize';
+import CTText from '../ctText';
+import { UserManager } from '../../storage';
+import { getLoadingInfo,numberFormat } from '../../utils/utils';
+import { isEmpty } from '../../utils/validator';
+import { palette } from '../../theme/color';
+import { height } from '../../config/resposiveSize';
 
 const LoadingInfo = ({ isLoading = false, aboveButton = false }) => {
 

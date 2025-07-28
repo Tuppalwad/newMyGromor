@@ -199,7 +199,7 @@ const SplashScreen = () => {
                     />
                 </View>
             </CustomPopupModal>
-            <Indicator show={isLoading} />
+            {/* <Indicator show={isLoading} /> */}
 
         </View>
     );

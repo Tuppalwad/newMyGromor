@@ -8,7 +8,7 @@ import {
     Dimensions,
     FlatList,
 } from 'react-native';
-import { defConfigImageURL } from '../../dashboard_Modules/tabs/home/index.service';
+import { defConfigImageURL } from '../../dashboard_modules/tabs/home/index.service';
 
 const screenWidth = Dimensions.get('window').width;
 

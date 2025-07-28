@@ -33,7 +33,7 @@ const CustomButton = ({ title, onPress, style, textStyle, disabled }) => {
 
 const styles = StyleSheet.create({
     button: {
-        paddingVertical: 10,
+        paddingVertical: 12,
         paddingHorizontal: 30,
         borderRadius: 4,
         alignItems: 'center',

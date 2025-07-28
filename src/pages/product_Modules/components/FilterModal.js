@@ -1,7 +1,7 @@
-import React from 'react';
-import { Modal, View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, Image, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Modal, View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet, Image, ScrollView, TouchableWithoutFeedback } from 'react-native';
 import product1 from '../../../assets/images/shop/product1.png'
-
+import SearchIcon from '../../../assets/images/common/searchIcon.png'
 const crops = [
     { id: 'all', name: 'All', image: null },
     { id: 'carrot', name: 'Carrot', image: product1 },
@@ -11,6 +11,15 @@ const crops = [
 ];
 
 export default function FilterModal({ visible, onClose }) {
+    const [choice, setChoice] = useState('');
+
+    useEffect(() => {
+        const onPressChoice = (item) => {
+            setChoice(item)
+        }
+        onPressChoice
+    })
+
     return (
         <Modal
             visible={visible}
@@ -18,61 +27,63 @@ export default function FilterModal({ visible, onClose }) {
             transparent
             onRequestClose={onClose}
         >
-            <View style={styles.overlay}>
-                <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={onClose}>
+                <View style={styles.overlay}>
+                    <View style={styles.modalContainer}>
 
-                    {/* Header */}
-                    <View style={styles.header}>
-                        <View></View>
-                        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                            <Text style={styles.title}>Filters</Text>
-                            <TouchableOpacity>
-                                <Text style={styles.clearAll}>Clear All</Text>
+                        {/* Header */}
+                        <View style={styles.header}>
+                            <View></View>
+                            <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+                                <Text style={styles.title}>Filters</Text>
+                                <TouchableOpacity>
+                                    <Text style={styles.clearAll}>Clear All</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <TouchableOpacity onPress={onClose}>
+                                <Text style={styles.close}>✕</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity onPress={onClose}>
-                            <Text style={styles.close}>✕</Text>
-                        </TouchableOpacity>
-                    </View>
 
-                    {/* Clear All */}
+                        {/* Clear All */}
 
-                    <View style={styles.content}>
-                        {/* Left Menu */}
-                        <View style={styles.menu}>
-                            {['Crop', 'Category', 'Sub-Category', 'Price', 'Pest/Disease'].map((item, index) => (
-                                <TouchableOpacity key={index} style={[styles.menuItem, item === 'Crop' && styles.activeMenu]}>
-                                    <Text style={[styles.menuText, item === 'Crop' && styles.activeMenuText]}>{item}</Text>
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-
-                        {/* Right Content */}
-                        <View style={styles.rightContent}>
-                            <View style={styles.searchContainer}>
-                                <TextInput placeholder="Search" style={styles.searchInput} />
-                                <Text style={styles.searchIcon}>🔍</Text>
+                        <View style={styles.content}>
+                            {/* Left Menu */}
+                            <View style={styles.menu}>
+                                {['Crop', 'Category', 'Sub-Category', 'Price', 'Pest/Disease'].map((item, index) => (
+                                    <TouchableOpacity key={index} onPress={(item) => onPressChoice(item)} style={[styles.menuItem, item === choice && styles.activeMenu]}>
+                                        <Text style={[styles.menuText, item === choice && styles.activeMenuText]}>{item}</Text>
+                                    </TouchableOpacity>
+                                ))}
                             </View>
 
-                            <ScrollView style={styles.optionsList}>
-                                {crops.map((crop) => (
-                                    <View key={crop.id} style={styles.optionRow}>
-                                        <TouchableOpacity style={styles.checkbox}></TouchableOpacity>
-                                        {crop.image && <Image source={crop.image} style={styles.optionImage} />}
-                                        <Text style={styles.optionText}>{crop.name}</Text>
-                                    </View>
-                                ))}
-                            </ScrollView>
+                            {/* Right Content */}
+                            <View style={styles.rightContent}>
+                                <View style={styles.searchContainer}>
+                                    <TextInput placeholder="Search" style={styles.searchInput} />
+                                    <Image source={SearchIcon} style={{ width: 15, height: 15 }} resizeMode='contain' />
+                                </View>
+
+                                <ScrollView style={styles.optionsList}>
+                                    {crops.map((crop) => (
+                                        <View key={crop.id} style={styles.optionRow}>
+                                            <TouchableOpacity style={styles.checkbox}></TouchableOpacity>
+                                            {crop.image && <Image source={crop.image} style={styles.optionImage} />}
+                                            <Text style={styles.optionText}>{crop.name}</Text>
+                                        </View>
+                                    ))}
+                                </ScrollView>
+                            </View>
                         </View>
+
+                        {/* Apply Button */}
+                        <TouchableOpacity style={styles.applyButton}>
+                            <Text style={styles.applyText}>Apply</Text>
+                        </TouchableOpacity>
+
                     </View>
-
-                    {/* Apply Button */}
-                    <TouchableOpacity style={styles.applyButton}>
-                        <Text style={styles.applyText}>Apply</Text>
-                    </TouchableOpacity>
-
                 </View>
-            </View>
+            </TouchableWithoutFeedback>
         </Modal>
     );
 }
@@ -93,9 +104,11 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingBottom: 20
     },
     title: {
-        fontSize: 16,
+        fontWeight: 600,
+        fontSize: 20,
         fontWeight: 'bold',
     },
     close: {
@@ -106,6 +119,7 @@ const styles = StyleSheet.create({
     clearAll: {
         color: '#0A8F43',
         marginTop: 8,
+        fontSize: 14
     },
     content: {
         flexDirection: 'row',
@@ -113,7 +127,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     menu: {
-        width: 100,
+        width: "30%",
         borderRightWidth: 1,
         borderColor: '#eee',
     },
@@ -121,19 +135,23 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
     },
     menuText: {
+        paddingHorizontal: 10,
         fontSize: 14,
         color: '#333',
-        lineHeight: 10,
+        lineHeight: 20,
     },
     activeMenu: {
-        backgroundColor: '#E8F5E9',
-        borderRadius: 6,
+        backgroundColor: '#DAFDE7',
+        borderTopLeftRadius: 5,
+        borderBottomLeftRadius: 5,
+
     },
     activeMenuText: {
-        color: '#0A8F43',
+        color: '#000',
         fontWeight: '500',
     },
     rightContent: {
+        width: "70%",
         flex: 1,
         marginLeft: 16,
     },

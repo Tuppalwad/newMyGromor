@@ -1,17 +1,18 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { defConfigImageURL } from '../../dashboard_Modules/tabs/home/index.service';
+import { defConfigImageURL } from '../../dashboard_modules/tabs/home/index.service';
 import { useSelector } from 'react-redux';
 import { capitalizeAll } from '../../../utils/utils';
 
-export default function CategoryCard({ title, icon }) {
+export default function CategoryCard({ item, onPressCategory }) {
+
     const BannerData = useSelector((state) => state.product.bannerData);
 
     return (
-        <TouchableOpacity style={styles.card}>
+        <TouchableOpacity style={styles.card} onPress={() => onPressCategory(item)}>
             {/* <Image source={icon} style={styles.icon} /> */}
-            <Image source={{ uri: defConfigImageURL(BannerData.imageBaseURL, icon) }} style={styles.icon} resizeMode={'contain'} />
-            <Text style={styles.title}>{capitalizeAll(title)}</Text>
+            <Image source={{ uri: defConfigImageURL(BannerData.imageBaseURL, item.imageKey) }} style={styles.icon} resizeMode={'contain'} />
+            <Text style={styles.title}>{capitalizeAll(item.code)}</Text>
         </TouchableOpacity>
     );
 }

@@ -604,6 +604,7 @@ const Home = () => {
     <View style={{ flex: 1 }}>
       <HomeScreen
         onPressCall={onPressCall}
+        isLoading={isLoading}
 
       />
     </View>
