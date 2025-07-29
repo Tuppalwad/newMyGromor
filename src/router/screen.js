@@ -76,5 +76,7 @@ export const Screen = {
   SprayingService: 'SprayingServiceDetail',
   MapScreen: 'MapScreen',
   MyBooking: "MyBooking",
-  MyAccount: "MyAccount"
+  MyAccount: "MyAccount",
+  newServiceRequest: 'NewServiceRequestScreen',
+  SuccessScreen: 'SuccessScreen'
 };

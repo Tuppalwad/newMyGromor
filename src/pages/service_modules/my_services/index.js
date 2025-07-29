@@ -15,6 +15,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import filterIcon from '../../../assets/images/common/filter.png'
 import rightArrow from '../../../assets/images/common/rightArrow.png'
 import SprayingServiceDetail from '../spraying-service';
+import NewServiceRequestScreen from '../spraying-service/newService';
+
 function MyServicesScreen({ navigation }) {
     // const [selectedTab, setSelectedTab] = useState('Door Delivery');
     // const navigation = useNavigation();
@@ -228,7 +230,7 @@ function MyServicesScreen({ navigation }) {
                                     style={{ borderRadius: 6 }}
                                 // style={styles.payButton}
                                 >
-                                    <TouchableOpacity style={styles.newBtn}>
+                                    <TouchableOpacity style={styles.newBtn} onPress={() => navigation.navigate(NewServiceRequestScreen)}>
                                         <Text style={styles.newBtnText}>+ New Service</Text>
                                     </TouchableOpacity>
                                 </LinearGradient>

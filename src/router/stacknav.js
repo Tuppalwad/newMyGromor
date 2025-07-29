@@ -103,6 +103,8 @@ import SimilarProudct from '../pages/product_modules/similar-product';
 import DoorDeliveryComponent from '../pages/service_modules/door-delivery';
 import SprayingServiceDetail from '../pages/service_modules/spraying-service';
 import SelectLocationScreen from '../components/common/SelectLocationScreen';
+import NewServiceRequestScreen from '../pages/service_modules/spraying-service/newService';
+import SuccessScreen from '../pages/product_modules/components/SuccessScreen';
 // import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
 // import MyServicesScreen from '../pages/service_module/myServices';
@@ -256,6 +258,16 @@ const StackNav = ({ navigation }) => {
         options={{ headerShown: false }}
         name={Screen.SprayingService}
         component={SprayingServiceDetail}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.newServiceRequest}
+        component={NewServiceRequestScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.SuccessScreen}
+        component={SuccessScreen}
       />
 
       {/* 

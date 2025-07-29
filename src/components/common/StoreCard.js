@@ -59,8 +59,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#E6F4EA',
         padding: 6,
-        borderRadius: 6,
+        borderRadius: 20,
         marginBottom: 10,
+        width: '50%'
     },
     storeCodeText: {
         marginLeft: 6,
@@ -77,7 +78,8 @@ const styles = StyleSheet.create({
     icon: {
         width: 14,
         height: 14,
-        resizeMode: 'contain'
+        resizeMode: 'contain',
+        tintColor: '#2E7D32'
         // marginRight: 8,
         // marginTop: 3,
     },
