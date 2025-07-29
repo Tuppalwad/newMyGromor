@@ -214,17 +214,7 @@ function MyServicesScreen({ navigation }) {
                             />
                         </View>
 
-                        <LinearGradient
-                            colors={['#1E8153', '#4EA618']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={styles.payButton}
-                        >
-                            <TouchableOpacity style={styles.proceedBtn} onPress={() => navigation.navigate('DoorDeliveryComponent')}>
-                                <Text style={styles.proceedText}>Proceed to Delivery</Text>
-                                <Text style={styles.arrow}>›</Text>
-                            </TouchableOpacity>
-                        </LinearGradient>
+
                     </View>
                 ) : (
                     <View>
@@ -252,6 +242,21 @@ function MyServicesScreen({ navigation }) {
                         </View>
                     </View>
                 )}
+
+            </ScrollView>
+
+            {activeCategory == "Door Delivery" ?
+                <LinearGradient
+                    colors={['#1E8153', '#4EA618']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.payButton}
+                >
+                    <TouchableOpacity style={styles.proceedBtn} onPress={() => navigation.navigate('DoorDeliveryComponent')}>
+                        <Text style={styles.proceedText}>Proceed to Delivery</Text>
+                        <Text style={styles.arrow}>›</Text>
+                    </TouchableOpacity>
+                </LinearGradient> :
                 <LinearGradient
                     colors={['#1E8153', '#4EA618']}
                     start={{ x: 0, y: 0 }}
@@ -264,7 +269,8 @@ function MyServicesScreen({ navigation }) {
                         <Text style={styles.filterText}> Filters</Text>
                     </TouchableOpacity>
                 </LinearGradient>
-            </ScrollView>
+            }
+
         </View >
     );
 }
@@ -274,7 +280,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F4F4F4',
-        // marginTop: 30
+        marginTop: 30
     },
     header: {
         flexDirection: 'row',

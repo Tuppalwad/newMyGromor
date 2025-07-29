@@ -102,6 +102,7 @@ import ViewAllCategoryData from '../pages/product_modules/view-all-category';
 import SimilarProudct from '../pages/product_modules/similar-product';
 import DoorDeliveryComponent from '../pages/service_modules/door-delivery';
 import SprayingServiceDetail from '../pages/service_modules/spraying-service';
+import SelectLocationScreen from '../components/common/SelectLocationScreen';
 // import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
 // import MyServicesScreen from '../pages/service_module/myServices';
@@ -211,12 +212,12 @@ const StackNav = ({ navigation }) => {
         component={PurchaseDetail}
       />
       <Stack.Screen
-        name='MyBooking'
+        name={Screen.MyBooking}
         options={{ headerShown: false }}
         component={MyBooking}
       />
       <Stack.Screen
-        name='MyAccount'
+        name={Screen.MyAccount}
         options={{ headerShown: false }}
         component={MyAccountScreen}
       />
@@ -237,6 +238,15 @@ const StackNav = ({ navigation }) => {
         name={Screen.similarProduct}
         component={SimilarProudct}
       />
+
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.MapScreen}
+        component={SelectLocationScreen}
+      />
+
+
       <Stack.Screen
         options={{ headerShown: false }}
         name={Screen.DoorDelivery}
@@ -248,13 +258,7 @@ const StackNav = ({ navigation }) => {
         component={SprayingServiceDetail}
       />
 
-
-
-      {/* <Stack.Screen
-        options={{headerShown: false}}
-        name={Screen.FeedProfile}
-        component={feedMyProfileScreen}
-      />
+      {/* 
       <Stack.Screen
         options={{headerShown: false}}
         name={Screen.createFeed}

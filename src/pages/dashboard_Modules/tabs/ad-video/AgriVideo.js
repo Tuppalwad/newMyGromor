@@ -177,13 +177,10 @@ const AgriVideo = () => {
         }
     };
 
-    console.log(videoArray, "cccccccccccccccc")
-
-
     return (
 
-        <View style={styles.container}>
-            <View style={{ marginTop: 15 }}>
+        <SafeAreaView style={styles.container}>
+            <View style={{  }}>
                 <CustomHeader
                     type="video"
                     topTitle="Agri Video"
@@ -239,7 +236,7 @@ const AgriVideo = () => {
             <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
 
             <Indicator Indicator={!isLoading} />
-        </View>
+        </SafeAreaView>
     );
 };
 

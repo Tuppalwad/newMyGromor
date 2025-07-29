@@ -9,7 +9,7 @@ import AddressCard from '../../../components/common/AddressCard';
 import DeliveryAddress from '../../product_modules/components/AddressInputs';
 import LinearGradient from 'react-native-linear-gradient';
 
-const DoorDeliveryComponent = () => {
+const DoorDeliveryComponent = ({ navigation }) => {
     const [sameAddress, setSameAddress] = useState(true);
 
     const [address, setAddress] = useState({
@@ -25,9 +25,6 @@ const DoorDeliveryComponent = () => {
     return (
 
         <SafeAreaView style={styles.container}>
-
-
-
 
             {/* Header */}
             <View >
@@ -76,28 +73,6 @@ const DoorDeliveryComponent = () => {
                 <View style={{ marginTop: 10 }}>
                     <AddressCard cardType="StoreType" />
                 </View>
-
-                {/* Store Address */}
-                {/* <Text style={styles.sectionTitle}>Store Address</Text>
-                <View style={styles.card}>
-                    <View style={styles.storeCodeBox}> */}
-                {/* <Ionicons name="storefront-outline" size={14} color="green" /> */}
-                {/* <Text style={styles.storeCode}> Store Code: <Text style={{ color: '#007A46', fontWeight: '600' }}>S0393</Text></Text>
-                    </View> */}
-                {/* <View style={styles.addressRow}> */}
-                {/* <Ionicons name="location-outline" size={14} color="gray" /> */}
-                {/* <Text style={styles.lightText}>
-                            Mana Gromor Centre A.kondapuram{"\n"}
-                            Coromandel International Ltd,{"\n"}
-                            c/o Mana Gromor Center, Building No. 110/1,{"\n"}
-                            A.kondapuram, Putlur Mandal, Anantapur
-                        </Text>
-                    </View> */}
-                {/* <View style={styles.addressRow}>
-                        {/* <Ionicons name="call-outline" size={14} color="gray" /> */}
-                {/* <Text style={styles.lightText}>+91 8978780010</Text>
-                    </View> */}
-                {/* </View>  */}
 
                 {/* Price Details & Button */}
                 <Text style={{ fontSize: 16, fontWeight: 700, marginTop: 15 }}>Price Details</Text>

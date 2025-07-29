@@ -10,12 +10,13 @@ import redDot from '../../assets/images/splash/redDot.png';
 import searchIcon from '../../assets/images/splash/search.png';
 import locationIcon from '../../assets/images/splash/location.png';
 import LinearGradient from 'react-native-linear-gradient';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Share from '../../assets/images/common/share.png';
 import Hart from '../../assets/drawer/favourite.png';
 import { useNavigation } from '@react-navigation/native';
 import { Screen } from '../../router/screen';
 import LikeIcon from '../../assets/images/common/LikeIcon.png'
+import { getPreviousAddress } from '../../redux/user/operation';
 
 export default function CustomHeader({
     type = 'home', // 'home' or 'shop'
@@ -36,14 +37,27 @@ export default function CustomHeader({
     onPressDeleteFav
 
 }) {
+    const dispatch = useDispatch()
     const StoreCodeDetails = useSelector(
         state => state.farmer.farmerStoreCodeDetails,
     );
     const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
     const navigation = useNavigation()
-    const onCartPress = () => { navigation.navigate(Screen.myCart) }
+    const onCartPress = () => { setPreviousAddress(), navigation.navigate(Screen.myCart) }
     const cartDataArray = useSelector(state => state.product.cartData);
-    const cartCount = cartDataArray?.length || 0;
+    const cartBookingDataArray = useSelector(
+        state => state.product.cartBookingData,
+    );
+    const cartCount = (cartDataArray?.length || 0) + (cartBookingDataArray.length || 0);
+    const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
+
+    const setPreviousAddress = async () => {
+        try {
+            await dispatch(getPreviousAddress(farmerAddress.farmerIdentityId))
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <View>
             <View style={{

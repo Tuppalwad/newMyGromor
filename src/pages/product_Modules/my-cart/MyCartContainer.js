@@ -62,10 +62,15 @@ const MyCartContainer = ({
     setActiveCategory,
     setActiveTab,
     address,
-    setAddress
-
+    setAddress,
+    placesRef,
+    checkBillAdd,
+    setCheckBillAdd,
+    checkBillingAddress,
+    enablePayment,
+    showDeliveryMethodErrro
 }) => {
-    const [sameAddress, setSameAddress] = useState(true);
+    // const [sameAddress, setSameAddress] = useState(true);
     const navigation = useNavigation();
     const [quantity, setQuantity] = useState(1)
     let Card_ArrayData = activeTab.id == 2 ? cartFertilizersData : cartData;
@@ -80,7 +85,7 @@ const MyCartContainer = ({
     };
     const BannerData = useSelector(state => state.product.bannerData);
 
-    const renderItem = ({ item }) => (
+    const renderItem = ({ item, index }) => (
         <View style={styles.itemWrapper}>
             <View style={styles.itemCard}>
                 <View style={{
@@ -108,12 +113,30 @@ const MyCartContainer = ({
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignContent: 'center' }}>
 
                         <View style={styles.quantityRow}>
-                            <TouchableOpacity onPress={handleDecrement} style={styles.qtyButton} >
-                                <Text style={styles.qtyText}>-</Text>
+                            <TouchableOpacity onPress={() => onPressMinusQuantity(item, index)} style={{
+                                ...styles.qtyButton,
+                                borderColor: item.quantity == 1 ? palette.buttondisabled : '#0A8F43',
+
+                            }}
+                                disabled={item.quantity == 1}
+
+                            >
+                                <Text style={{
+                                    ...styles.qtyText,
+                                    color: item.quantity == 1 ? palette.buttondisabled : '#0A8F43',
+                                }}>-</Text>
                             </TouchableOpacity>
-                            <Text style={styles.qtyNumber}>{quantity}</Text>
-                            <TouchableOpacity onPress={handleIncrement} style={styles.qtyButton}>
-                                <Text style={styles.qtyText}>+</Text>
+                            <Text style={styles.qtyNumber}>{item?.quantity}</Text>
+                            <TouchableOpacity onPress={() => onPressAddQuantity(item, index)} style={{
+                                ...styles.qtyButton,
+                                borderColor: item?.quantity == item.maxQuantity ? palette.buttondisabled : '#0A8F43',
+                            }}
+                                disabled={!(item?.inStock === 'true' || item.inStock)}
+                            >
+                                <Text style={{
+                                    ...styles.qtyText,
+                                    color: item?.quantity == item.maxQuantity ? palette.buttondisabled : '#0A8F43',
+                                }}>+</Text>
                             </TouchableOpacity>
 
                         </View>
@@ -222,8 +245,8 @@ const MyCartContainer = ({
 
                                 {/* Delivery Method */}
                                 <Text style={{ paddingVertical: 15, fontWeight: 600, fontSize: 16 }}>Select Delivery Method</Text>
-                                {deliveryType == "" && <Text style={{ color: '#F52F2F', paddingBottom: 10 }}> Please select one option to proceed </Text>}
-                                <View style={{ ...styles.row, borderWidth: deliveryType == "" ? 0.5 : 0, borderColor: deliveryType == "" ? '#F52F2F' : '' }}>
+                                {deliveryType == "" && showDeliveryMethodErrro && <Text style={{ color: '#F52F2F', paddingBottom: 10 }}> Please select one option to proceed </Text>}
+                                <View style={{ ...styles.row, borderWidth: deliveryType == "" && showDeliveryMethodErrro ? 0.5 : 0, borderColor: deliveryType == "" && showDeliveryMethodErrro ? '#F52F2F' : '' }}>
                                     {/* Door Delivery */}
                                     <TouchableOpacity
                                         style={[
@@ -292,15 +315,15 @@ const MyCartContainer = ({
 
                                 {/* Delivery Address Checkbox */}
 
-                                <Text style={{ paddingVertical: 10, fontWeight: 600, fontSize: 16 }}>Select Delivery Method</Text>
+                                <Text style={{ paddingVertical: 10, fontWeight: 600, fontSize: 16 }}>Delivery Address</Text>
 
 
                                 <TouchableOpacity
                                     style={{ ...styles.row, marginBottom: 0, backgroundColor: '#f3f2f2ff' }}
-                                    onPress={() => setSameAddress(!sameAddress)}
+                                    onPress={checkBillingAddress}
                                 >
-                                    <View style={[styles.customCheckbox, sameAddress && styles.customCheckboxChecked]}>
-                                        {/* {sameAddress && <Text style={styles.checkmark}>✔</Text>} */}
+                                    <View style={[styles.customCheckbox, !checkBillAdd && styles.customCheckboxChecked]}>
+                                        {/* {checkBillAdd && <Text style={styles.checkmark}>✔</Text>} */}
                                         <Image
                                             source={checkIcon}
                                             style={{ width: 15, height: 15, tintColor: '#fff' }}
@@ -310,8 +333,7 @@ const MyCartContainer = ({
                                     <Text style={styles.checkboxLabel}>Delivery address same as billing address</Text>
                                 </TouchableOpacity>
 
-
-                                {!sameAddress && <DeliveryAddress address={address} setAddre={setAddress} />}
+                                {checkBillAdd && <DeliveryAddress address={address} setAddress={setAddress} placesRef={placesRef} />}
 
                                 <View style={{ marginTop: 10 }}>
                                     <AddressCard cardType="StoreType" />
@@ -327,44 +349,60 @@ const MyCartContainer = ({
                                 </Text>
                             </View>
                         </View>
-                        {/* <CustomPopupModal
-                            visible={showDelete?.visibe}
-                            icon={Icon.warning}
-                            isRed={true}
-                            title={appLanguage?.warning ?? 'Warning!'}
-                            buttonText={appLanguage?.yes ?? 'Yes'}
-                            button2Text={appLanguage?.no ?? 'No'}
-                            onPressButton2={() => {
-                                setShowDelete({ visible: false, item: null });
-                            }}
-                            BottomPopupStatus={true}
-                            onPressDone={() => {
-                                onPressDelete();
-                            }}>
-                            <CTText
-                                text={
-                                    appLanguage?.delete_confirmation ??
-                                    'Are you sure, do you want to delete this item?'
-                                }
-                                fontSize={RFValue(12)}
-                                semiBold
-                                textColor={palette.grey}
-                                style={{ textAlign: 'center' }}
-                            />
-                        </CustomPopupModal> */}
+
 
                     </View>
                 )}
             />
 
+
+            <CustomPopupModal
+                visible={showDelete?.visible}
+                icon={Icon.warning}
+                isRed={true}
+                title={appLanguage?.warning ?? 'Warning!'}
+                buttonText={appLanguage?.yes ?? 'Yes'}
+                button2Text={appLanguage?.no ?? 'No'}
+                onPressButton2={() => {
+                    setShowDelete({ visible: false, item: null });
+                }}
+                BottomPopupStatus={true}
+                onPressDone={() => {
+                    onPressDelete();
+                }}>
+                <CTText
+                    text={
+                        appLanguage?.delete_confirmation ??
+                        'Are you sure, do you want to delete this item?'
+                    }
+                    fontSize={RFValue(12)}
+                    semiBold
+                    textColor={palette.grey}
+                    style={{ textAlign: 'center' }}
+                />
+            </CustomPopupModal>
+
             <View style={styles.bottomContainer}>
                 <View style={styles.footer}>
-                    <TouchableOpacity style={styles.codButton}>
-                        <Text style={styles.codText}>Cash on Delivery</Text>
+                    <TouchableOpacity style={{
+                        ...styles.codButton,
+                        borderColor: enablePayment ? '#FF6F00' : palette.disabled_Button,
+
+                    }}
+                        disabled={!enablePayment}
+                    >
+                        <Text style={{
+                            ...styles.codText,
+                            color: enablePayment ? '#FF6F00' : palette.disabled_Button,
+
+                        }}>Cash on Delivery</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.payButtonWrapper}>
+                    <TouchableOpacity style={styles.payButtonWrapper}
+                        disabled={!enablePayment}
+
+                    >
                         <LinearGradient
-                            colors={['#1E8153', '#4EA618']}
+                            colors={[enablePayment ? '#1E8153' : palette.disabled_Button, enablePayment ? '#4EA618' : palette.disabled_Button]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={styles.payButton}
@@ -522,7 +560,6 @@ const styles = StyleSheet.create({
         height: 24,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: '#0A8F43',
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -638,10 +675,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#fff',
     },
-    codText: {
-        color: '#FF6B00',
-        fontWeight: 'bold',
-    },
+
     heading: {
         fontWeight: 'bold',
         fontSize: 16,
@@ -760,14 +794,12 @@ const styles = StyleSheet.create({
     codButton: {
         width: '48%',
         borderWidth: 1,
-        borderColor: '#FF6F00',
         paddingVertical: 14,
         borderRadius: 8,
         alignItems: 'center',
     },
 
     codText: {
-        color: '#FF6F00',
         fontWeight: '600',
         fontSize: 16,
     },

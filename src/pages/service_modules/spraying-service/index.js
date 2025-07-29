@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'rea
 import CustomHeader from '../../../components/common/CustomHeader';
 import timer from '../../../assets/images/splash/timer.png'
 import sprayingService from '../../../assets/images/common/SprayingService.png'
-export default function SprayingServiceDetail() {
+import { SafeAreaView } from 'react-native-safe-area-context';
+export default function SprayingServiceDetail({ navigation }) {
     return (
-        <>
+        <SafeAreaView style={{
+            flex: 1,
+        }}>
             <View>
-
                 <CustomHeader
                     type="services"
                     topTitle="SPraying Services Details"
@@ -60,7 +62,7 @@ export default function SprayingServiceDetail() {
                     </View>
                 </View>
             </ScrollView>
-        </>
+        </SafeAreaView>
     );
 }
 
@@ -74,9 +76,8 @@ const Row = ({ label, value, bold }) => (
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         backgroundColor: '#ebebebf1',
-        // paddingHorizontal: 15,
+        paddingHorizontal: 15,
     },
     header: {
         flexDirection: 'row',

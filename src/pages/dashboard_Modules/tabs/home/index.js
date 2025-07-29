@@ -215,7 +215,7 @@ import { UserManager } from '../../../../storage';
 import { isEmpty } from '../../../../utils/validator';
 import { Isplatform_IOS } from '../../../../config/resposiveSize';
 import Geolocation from '@react-native-community/geolocation';
-import { PERMISSIONS } from 'react-native-permissions';
+import { PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { HEToast } from '../../../../components/toast';
 import { Configuration, WEATHER_APP_KEY } from '../../../../config';
 import { FarmerType } from '../../../../redux/farmer/type';
@@ -435,6 +435,7 @@ const Home = () => {
           HEToast(appLanguage?.lblAuthorization ?? 'Location access is denied');
         }
       } catch (err) {
+        console.log(err, 'rrrrrrrrrs')
         HEToast(
           appLanguage?.lblLocationservice ??
           'Location service is disabled or unavailable',
@@ -490,7 +491,7 @@ const Home = () => {
           HEToast(appLanguage?.lblAuthorization ?? 'Location access is denied');
         }
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
+      { enableHighAccuracy: true, timeout: 30000, maximumAge: 10000 }
     );
   };
 

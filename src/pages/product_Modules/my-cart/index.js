@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { View, Linking } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +14,16 @@ import { PaymentType } from '../../../redux/payment/type';
 import { HEToast } from '../../../components/toast';
 import { CommonActions } from '@react-navigation/native';
 import { isEmpty } from '../../../utils/validator';
+import { getMinimumCount } from '../../../redux/farmer/operation';
+import { getPreviousAddress } from '../../../redux/user/operation';
+
+
+let defdelivery_Charge = {
+    deliveryCharge: 0,
+    deliveryChargeCalc: 0,
+    deliveryChargeDiscount: 0,
+};
+
 
 const MyCart = ({ navigation, route }) => {
     const operation = useOperation();
@@ -28,15 +38,27 @@ const MyCart = ({ navigation, route }) => {
         ProductType.MyCartBooking,
         ProductType.productCartBooking,
     ]);
+    const placesRef = useRef();
+    const [deliverCharges, setDeliverCharges] = useState(defdelivery_Charge);
     const [deliveryType, setDeliveryType] = useState('');
     const [activeCategory, setActiveCategory] = useState('non-fertilizers');
-
+    const [enablePayment, setEnablePayment] = useState(false);
     const isLoading = useSelector(state => loadingSelector(state));
+    const { previousAddress } = useSelector(state => state.user);
+    const [checkBillAdd, setCheckBillAdd] = useState(true);
+
     const appLanguage = UserManager?.getAppMultiLanguage;
     const isFocussed = useIsFocused();
     const [promoCode, setPromoCode] = useState('');
     const [showPromo, setShowPromo] = useState(false);
     const [cartData, setCartData] = useState([]);
+    const [errorMessage, setErrorMessage] = useState('')
+    const [distance, setDistance] = useState();
+
+    const [BookingSuccessVisible, setBookingSuccessVisible] = useState({
+        visible: false,
+        transId: '',
+    });
     const [priceData, setPriceData] = useState({
         subTotal: 0,
         discount: 0,
@@ -96,6 +118,16 @@ const MyCart = ({ navigation, route }) => {
     ];
     const [activeTab, setActiveTab] = useState(tabData[0]);
     const [cartFertilizersData, setCartFertilizersData] = useState([]);
+    const [showDeliveryMethodErrro, setShowDeliveryMethodErrro] = useState(false)
+    const isfocused = useIsFocused()
+
+    useEffect(() => {
+        getAddress()
+        if (previousAddress) {
+            setCheckBillAdd(false)
+        }
+    }, [previousAddress])
+
 
     useEffect(() => {
         if (isFocussed) {
@@ -125,7 +157,6 @@ const MyCart = ({ navigation, route }) => {
 
     const Card_ArrayData = activeTab.id == 2 ? cartFertilizersData : cartData;
 
-    console.log(showDelete, 'kkkkkkkkkkkk')
 
     useEffect(() => {
 
@@ -170,8 +201,8 @@ const MyCart = ({ navigation, route }) => {
                 ltr: ltValues,
                 amount: price.subTotal,
                 storeCode: StoreCodeDetails.storeCode,
-                // latitude: addressData.latlng.latitude,
-                // longitude: addressData.latlng.longitude,
+                latitude: address.latitude,
+                longitude: address.longitude,
                 productType: activeCategory !== "non-fertilizers" ? 1 : 0,
                 farmerId: farmerAddress?.farmerIdentityId,
                 language: farmerLanguage
@@ -185,31 +216,30 @@ const MyCart = ({ navigation, route }) => {
                 });
                 if (quantity < 5) {
                     console.log('1')
-
                     setEnablePayment(false);
                     return
                 }
             }
-            if (deliveryType.type == (appLanguage?.pick_up ?? "Pick Up")) {
+            if (deliveryType.type == 2) {
                 setEnablePayment(true);
                 return
             }
 
 
-            // if ((addressData.addressLine1 || addressData.addressLine2) && addressData.city && addressData.pinCode && addressData.state && addressData.latlng.latitude && addressData.latlng.longitude) {
-            //     // setEnablePayment(true);
-            //     getDeliveryCharges(tempParams)
-            // } else {
-            //     setEnablePayment(false);
-            //     return;
-            // }
-            // if (deliveryType.type != (appLanguage?.pick_up ?? "Pick Up")) {
-            //     getDeliveryCharges(tempParams)
-            // }
+            if ((address.address1 || address.address2) && address.city && address.pincode && address.state && address.latitude && address.longitude) {
+                setEnablePayment(true);
+                getDeliveryCharges(tempParams)
+            } else {
+                setEnablePayment(false);
+                return;
+            }
+            if (deliveryType.type != 2) {
+                getDeliveryCharges(tempParams)
+            }
 
 
         }
-    }, [Card_ArrayData, activeTab.id]);
+    }, [Card_ArrayData, activeTab.id, address.latitude, address.longitude, checkBillAdd]);
 
     useEffect(() => {
 
@@ -238,6 +268,22 @@ const MyCart = ({ navigation, route }) => {
             setPriceBookData(price);
         }
     }, [Card_ArrayData, activeTab.id]);
+
+
+    // useEffect(() => {
+    //     if (isfocused) dispatch(getMinimumCount())
+    //     setPreviousAddress()
+    // }, [isfocused])
+
+
+    // const setPreviousAddress = async () => {
+    //     try {
+    //         await dispatch(getPreviousAddress(farmerAddress.farmerIdentityId))
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
+
 
     const getMyCart = param => {
         dispatch(operation.product.getMyCart(param))
@@ -285,6 +331,7 @@ const MyCart = ({ navigation, route }) => {
         let param = {
             cartId: showDelete?.item?.cartId,
         };
+
         setShowDelete({ item: null, visible: false });
 
         if (activeTab?.id == 1) {
@@ -374,6 +421,7 @@ const MyCart = ({ navigation, route }) => {
     };
 
     const onPressAddQuantity = (item, index) => {
+
         if (activeTab?.id == 1) {
             let tempArr =
                 activeTab?.id == 1 ? [...cartData] : [...cartFertilizersData];
@@ -410,6 +458,7 @@ const MyCart = ({ navigation, route }) => {
     };
 
     const updateCart = (param, type) => {
+
         let tempParam = {
             farmerId: farmerAddress?.farmerIdentityId,
             id: param?.cartId,
@@ -576,6 +625,7 @@ const MyCart = ({ navigation, route }) => {
 
 
     const getDeliveryCharges = param => {
+
         dispatch(operation.farmer.getNewDeliveryCharges(param))
             .then(res => {
                 if (
@@ -592,7 +642,7 @@ const MyCart = ({ navigation, route }) => {
                     return;
                 } else {
                     setEnablePayment(true);
-                    setTransdeliverCharges(res);
+                    // setTransdeliverCharges(res);
                 }
                 if (deliveryType?.type === (appLanguage?.door_delivery ?? 'Door Delivery')) {
                     setDeliverCharges(res);
@@ -615,6 +665,301 @@ const MyCart = ({ navigation, route }) => {
                 }
             });
     };
+
+
+    console.log(previousAddress, 'ppppppppppp')
+
+    const checkBillingAddress = () => {
+        // Mark this as an intentional change to avoid triggering useEffect
+        // setIgnoreNextEffect(true);
+
+        if (checkBillAdd) {
+            setCheckBillAdd(false);
+            getAddress();
+        } else {
+            const address = farmerAddress.address;
+            const hasLatLng = address && (address.addressLine2 || address.addressLine1);
+
+            if (!hasLatLng) {
+                HEToast(
+                    'Billing address does not have latitude and longitude. Please enter delivery address.',
+                );
+            } else {
+                const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address.addressLine2 || address.addressLine1)}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
+
+                fetch(geocodeURL)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'OK' && data.results?.length > 0) {
+                            const addressComponents = data.results[0].address_components;
+                            const location = data.results[0]?.formatted_address;
+
+                            const city =
+                                addressComponents.find((component) =>
+                                    component.types.includes("locality")
+                                )?.long_name || "";
+
+                            const state =
+                                addressComponents.find((component) =>
+                                    component.types.includes("administrative_area_level_1")
+                                )?.long_name || "";
+
+                            const pincode =
+                                addressComponents.find((component) =>
+                                    component.types.includes("postal_code")
+                                )?.long_name || "";
+
+                            console.log(pincode, 'kkkkkkkkkkkkkkkddddddd');
+
+                            const { lat, lng } = data.results[0].geometry.location;
+                            const longaddress = location.split(',').slice(1).join(',').trim().split(',');
+                            setAddress(prev => ({
+                                ...prev,
+                                address1: longaddress?.slice(0, 2)?.join(',').trim(),
+                                address2: longaddress?.slice(2)?.join(',').trim(),
+                                city: city,
+                                state: state,
+                                pincode: pincode,
+                                latitude: lat,
+                                longitude: lng
+                            }));
+                            placesRef.current?.clear();
+                        } else {
+                            if (deliveryType.type !== 2) {
+                                HEToast(appLanguage.lblSaveDeliveryAddressToProceed ?? 'Location Not found');
+                                console.error('Geocoding failed:', data.status);
+                            }
+                            return;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching address:', error);
+                    })
+                    .finally(() => {
+                        setLoadMap(false);
+                        return false;
+                    });
+
+                setCheckBillAdd(true);
+            }
+        }
+    };
+
+
+    const getAddress = useCallback(
+        async address => {
+            const preAddress = previousAddress?.deliveryAddress?.deliveryAddress
+
+            if (!preAddress) {
+                return
+            }
+
+            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(preAddress)}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
+
+            setCheckBillAdd(false)
+            fetch(geocodeURL)
+                .then(response => response.json())
+                .then(data => {
+
+                    if (data.status === 'OK' && data.results?.length > 0) {
+                        const addressComponents = data.results[0].address_components;
+                        const location = data.results[0]?.formatted_address
+                        // Safely extract the address components
+
+                        const city =
+                            addressComponents.find((component) =>
+                                component.types.includes("locality")
+                            )?.long_name || "";
+
+                        const state =
+                            addressComponents.find((component) =>
+                                component.types.includes("administrative_area_level_1")
+                            )?.long_name || "";
+
+                        const pincode =
+                            addressComponents.find((component) =>
+                                component.types.includes("postal_code")
+                            )?.long_name || ""; // May not be available in your response
+
+                        const { lat, lng } = data.results[0].geometry.location;
+
+                        const longaddress = location.split(',').slice(1).join(',').trim().split(',');;
+                        setAddress(prev => ({
+                            ...prev,
+                            address1: longaddress?.slice(0, 2)?.join(',').trim(),
+                            address2: longaddress?.slice(2)?.join(',').trim(),
+                            city: city,
+                            state: state,
+                            pincode: pincode,
+                            latitude: lat,
+                            longitude: lng
+                        }));
+                        placesRef.current?.clear();
+                    } else {
+                        if (deliveryType.type !== (appLanguage?.pick_up ?? "Pick Up")) {
+                            HEToast(appLanguage.lblSaveDeliveryAddressToProceed ?? 'Location Not found');
+                            console.error('Geocoding failed:', data.status);
+                        }
+                        return
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching address:', error);
+                })
+                .finally(() => {
+
+                    // setLoadMap(false);
+                    return false
+                });
+        },
+        [saveAddress, deliveryType],
+    );
+
+
+    const saveAddress = useCallback(
+        async address => {
+            const preAddress = address
+
+            console.log(preAddress, 'preAddress')
+
+            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(preAddress)}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
+
+            // setCheckBillAdd(false)
+            fetch(geocodeURL)
+                .then(response => response.json())
+                .then(data => {
+
+                    if (data.status === 'OK' && data.results?.length > 0) {
+                        const addressComponents = data.results[0].address_components;
+                        const location = data.results[0]?.formatted_address
+                        // Safely extract the address components
+
+                        const city =
+                            addressComponents.find((component) =>
+                                component.types.includes("locality")
+                            )?.long_name || "";
+
+                        const state =
+                            addressComponents.find((component) =>
+                                component.types.includes("administrative_area_level_1")
+                            )?.long_name || "";
+
+                        const pincode =
+                            addressComponents.find((component) =>
+                                component.types.includes("postal_code")
+                            )?.long_name || ""; // May not be available in your response
+
+                        const { lat, lng } = data.results[0].geometry.location;
+
+                        const longaddress = location.split(',').slice(1).join(',').trim().split(',');;
+                        setAddress(prev => ({
+                            ...prev,
+                            address1: longaddress?.slice(0, 2)?.join(',').trim(),
+                            address2: longaddress?.slice(2)?.join(',').trim(),
+                            city: city,
+                            state: state,
+                            pincode: pincode,
+                            latitude: lat,
+                            longitude: lng
+                        }));
+                        placesRef.current?.clear();
+                    } else {
+                        if (deliveryType.type !== (appLanguage?.pick_up ?? "Pick Up")) {
+                            HEToast(appLanguage.lblSaveDeliveryAddressToProceed ?? 'Location Not found');
+                            console.error('Geocoding failed:', data.status);
+                        }
+                        return
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching address:', error);
+                })
+                .finally(() => {
+
+                    // setLoadMap(false);
+                    return false
+                });
+        },
+        [
+            address.latitude,
+            address.longitude
+        ],
+    );
+
+
+    const getAddressFromLatLng = useCallback(
+        async (latlng, shomap = true) => {
+            // Replace YOUR_GOOGLE_MAPS_API_KEY with your actual API key
+            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng.latitude},${latlng.longitude}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
+            if (shomap) {
+                setShowMaps(true)
+            }
+            setCheckBillAdd(false)
+            fetch(geocodeURL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'OK') {
+                        let location = data?.results?.[0]?.formatted_address;
+
+                        console.log(location, 'location')
+                        placesRef?.current?.setAddressText(location);
+                        const addressComponents = data?.results?.[0]?.address_components;
+
+                        const city = (addressComponents ?? []).find(component =>
+                            component.types.includes('administrative_area_level_3'),
+                        );
+                        const state = (addressComponents ?? []).find(component =>
+                            component.types.includes('administrative_area_level_1'),
+                        );
+                        // const pincode = (addressComponents ?? []).find(component =>
+                        //   component.types.includes('postal_code'),
+                        // );
+
+                        let pincode = data?.results?.[0]?.address_components.find(
+                            x => x.types[0] === 'postal_code',
+                        );
+                        const englishTextPin = pincode?.long_name.replace(
+                            /\D/g,
+                            '',
+                        );
+
+                        const longaddress = location.split(',').slice(1).join(',').trim().split(',');
+
+                        setAddress(prev => ({
+                            ...prev,
+                            address1: longaddress?.slice(0, 2)?.join(',').trim(),
+                            address2: longaddress?.slice(2)?.join(',').trim(),
+                            city: city,
+                            state: state,
+                            pincode: pincode,
+                            latitude: lat,
+                            longitude: lng
+                        }));
+                        setRegionDetails(prev => ({
+                            ...prev,
+                            latitude: latlng?.latitude,
+                            longitude: latlng?.longitude,
+                        }));
+                    } else {
+                        console.error('Geocoding failed:', data.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching address:', error);
+                })
+                .finally(() => {
+
+
+                    setShowMaps(false)
+                    return
+                });
+        },
+        [setAddress],
+    );
+
+
+    console.log(address, 'aaaaaaaaaaaaaad')
+
 
     return (
         <View style={{ flex: 1, backgroundColor: "#dfdfdf" }}>
@@ -662,6 +1007,13 @@ const MyCart = ({ navigation, route }) => {
                 setActiveTab={setActiveTab}
                 setAddress={setAddress}
                 address={address}
+                enablePayment={enablePayment}
+                placesRef={placesRef}
+                checkBillingAddress={checkBillingAddress}
+                setCheckBillAdd={setCheckBillAdd}
+                checkBillAdd={checkBillAdd}
+                showDeliveryMethodErrro={showDeliveryMethodErrro}
+
 
             />
         </View>

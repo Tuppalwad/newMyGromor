@@ -1,14 +1,44 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from "react";
+import { StyleSheet, SafeAreaView, View } from "react-native";
+import { WebView } from 'react-native-webview';
 
-const MarketValue = () => {
+import constants from "../../../../config/constants";
+import { palette } from "../../../../theme/color";
+import CustomHeader from "../../../../components/common/CustomHeader";
+
+const MarketValue = ({ navigation }) => {
   return (
-    <View>
-      <Text>MarketValue</Text>
-    </View>
-  )
-}
+    <SafeAreaView style={styles.container}>
+      <CustomHeader
+        type="marketValue"
+        topTitle="Market Value"
+        subtitle=""
+        onBackPress={() => navigation.goBack()}
+        onCartPress={() => console.log('Cart pressed')}
+        onNotificationPress={() => console.log('Notification pressed')}
+      />
 
-export default MarketValue
+      <View style={styles.webviewContainer}>
+        <WebView
+          source={{ uri: constants.URL_MARKET_VALUE }}
+          style={{ flex: 1 }}
+          startInLoadingState={true}
+        />
+      </View>
+    </SafeAreaView>
+  );
+};
 
-const styles = StyleSheet.create({})
+export default MarketValue;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: palette.lightWhite,
+    marginTop: 30
+  },
+  webviewContainer: {
+    flex: 1,
+    overflow: 'hidden',
+  },
+});
