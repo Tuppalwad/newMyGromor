@@ -33,6 +33,7 @@ import { Configuration } from '../../../../config';
 import { useOperation } from '../../../../redux/operation';
 import SearchBar from '../../../../components/common/SearchBar';
 import Indicator from '../../../../components/common/Indicator';
+import WeatherScreen from '../../../product_modules/weather/weatherScreen';
 const services = [
     { title: 'Buy Products', screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
     { title: 'Spraying Services', screen: '', icon: SprayingService },
@@ -99,19 +100,24 @@ const HomeScreen = ({ isloading }) => {
     return (
         <SafeAreaView style={styles.container}>
             {/* Top Weather Strip */}
+
             <LinearGradient
                 colors={['#fcf5d7ff', '#FFFFFF']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 0, y: 0.5 }}
                 style={styles.container}
             >
+
                 <View style={styles.weatherStrip}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Image source={Weather} style={{ width: 16, height: 16, marginRight: 4 }} resizeMode='contain' />
                         <Text style={styles.weatherText}> 31°C  Partly cloudy and light winds</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={styles.weatherLink}>View</Text>
+                        <TouchableOpacity onPress={() => navigation.navigate('WeatherScreen')}>
+
+                            <Text style={styles.weatherLink}>View</Text>
+                        </TouchableOpacity>
                         <Image source={RightArrow} style={{ width: 8, height: 8, marginLeft: 4, tintColor: '#6AB42D' }} resizeMode='contain' />
                     </View>
                 </View>

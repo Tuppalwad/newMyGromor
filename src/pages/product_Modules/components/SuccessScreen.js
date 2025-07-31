@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'; // Make sure you have this installed
 import { useNavigation } from '@react-navigation/native';
 import checkIcon from '../../../assets/images/common/checkIcon.png'
+import SprayingServiceDetail from '../../service_modules/spraying-service';
 const SuccessScreen = () => {
     const navigation = useNavigation();
 
@@ -19,7 +20,7 @@ const SuccessScreen = () => {
                 <Text style={styles.serviceId}>Service ID #CD250701031942</Text>
             </Text>
 
-            <TouchableOpacity style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate(SprayingServiceDetail)}>
                 <LinearGradient
                     colors={['#1E8153', '#4EA618']}
                     start={{ x: 0, y: 0 }}
