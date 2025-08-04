@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View, Text, TextInput, StyleSheet,
     Image, TouchableOpacity, ScrollView,
@@ -10,19 +10,28 @@ import doorDelivery from '../../../assets/images/common/doorService.png'
 import sprayService from '../../../assets/images/common/SprayingService.png'
 import shop from '../../../assets/images/common/shop.png'
 import DoorDeliveryComponent from '../door-delivery';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import filterIcon from '../../../assets/images/common/filter.png'
 import rightArrow from '../../../assets/images/common/rightArrow.png'
 import SprayingServiceDetail from '../spraying-service';
 import NewServiceRequestScreen from '../spraying-service/newService';
+import { useDispatch, useSelector } from 'react-redux';
+import { getServicesapi } from '../../../redux/services/operation';
+import { Screen } from '../../../router/screen';
+import Indicator from '../../../components/common/Indicator';
+import { splitData } from '../../../utils/utils';
 
 function MyServicesScreen({ navigation }) {
-    // const [selectedTab, setSelectedTab] = useState('Door Delivery');
-    // const navigation = useNavigation();
 
+    const state = useRoute().params?.state
+    const { applyedservices } = useSelector(state => state.services);
+    const [loading, setLoading] = useState(false)
     const [soNumber, setSoNumber] = useState('');
-    const [activeCategory, setActiveCategory] = useState('Door Delivery');
+    const [activeCategory, setActiveCategory] = useState(state);
+    const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
+    const dispatch = useDispatch();
+
     const orderItems = [
         {
             id: '1',
@@ -41,64 +50,57 @@ function MyServicesScreen({ navigation }) {
             image: require('../../../assets/images/shop/product2.png'),
         },
     ];
-    const services = [
-        {
-            id: 'SS25050212857',
-            crop: 'Cotton',
-            date: '06-07-2025',
-            time: '03:45 PM',
-            status: 'In-progress',
-            badgeColor: '#FFF8BC',
-        },
-        {
-            id: 'SS25050949466',
-            crop: 'Bengal Gram',
-            date: '05-07-2025',
-            time: '11:30 AM',
-            status: 'Rescheduled by Farmer',
-            badgeColor: '#FBEAFF',
-        },
-        {
-            id: 'SS250501229632',
-            crop: 'Chilli',
-            date: '25-06-2025',
-            time: '12:40 PM',
-            status: 'Completed',
-            badgeColor: '#DCFFD9',
-        },
-    ];
+
+
     const renderItem = ({ item }) => (
         <View style={styles.sprayingcard}>
             <View style={styles.sprayingcardHeader}>
                 <Text style={styles.serviceId}>Service ID</Text>
-                <View style={[styles.sprayingBadge, { backgroundColor: item.badgeColor }]}>
-                    <Text style={styles.sprayingBadgeText}>{item.status}</Text>
+                <View style={[styles.sprayingBadge, { backgroundColor: "#DCFFD9" }]}>
+                    <Text style={styles.sprayingBadgeText}>{splitData(item?.serviceStatus)}</Text>
                 </View>
             </View>
-            <Text style={styles.serviceIdText}>{item.id}</Text>
-            < View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
+            <Text style={styles.serviceIdText}>{item?.serviceId}</Text>
+            <View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 
                 <View>
                     <Text style={styles.Sprayingcrop}>Crop: <Text style={styles.cropName}>{item.crop}</Text></Text>
                     <Text style={styles.date}>Scheduled Date: {item.date}</Text>
-                    {item.time ? <Text style={styles.date}>Preferred Time: {item.time}</Text> : null}
+                    {item?.preferredTime ? <Text style={styles.date}>Preferred Time: {item?.preferredTime}</Text> : null}
                 </View>
                 <View>
-                    <TouchableOpacity onPress={() => navigation.navigate(SprayingServiceDetail)}>
+                    <TouchableOpacity onPress={() => navigation.navigate(Screen.SprayingService, { data: item })}>
                         <Image source={rightArrow} style={{ tintColor: '#000', marginTop: 15, height: 15, width: 15, resizeMode: 'contain' }} />
                     </TouchableOpacity>
                 </View>
             </View>
         </View>
     );
+
+    useEffect(() => {
+        fetchData()
+    }, [])
+
+
+
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            await dispatch(getServicesapi({ farmerIdentityId: farmerAddress?.farmerIdentityId }));
+        } catch (error) {
+            console.log(error);
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <View style={styles.container}>
-
             {/* Header */}
             <View>
-
                 <CustomHeader
                     type="services"
                     topTitle="My Services"
@@ -120,7 +122,8 @@ function MyServicesScreen({ navigation }) {
                         <Image source={doorDelivery} style={{
                             width: 24, height: 24,
                             tintColor: activeCategory === 'Door Delivery' ? '#01AD41' : '#444'
-                        }} />
+                        }}
+                        />
                         <Text style={[
                             styles.tabText,
                             activeCategory === 'Door Delivery' && styles.activeTabText
@@ -152,100 +155,103 @@ function MyServicesScreen({ navigation }) {
                     {activeCategory === 'Spraying Services' && <View style={styles.greenUnderline} />}
                 </TouchableOpacity>
             </View>
-            <ScrollView>
-                {activeCategory === 'Door Delivery' ? (
-                    <View>
-                        <Image source={require('../../../assets/images/common/services.png')} style={styles.bannerImage} />
-                        <Text style={styles.title}>Doorstep Delivery Service</Text>
-                        <Text style={styles.subtitle}>*Available even in Remote Villages</Text>
 
-                        <View style={{ paddingHorizontal: 16 }}>
-                            <Text style={styles.soLabel}>SO Number</Text>
-                            <View style={styles.inputContainer}>
-                                <TextInput
-                                    placeholder="Enter 14 digit SO Number"
-                                    placeholderTextColor="#999"
-                                    value={soNumber}
-                                    onChangeText={setSoNumber}
-                                    keyboardType="numeric"
-                                    maxLength={14}
-                                    style={styles.input}
-                                />
-                                <TouchableOpacity>
-                                    <Image source={require('../../../assets/images/splash/search.png')} style={styles.searchIcon} />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+            <FlatList
+                data={[{}]}
+                renderItem={() => (
+                    activeCategory === 'Door Delivery' ? (
+                        <View>
+                            <Image source={require('../../../assets/images/common/services.png')} style={styles.bannerImage} />
+                            <Text style={styles.title}>Doorstep Delivery Service</Text>
+                            <Text style={styles.subtitle}>*Available even in Remote Villages</Text>
 
-                        <View style={styles.card}>
-                            <View style={styles.storeRow}>
-                                <Image source={shop} style={styles.storeIcon} />
-                                <Text style={styles.storeText}>Store Code: <Text style={styles.storeCode}>SO393</Text></Text>
+                            <View style={{ paddingHorizontal: 16 }}>
+                                <Text style={styles.soLabel}>SO Number</Text>
+                                <View style={styles.inputContainer}>
+                                    <TextInput
+                                        placeholder="Enter 14 digit SO Number"
+                                        placeholderTextColor="#999"
+                                        value={soNumber}
+                                        onChangeText={setSoNumber}
+                                        keyboardType="numeric"
+                                        maxLength={14}
+                                        style={styles.input}
+                                    />
+                                    <TouchableOpacity>
+                                        <Image source={require('../../../assets/images/splash/search.png')} style={styles.searchIcon} />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
 
-                            <View style={styles.infoBlock}>
-                                <Text style={styles.label}>Order No.</Text>
-                                <Text style={styles.value}>CD250701031942</Text>
-                            </View>
-                            <View style={styles.separator} />
+                            <View style={styles.card}>
+                                <View style={styles.storeRow}>
+                                    <Image source={shop} style={styles.storeIcon} />
+                                    <Text style={styles.storeText}>Store Code: <Text style={styles.storeCode}>SO393</Text></Text>
+                                </View>
 
-                            <View style={styles.infoBlock}>
-                                <Text style={styles.label}>Order Amount: <Text style={styles.value}>₹3618</Text></Text>
-                                <Text style={styles.label}>Order Date: <Text style={styles.value}>06-05-2025</Text></Text>
-                            </View>
-                            <View style={styles.separator} />
+                                <View style={styles.infoBlock}>
+                                    <Text style={styles.label}>Order No.</Text>
+                                    <Text style={styles.value}>CD250701031942</Text>
+                                </View>
+                                <View style={styles.separator} />
 
-                            <Text style={styles.totalQty}>Total Quantity: 4</Text>
+                                <View style={styles.infoBlock}>
+                                    <Text style={styles.label}>Order Amount: <Text style={styles.value}>₹3618</Text></Text>
+                                    <Text style={styles.label}>Order Date: <Text style={styles.value}>06-05-2025</Text></Text>
+                                </View>
+                                <View style={styles.separator} />
 
-                            <FlatList
-                                data={orderItems}
-                                keyExtractor={item => item.id}
-                                renderItem={({ item }) => (
-                                    <View style={styles.itemBox}>
-                                        <Image source={item.image} style={styles.itemImage} />
-                                        <View style={styles.itemInfo}>
-                                            <Text style={styles.itemName}>{item.name}</Text>
-                                            <Text style={styles.itemWeight}>{item.weight}</Text>
-                                            <View style={styles.itemFooter}>
-                                                <Text style={styles.itemQty}>Qty. x{item.quantity}</Text>
-                                                <Text style={styles.itemPrice}>{item.price}</Text>
+                                <Text style={styles.totalQty}>Total Quantity: 4</Text>
+
+                                <FlatList
+                                    data={orderItems}
+                                    keyExtractor={item => item.id}
+                                    renderItem={({ item }) => (
+                                        <View style={styles.itemBox}>
+                                            <Image source={item.image} style={styles.itemImage} />
+                                            <View style={styles.itemInfo}>
+                                                <Text style={styles.itemName}>{item.name}</Text>
+                                                <Text style={styles.itemWeight}>{item.weight}</Text>
+                                                <View style={styles.itemFooter}>
+                                                    <Text style={styles.itemQty}>Qty. x{item.quantity}</Text>
+                                                    <Text style={styles.itemPrice}>{item.price}</Text>
+                                                </View>
                                             </View>
                                         </View>
-                                    </View>
-                                )}
-                            />
-                        </View>
-
-
-                    </View>
-                ) : (
-                    <View>
-                        <View style={{ paddingHorizontal: 10 }}>
-                            <View style={styles.newBtnRow}>
-                                <Text style={styles.total}>Total 3 Services</Text>
-                                <LinearGradient
-                                    colors={['#1E8153', '#4EA618']}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 0 }}
-                                    style={{ borderRadius: 6 }}
-                                // style={styles.payButton}
-                                >
-                                    <TouchableOpacity style={styles.newBtn} onPress={() => navigation.navigate(NewServiceRequestScreen)}>
-                                        <Text style={styles.newBtnText}>+ New Service</Text>
-                                    </TouchableOpacity>
-                                </LinearGradient>
+                                    )}
+                                />
                             </View>
-                            <FlatList
-                                data={services}
-                                keyExtractor={(item) => item.id}
-                                renderItem={renderItem}
-                                contentContainerStyle={{ paddingBottom: 100 }}
-                            />
-                        </View>
-                    </View>
-                )}
 
-            </ScrollView>
+
+                        </View>
+                    ) : (
+                        <View>
+                            <View style={{ paddingHorizontal: 10 }}>
+                                <View style={styles.newBtnRow}>
+                                    <Text style={styles.total}>Total 3 Services</Text>
+                                    <LinearGradient
+                                        colors={['#1E8153', '#4EA618']}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        style={{ borderRadius: 6 }}
+                                    // style={styles.payButton}
+                                    >
+                                        <TouchableOpacity style={styles.newBtn} onPress={() => navigation.navigate(NewServiceRequestScreen)}>
+                                            <Text style={styles.newBtnText}>+ New Service</Text>
+                                        </TouchableOpacity>
+                                    </LinearGradient>
+                                </View>
+                                <FlatList
+                                    data={applyedservices || []}
+                                    keyExtractor={(item) => item.id}
+                                    renderItem={renderItem}
+                                    contentContainerStyle={{ paddingBottom: 100 }}
+                                />
+                            </View>
+                        </View>
+                    )
+                )}
+            />
 
             {activeCategory == "Door Delivery" ?
                 <LinearGradient
@@ -272,6 +278,7 @@ function MyServicesScreen({ navigation }) {
                     </TouchableOpacity>
                 </LinearGradient>
             }
+            <Indicator Indicator={!loading} />
 
         </View >
     );
@@ -455,11 +462,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#000',
     },
-    // separator: {
-    //     borderBottomWidth: 1,
-    //     borderBottomColor: '#ccc',
-    //     marginVertical: 10,
-    // },
     totalQty: {
         fontSize: 14,
         fontWeight: '600',
@@ -561,7 +563,7 @@ const styles = StyleSheet.create({
     sprayingBadge: {
         paddingHorizontal: 10,
         paddingVertical: 4,
-        borderRadius: 12,
+        borderRadius: 18,
     },
     sprayingBadgeText: {
         fontSize: 12,

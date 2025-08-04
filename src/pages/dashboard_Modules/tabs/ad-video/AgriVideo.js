@@ -10,6 +10,7 @@ import {
     FlatList,
     ScrollView,
     RefreshControl,
+    SafeAreaView,
 } from 'react-native';
 import { WebView } from 'react-native-webview'; // ✅ WebView import
 import { useOperation } from '../../../../redux/operation';
@@ -26,24 +27,73 @@ import Indicator from '../../../../components/common/Indicator';
 
 const categories = ['All', 'Newest', 'Most Viewed', 'Learning', 'Advisory'];
 
-const videos = [
-    {
-        id: '1',
-        videoId: '5bQlbxTBteQ',
-        title: "Coromandel's Adhiraj Neem based product vs Others comparison video (Telugu)",
-        tag: 'Neem',
-    },
-    {
-        id: '2',
-        videoId: '5bQlbxTBteQ',
-        title: 'Fertilizer recommendation for cotton crops in June',
-        tag: 'Cotton',
-    },
-];
+
 
 const AgriVideo = () => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [playingVideoId, setPlayingVideoId] = useState(null);
+
+
+
+    const navigate = useNavigation()
+
+    const operation = useOperation();
+    const dispatch = useDispatch();
+    const isFocussed = useIsFocused();
+    const appLanguage = UserManager?.getAppMultiLanguage
+    const [params, setParams] = useState({ page: 1, pageSize: 5 })
+    const [adsData, setAdsData] = useState([])
+    const [adsResponse, setAdsResponse] = useState(null)
+    const loadingSelector = createLoadingSelector([ProductType.video]);
+    const isLoading = useSelector(state => loadingSelector(state));
+    const videoArray = useSelector((state) => state.product.videoArray);
+    const [filterVisible, setFilterVisible] = useState(false);
+
+    useEffect(() => {
+        if (isFocussed && isEmpty(videoArray)) {
+            getVideoAds(params)
+        } else {
+            setAdsData(videoArray?.data ?? [])
+            setAdsResponse({ totalRecords: videoArray?.totalRecords })
+        }
+    }, [isFocussed])
+
+    const getVideoAds = (params, isEnd = false) => {
+        try {
+            dispatch(operation.product.getProductVideo(params)).then((res) => {
+                if (res?.data) {
+                    if (isEnd) {
+                        tempArr = [...adsData, ...res?.data]
+                    } else {
+                        tempArr = [...res?.data]
+                    }
+                } else {
+                    if (isEnd) {
+                        tempArr = [...adsData]
+                    }
+                }
+                setAdsData(tempArr)
+                setAdsResponse({ totalRecords: res?.totalRecords })
+            }).catch((err) => {
+                dispatch(operation.user.getErrorHandling(err, "getProductVideo"));
+            })
+        } catch (e) {
+            console.log(e, 'error')
+        }
+    }
+
+    const onEndReached = () => {
+        let total = adsResponse?.totalRecords ?? 0
+        let count = adsData?.length
+        if (!isLoading && (count < total)) {
+            let param = {
+                page: params?.page + 1,
+                pageSize: params?.pageSize,
+            };
+            setParams(param)
+            getVideoAds(param, true)
+        }
+    };
 
     const renderCategory = (item) => (
         <TouchableOpacity
@@ -105,82 +155,11 @@ const AgriVideo = () => {
         );
     };
 
-    const navigate = useNavigation()
-
-    const operation = useOperation();
-    const dispatch = useDispatch();
-    const isFocussed = useIsFocused();
-    const appLanguage = UserManager?.getAppMultiLanguage
-    const [params, setParams] = useState({ page: 1, pageSize: 5 })
-    const [adsData, setAdsData] = useState([])
-    const [adsResponse, setAdsResponse] = useState(null)
-    const loadingSelector = createLoadingSelector([ProductType.video]);
-    const isLoading = useSelector(state => loadingSelector(state));
-    const videoArray = useSelector((state) => state.product.videoArray);
-    const [filterVisible, setFilterVisible] = useState(false);
-
-    useEffect(() => {
-        if (isFocussed && isEmpty(videoArray)) {
-            getVideoAds(params)
-        } else {
-            setAdsData(videoArray?.data ?? [])
-            setAdsResponse({ totalRecords: videoArray?.totalRecords })
-        }
-    }, [isFocussed])
-
-    const getVideoAds = (params, isEnd = false) => {
-        try {
-            dispatch(operation.product.getProductVideo(params)).then((res) => {
-                if (res?.data) {
-                    if (isEnd) {
-                        tempArr = [...adsData, ...res?.data]
-                    } else {
-                        tempArr = [...res?.data]
-                    }
-                } else {
-                    if (isEnd) {
-                        tempArr = [...adsData]
-                    }
-                }
-                setAdsData(tempArr)
-                setAdsResponse({ totalRecords: res?.totalRecords })
-            }).catch((err) => {
-                dispatch(operation.user.getErrorHandling(err, "getProductVideo"));
-            })
-        } catch (e) {
-
-        }
-    }
-
-    const onEndReached = () => {
-        let total = adsResponse?.totalRecords ?? 0
-        let count = adsData?.length
-        if (!isLoading && (count < total)) {
-            let param = {
-                page: params?.page + 1,
-                pageSize: params?.pageSize,
-            };
-            setParams(param)
-            getVideoAds(param, true)
-        }
-    };
-
-
-
-    const renderFetchSpinner = () => {
-        if (isLoading) {
-            return (
-                <View style={{ flex: 1, marginVertical: height / 100 * 10 }}>
-                    <Indicator isSmall={true} show={isLoading} Indicator={true} />
-                </View>
-            );
-        }
-    };
 
     return (
 
         <SafeAreaView style={styles.container}>
-            <View style={{  }}>
+            <View style={{}}>
                 <CustomHeader
                     type="video"
                     topTitle="Agri Video"

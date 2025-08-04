@@ -62,19 +62,15 @@ function getURL() {
       // Weather API
       WeatherURL: 'https://api.openweathermap.org/data/' + WEATHER_VERSION,
       ProWeatherURL: 'https://pro.openweathermap.org/data/' + WEATHER_VERSION,
-      ImageURL:
-        'https://cilmygromorsa.blob.core.windows.net/gromor-media-prod/',
+      ImageURL: 'https://cilmygromorsa.blob.core.windows.net/gromor-media-prod/',
       feedImageID: 'feeds/',
       tollfreenumber: '1800 425 2828',
       tollfreenumber_Linking: '18004252828',
       version: 'Version',
       buildNo: '',
-      contact_Info:
-        'We are not operational in your area. Stay tuned; for more information, contact customer service. ',
+      contact_Info: 'We are not operational in your area. Stay tuned; for more information, contact customer service. ',
     };
   } else if (BUILD === BuildTypes.PreProduction) {
-    // https://mygromor20uat.coromandel.biz/identity-api-prod/
-    // https://mygromor20uat.coromandel.biz/productprod.api/
 
     const BASE_URL = PREPROD_BASE_URL;
     return {

@@ -57,7 +57,7 @@ const DrawerContent = (props) => {
     <TouchableOpacity style={styles.option}
       onPress={() => navigation.navigate(path)}
     >
-      <Image source={icon} style={styles.icon} />
+      <Image source={icon} style={styles.icon} resizeMode='contain' />
       <Text style={styles.optionText}>{title}</Text>
       <Image source={require('../../src/assets/drawer/forwardArrow.png')} style={{ width: 9, height: 9, marginLeft: 'auto', objectFit: 'contain' }} />
     </TouchableOpacity>
@@ -115,16 +115,16 @@ const DrawerContent = (props) => {
         <View style={styles.section}>
           {renderOption('Home', require('../../src/assets/drawer/homeIcon.png'), Screen.homes)}
           {renderOption('My Account', require('../../src/assets/drawer/accountIcon.png'), Screen.myAccount)}
-          {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'), Screen.myOrderHistory)}
+          {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'), Screen.MyOrder)}
           {renderOption('My Cart', require('../../src/assets/drawer/cart.png'), Screen.myCart)}
           {renderOption('Favourite Products', require('../../src/assets/drawer/favourite.png'))}
         </View>
 
         <View style={styles.gridSection}>
-          {renderGridOption('Shop', require('../../src/assets/drawer/shop.png'))}
-          {renderGridOption('My Services', require('../../src/assets/drawer/service.png'))}
-          {renderGridOption('Crop Advisory', require('../../src/assets/drawer/crop.png'))}
-          {renderGridOption('Crop Doctor', require('../../src/assets/drawer/cropZoom.png'))}
+          {renderGridOption('Shop', require('../../src/assets/drawer/shop.png'), Screen.Shop, navigation)}
+          {renderGridOption('My Services', require('../../src/assets/drawer/service.png'), Screen.MyServicesScreen, navigation)}
+          {renderGridOption('Crop Advisory', require('../../src/assets/drawer/crop.png',))}
+          {renderGridOption('Crop Doctor', require('../../src/assets/drawer/cropZoom.png',))}
         </View>
 
         <View style={styles.section}>
@@ -168,8 +168,9 @@ const DrawerContent = (props) => {
 
 
 
-const renderGridOption = (title, icon) => (
-  <TouchableOpacity style={styles.gridItem}>
+const renderGridOption = (title, icon, path, navigation) => (
+
+  <TouchableOpacity style={styles.gridItem} onPress={() => navigation.navigate(path)}>
     <Image source={icon} style={styles.gridIcon} />
     <Text style={styles.gridText}>{title}</Text>
   </TouchableOpacity>

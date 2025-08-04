@@ -1,29 +1,38 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import CustomHeader from '../../../components/common/CustomHeader';
+import CustomHeader from '../../../../components/common/CustomHeader';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import parcel from '../../../assets/images/common/parcel.png';
-import booking from '../../../assets/images/common/booking.png'; // Assuming you have a booking icon
-import timerIcon from '../../../assets/images/splash/timer.png'; // Assuming you have a timer icon
-import deliver from '../../../assets/images/common/deliver.png'; // Assuming you have a deliver icon
-import failed from '../../../assets/images/common/failed.png'; // Assuming you have a failed icon
-import rightArrow from '../../../assets/images/common/rightArrow.png'; // Assuming you have a right arrow icon
+import parcel from '../../../../assets/images/common/parcel.png';
+import booking from '../../../../assets/images/common/booking.png'; // Assuming you have a booking icon
+import timerIcon from '../../../../assets/images/splash/timer.png'; // Assuming you have a timer icon
+import deliver from '../../../../assets/images/common/deliver.png'; // Assuming you have a deliver icon
+import failed from '../../../../assets/images/common/failed.png'; // Assuming you have a failed icon
+import rightArrow from '../../../../assets/images/common/rightArrow.png'; // Assuming you have a right arrow icon
 import { useNavigation } from '@react-navigation/native';
-import filterIcon from '../../../assets/images/common/filter.png'; // Assuming you have a filter icon
-import { Screen } from '../../../router/screen';
+import filterIcon from '../../../../assets/images/common/filter.png'; // Assuming you have a filter icon
+import { Screen } from '../../../../router/screen';
+import moment from 'moment';
+import Indicator from '../../../../components/common/Indicator';
 
 const orders = [
-    { id: 1, status: 'In-progress', color: '#FFF3CD', textColor: '#856404', image: timerIcon },
-    { id: 2, status: 'Delivered', color: '#D4EDDA', textColor: '#155724', image: deliver },
-    { id: 3, status: 'Payment Failed', color: '#F8D7DA', textColor: '#721C24', image: failed },
-    { id: 4, status: 'Cancelled', color: '#F8D7DA', textColor: '#721C24', image: failed },
+    { id: 1, key: 'inprogress', status: 'In-progress', color: '#FFF3CD', textColor: '#856404', image: timerIcon },
+    { id: 2, key: 'delivered', status: 'Delivered', color: '#D4EDDA', textColor: '#155724', image: deliver },
+    { id: 3, key: 'failed', status: 'Payment Failed', color: '#F8D7DA', textColor: '#721C24', image: failed },
+    { id: 4, key: 'cancel', status: 'Cancelled', color: '#F8D7DA', textColor: '#721C24', image: failed },
+    { id: 5, key: 'booked', status: "Booked", color: '#D4EDDA', textColor: '#155724', image: deliver },
+
 ];
 
-export default function MyOrdersScreen() {
+export default function MyOrdersScreen({
+    isLoading, onPressItem, onPressContinue,
+    sortData, setSelectedSort, selectedSort, appLanguage, OrderArray, onEndReached,
+    getFetchAPIMethod,
+    activeCategory, setActiveCategory
+}) {
     const navigation = useNavigation();
-    const [activeCategory, setActiveCategory] = useState('purchases');
 
+    const count = OrderArray?.length || 0;
 
     const NumberComponent = ({ text, num, item }) => {
         return (
@@ -31,9 +40,9 @@ export default function MyOrdersScreen() {
 
                 <View style={styles.cardHeader}>
                     <Text style={styles.orderLabel}>{text}.</Text>
-                    <View style={[styles.statusBadge, { backgroundColor: item.color }]}>
-                        <Image source={item.image} style={{ width: 13, height: 13, tintColor: item.textColor, resizeMode: 'contain' }} />
-                        <Text style={[styles.statusText, { color: item.textColor }]}>{item.status}</Text>
+                    <View style={[styles.statusBadge, { backgroundColor: item?.color }]}>
+                        <Image source={item?.image} style={{ width: 13, height: 13, tintColor: item?.textColor, resizeMode: 'contain' }} />
+                        <Text style={[styles.statusText, { color: item?.textColor }]}>{item?.status}</Text>
                     </View>
 
                 </View>
@@ -42,6 +51,59 @@ export default function MyOrdersScreen() {
             </View>
         )
     }
+
+
+
+    const renderItem = ({ item, index }) => {
+
+        let colorData = null
+        let newItem = null
+
+        if (activeCategory == "purchases") {
+            colorData = orders.find((it) =>
+                item?.orderStatus?.toLowerCase().includes(it.key)
+            )
+            newItem = {
+                transactionId: item.transactionId,
+                orderAmount: item.orderAmount
+            }
+
+        }
+        else {
+            colorData = orders.find((it) =>
+                item?.bookingStatus?.toLowerCase().includes(it.key)
+            )
+            newItem = {
+                transactionId: item.bookingId,
+                orderAmount: item.orderedTotalBookingAmount
+            }
+        }
+
+
+        return (
+
+            <View key={index} style={styles.card}>
+                <NumberComponent
+                    text={activeCategory === 'purchases' ? "Order No" : "So No"}
+                    num={newItem?.transactionId}
+                    item={colorData}
+                />
+                <View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
+                <View style={styles.footerRow}>
+                    <View>
+                        <Text style={styles.amount}>Order Amount: ₹{newItem?.orderAmount}</Text>
+                        <Text style={styles.date}>Order Date: {moment(newItem.createdOn).format('DD-MM-YYYY')}</Text>
+                    </View>
+                    <TouchableOpacity onPress={() => onPressItem(item)}>
+                        <Image source={rightArrow} style={{ width: 16, height: 16, tintColor: '#000', resizeMode: 'contain', }} />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
+
+
+
 
     return (
         <View style={styles.container}>
@@ -97,30 +159,17 @@ export default function MyOrdersScreen() {
             </View>
 
 
-            <ScrollView style={styles.content}>
-                <Text style={styles.totalText}>Total 134 Purchases</Text>
+            <View style={styles.content}>
+                <Text style={styles.totalText}>Total {count} {activeCategory === 'purchases' ? "Purchases" : "Bookings"}</Text>
 
-                {orders.map((item, index) => (
-                    <View key={index} style={styles.card}>
-                        <NumberComponent text={activeCategory === 'purchases' ? "Order No" : "So No"
-                        }
-                            num={activeCategory === 'purchases' ? "PP38987oslkf" : "BD92482628"}
-                            item={item}
-                        />
-                        {/* add here horizontal line */}
-                        < View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
-                        <View style={styles.footerRow}>
-                            <View>
-                                <Text style={styles.amount}>Order Amount: ₹3618</Text>
-                                <Text style={styles.date}>Order Date: 06-05-2025</Text>
-                            </View>
-                            <TouchableOpacity onPress={() => navigation.navigate(Screen.Purchase)}>
-                                <Image source={rightArrow} style={{ width: 16, height: 16, tintColor: '#000', resizeMode: 'contain', }} />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                ))}
-            </ScrollView>
+                <FlatList
+                    data={OrderArray || []}
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()}
+                />
+
+
+            </View>
 
             <LinearGradient
                 colors={['#1E8153', '#4EA618']}
@@ -134,6 +183,8 @@ export default function MyOrdersScreen() {
                     <Text style={styles.filterText}> Filters</Text>
                 </TouchableOpacity>
             </LinearGradient>
+
+            <Indicator Indicator={!isLoading} />
         </View >
     );
 }
@@ -143,7 +194,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F4F4F4',
-        marginTop: 30,
     },
     header: {
         flexDirection: 'row',
@@ -222,6 +272,7 @@ const styles = StyleSheet.create({
     content: {
         flex: 1,
         paddingHorizontal: 16,
+        paddingBottom: 60
     },
     totalText: {
         fontSize: 14,

@@ -108,3 +108,8 @@ export const getLoadingInfo = (APITiming = {}, isLoading = false) => {
   }
   return temptime
 }
+
+
+export const splitData = (string) => {
+  return string.replace(/([A-Z])/g, " $1").trim();
+}

@@ -9,6 +9,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import checkIcon from '../../../assets/images/common/checkIcon.png'
 import SuccessScreen from '../../product_modules/components/SuccessScreen';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 const NewServiceRequestScreen = () => {
     const [address, setAddress] = useState({
         location: '',
@@ -28,7 +29,7 @@ const NewServiceRequestScreen = () => {
     const navigation = useNavigation()
 
     return (
-        <>
+        <SafeAreaView style={{ flex: 1 }}>
 
             {/* Header */}
             <View>
@@ -44,11 +45,13 @@ const NewServiceRequestScreen = () => {
             </View>
             <ScrollView style={styles.container}>
                 {/* Image */}
-                <Image
-                    source={sprayingDron} // replace with actual path
-                    style={styles.droneImage}
-                />
-                <View style={{ paddingVertical: 16 }}>
+                <View style={{ marginTop: 10 }}>
+                    <Image
+                        source={sprayingDron} // replace with actual path
+                        style={styles.droneImage}
+                    />
+                </View>
+                <View style={{ paddingVertical: 6 }}>
                     {/* Alert Text */}
                     <Text style={styles.alertText}>*All fields are required</Text>
 
@@ -105,11 +108,14 @@ const NewServiceRequestScreen = () => {
                                 Remarks <Text style={{ color: 'red', fontWeight: 30 }}>(optional)</Text>
                             </Text>
                             <TextInput
-                                style={styles.TextInput}
-                                placeholder="Enter your Remarks"
+                                style={[styles.TextInput, { height: 100, textAlignVertical: 'top' }]}
+                                placeholder="Enter Alternate Contact"
                                 placeholderTextColor="#999"
                                 multiline
+                                numberOfLines={4}
+
                             />
+
                         </View>
                     </View>
 
@@ -188,7 +194,7 @@ const NewServiceRequestScreen = () => {
                         <View style={styles.priceBox}>
                             <View style={styles.priceRow}>
                                 <Text style={styles.priceLabel}>Price Per Acre</Text>
-                                <Text style={styles.value}>₹2,999</Text>
+                                <Text style={styles.value}>₹{}</Text>
                             </View>
                             <View style={styles.priceRow}>
                                 <Text style={styles.priceLabel}>Discount</Text>
@@ -213,25 +219,29 @@ const NewServiceRequestScreen = () => {
                             </View>
                         </View>
                     </View>
+
+                    <TouchableOpacity style={styles.checkboxContainer} onPress={toggleCheckbox}>
+                        <View style={[styles.checkbox, isChecked && styles.checkedBox]}>
+                            {isChecked && (
+                                <Image
+                                    source={checkIcon}
+                                    style={styles.checkIcon}
+                                    resizeMode="contain"
+                                />
+                            )}
+                        </View>
+                        <Text style={styles.agreeText}>
+                            I agree to the <Text style={styles.termsText}>Terms and Conditions</Text>
+                        </Text>
+                    </TouchableOpacity>
                 </View>
+
             </ScrollView>
             {/* Terms & Submit */}
+
+            {/* submit button */}
             <View style={{ backgroundColor: '#fff' }}>
-                <TouchableOpacity style={styles.checkboxContainer} onPress={toggleCheckbox}>
-                    <View style={[styles.checkbox, isChecked && styles.checkedBox]}>
-                        {isChecked && (
-                            <Image
-                                source={checkIcon}
-                                style={styles.checkIcon}
-                                resizeMode="contain"
-                            />
-                        )}
-                    </View>
-                    <Text style={styles.agreeText}>
-                        I agree to the <Text style={styles.termsText}>Terms and Conditions</Text>
-                    </Text>
-                </TouchableOpacity>
-                {/* submit button */}
+
                 <TouchableOpacity style={styles.submitButton} onPress={() => navigation.navigate(SuccessScreen)}>
                     <LinearGradient
                         colors={['#1E8153', '#4EA618']}
@@ -244,7 +254,7 @@ const NewServiceRequestScreen = () => {
                     </LinearGradient>
                 </TouchableOpacity>
             </View>
-        </>
+        </SafeAreaView >
     );
 };
 
@@ -254,7 +264,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F3F4F6',
-        // paddingHorizontal: 16,
+        paddingHorizontal: 16,
     },
     header: {
         flexDirection: 'row',
@@ -291,13 +301,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 16,
         borderRadius: 10,
-        marginBottom: 20,
+        marginBottom: 6,
     },
     sectionTitle: {
         fontSize: 15,
         fontWeight: 700,
         marginBottom: 10,
-        marginTop: 25
+        marginTop: 15
     },
     inputBox: {
         marginBottom: 16,
@@ -356,42 +366,14 @@ const styles = StyleSheet.create({
         borderRadius: 6,
         paddingHorizontal: 10,
         height: 40,
+        color: '#4E4E4E'
+
     },
-    // termsContainer: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     backgroundColor: '#fff',
-    //     padding: 12,
-    //     borderRadius: 10,
-    //     // marginBottom: 20,
-    // },
-    // termsText: {
-    //     marginLeft: 10,
-    //     fontSize: 13,
-    //     color: '#111827',
-    // },
-    // link: {
-    //     color: '#10B981',
-    //     fontWeight: 'bold',
-    // },
-    // submitButton: {
-    //     backgroundColor: '#22C55E',
-    //     paddingVertical: 14,
-    //     borderRadius: 8,
-    //     alignItems: 'center',
-    //     marginBottom: 30,
-    // },
-    // submitText: {
-    //     color: '#fff',
-    //     fontWeight: 'bold',
-    //     fontSize: 15,
-    // },
+
     radioCard: {
         backgroundColor: '#ffffffff',
         borderRadius: 10,
         padding: 16,
-        // marginBottom: 20,
-        // marginTop: 10
     },
     radioLabel: {
         fontSize: 14,
@@ -475,7 +457,7 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        // marginBottom: 20,
+        marginBottom: 20,
         marginLeft: 20,
         paddingTop: 10
     },

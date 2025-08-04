@@ -9,6 +9,11 @@ import remark from '../../../assets/images/common/remark.png'
 import shop from '../../../assets/images/common/shop.png'
 import location from '../../../assets/images/common/location.png';
 import phone from '../../../assets/images/common/phone.png'
+import checkIcon from '../../../assets/images/common/checkIcon.png'
+import { useRoute } from '@react-navigation/native';
+import moment from 'moment';
+import AddressCard from '../../../components/common/AddressCard';
+import { splitData } from '../../../utils/utils';
 
 export default function SprayingServiceDetail({ navigation }) {
     const steps = [
@@ -27,6 +32,9 @@ export default function SprayingServiceDetail({ navigation }) {
 
         }
     ]
+
+    const data = useRoute().params?.data
+
     return (
         <SafeAreaView style={{
             flex: 1,
@@ -45,35 +53,33 @@ export default function SprayingServiceDetail({ navigation }) {
 
             <ScrollView style={styles.container}>
                 {/* Header */}
-
-
                 {/* Service ID card */}
                 <View style={styles.card}>
                     <Image source={sprayingService} style={{ height: 24, width: 24, tintColor: 'green' }} />
                     <Text style={styles.serviceId}>Service ID</Text>
-                    <Text style={styles.serviceCode}>SS25050212857</Text>
+                    <Text style={styles.serviceCode}>{data.serviceId}</Text>
                     <View style={styles.statusBadge}>
                         <Image source={timer} style={{ height: 15, width: 15, marginRight: 10, tintColor: '#4E4600' }} />
-                        <Text style={styles.statusText}> In-progress</Text>
+                        <Text style={styles.statusText}>{splitData(data?.serviceStatus)}</Text>
                     </View>
                 </View>
 
                 {/* Service Details */}
                 <Text style={styles.sectionTitle}>Service Details</Text>
                 <View style={styles.detailCard}>
-                    <Row label="Booking Date" value="06-05-2025" />
-                    <Row label="Store Code" value="S0393" />
+                    <Row label="Booking Date" value={moment(data.createdOn).format("DD-MM-YYYY")} />
+                    <Row label="Store Code" value={data?.storeCode} />
                     < View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
 
-                    <Row label="Crop" value="Bengal Gram" />
-                    <Row label="Area to be covered" value="90 acres" />
-                    <Row label="Actual Acreage" value="0 acre" />
+                    <Row label="Crop" value={data.crop} />
+                    <Row label="Area to be covered" value={`${data?.coverageArea} acres`} />
+                    <Row label="Actual Acreage" value={`${data?.actualAcreage} acres`} />
                     < View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
 
-                    <Row label="Base Rate" value="₹400" />
-                    <Row label="Discount" value="- ₹4,500" />
-                    <Row label="Estimated Charges" value="₹31,500" />
-                    <Row label="Total Amount" value="₹27,400" bold />
+                    <Row label="Base Rate" value={`₹${data?.baseRate}`} />
+                    <Row label="Discount" value={`- ₹${data?.discountPerAcre}`} />
+                    <Row label="Estimated Charges" value={`₹${data?.estimatedAmount}`} />
+                    <Row label="Total Amount" value={`₹${data?.estimatedAmount}`} bold />
                 </View>
 
                 {/* Spraying Service Details */}
@@ -84,14 +90,14 @@ export default function SprayingServiceDetail({ navigation }) {
                             <Image source={calender} style={styles.cardImage} />
                             <Text style={styles.remarksTitle}>Schedule Date </Text>
                         </View>
-                        <Text>10-07-2025</Text>
+                        <Text>{data?.reschedule_date}</Text>
                     </View>
                     <View style={styles.cardItem}>
                         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
                             <Image source={timer} style={styles.cardImage} />
                             <Text style={styles.remarksTitle}>Preferred Time</Text>
                         </View>
-                        <Text>10:45 AM</Text>
+                        <Text>{data?.preferredTime}</Text>
                     </View>
                     <View style={styles.cardItem}>
                         <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
@@ -104,13 +110,9 @@ export default function SprayingServiceDetail({ navigation }) {
                 </View>
                 {/* farmer address */}
                 <Text style={styles.sectionTitle}>Farmer Address</Text>
-                <View style={styles.addressCard}>
-                    <Text >
-                        Plot no. 2-4-197/A, Cinema Road,Below {'\n'}
-                        Margadarsi Office, Adilabad, Begumpet {'\n'}
-                        Telangana, 504001
-                    </Text>
-                </View>
+
+                <AddressCard />
+
                 {/* service tracking */}
                 <Text style={styles.sectionTitle}>Order Tracking</Text>
 
@@ -123,7 +125,7 @@ export default function SprayingServiceDetail({ navigation }) {
                                     styles.iconCircle,
                                     step.completed ? styles.completedCircle : styles.pendingCircle
                                 ]}>
-                                    {step.completed && <Text style={styles.check}>✔</Text>}
+                                    {step.completed && <Image source={checkIcon} style={{ width: 10, height: 10, resizeMode: 'contain', tintColor: '#fff' }} />}
                                 </View>
                                 {index < steps.length - 1 && (
                                     <View
@@ -160,53 +162,33 @@ export default function SprayingServiceDetail({ navigation }) {
                     <View style={styles.otherDetailCard}>
                         <View style={styles.detailRow}>
                             <Text>Number of Farmer(s)</Text>
-                            <Text>2</Text>
+                            <Text>{data?.noOfFarmers}</Text>
                         </View>
                         <View style={styles.detailRow}>
                             <Text>Alternate Contact</Text>
-                            <Text style={styles.highlightText}>+91 9999912345</Text>
+                            <Text style={styles.highlightText}>+91 {data?.alternateContact}</Text>
                         </View>
 
                         < View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
 
                         <View style={styles.detailRow}>
                             <Text>Farm Accessible by four-wheeler</Text>
-                            <Text>Yes</Text>
+                            <Text>{data?.isFourWheeleAccessible ? "Yes" : "No"}</Text>
                         </View>
                         <View style={styles.detailRow}>
                             <Text>High-voltage lines on farmland</Text>
-                            <Text>No</Text>
+                            <Text>{data?.isHighVoltageLines ? "Yes" : "No"}</Text>
+
                         </View>
                     </View>
                 </View>
-
-                {/* store address */}
 
                 <Text style={styles.storeHeading}>Store Address</Text>
 
-                <View style={styles.StoreCard}>
-                    <View style={styles.storeCodeBox}>
-                        <Text style={styles.storeCodeLabel}><Image source={shop} style={{ height: 15, width: 15, tintColor: '#2E7D32' }} /> Store Code:</Text>
-                        <Text style={styles.storeCodeValue}> S0393</Text>
-                    </View>
-
-                    <View style={styles.addressBlock}>
-                        <Image source={location} style={{ height: 15, width: 15, tintColor: '#000', marginTop: 4 }} />
-                        <View>
-                            <Text style={styles.locationTitle}> Mana Gromor Centre A.kondapuram</Text>
-                            <Text style={styles.addressText}>
-                                Coromandel International Ltd,{'\n'}
-                                c/o Mana Gromor Center, Building No. 110/1,{'\n'}
-                                A.kondapuram, Putlur Mandal, Anantapur
-                            </Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.phoneBlock}>
-                        <Image source={phone} style={{ height: 10, width: 10, tintColor: '#000', marginTop: 4 }} />
-                        <Text style={styles.phoneText}>+91 8978780010</Text>
-                    </View>
+                <View style={{ marginTop: 10 }}>
+                    <AddressCard cardType="StoreType" />
                 </View>
+
             </ScrollView>
         </SafeAreaView>
     );

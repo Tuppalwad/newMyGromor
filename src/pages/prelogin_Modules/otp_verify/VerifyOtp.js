@@ -137,7 +137,7 @@ export default function VerifyOtp({ route }) {
                     HEToast(appLanguage?.lblAuthorization ?? 'Access denied');
                 }
             },
-            { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
+            { enableHighAccuracy: false, timeout: 20000, maximumAge: 10000 }
         );
     };
 
@@ -163,9 +163,7 @@ export default function VerifyOtp({ route }) {
     );
 
     const handleResend = () => {
-
         try {
-
             setLoading(true)
             let param = { mobile: mobileNumber };
             dispatch(operation.user.resendOTP(param))
@@ -311,7 +309,7 @@ export default function VerifyOtp({ route }) {
                 />
 
                 {/* Verify Button */}
-                <CustomButton title={appLanguage.submit ?? "Verify OTP"} onPress={handleSubmit} style={styles.verifyButton} />
+                <CustomButton title={appLanguage.submit ?? "Verify OTP"} onPress={handleSubmit} disabled={isLoading} style={styles.verifyButton} />
 
                 {/* Timer and Resend */}
                 <View style={styles.bottomRow}>

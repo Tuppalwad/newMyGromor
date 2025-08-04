@@ -56,7 +56,7 @@ const AddressCard = ({ style, title = '', data = {}, cardType = '' }) => {
                 {cardType == 'StoreType' ? (
 
                     <StoreCard
-                        storeCode="S0393"
+                        storeCode={StoreCodeDetails.storeCode}
                         storeName={StoreCodeDetails?.storeName}
                         addressLines={[
                             StoreCodeDetails?.address

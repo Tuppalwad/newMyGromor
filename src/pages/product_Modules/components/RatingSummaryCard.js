@@ -73,21 +73,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         marginBottom: 16,
     },
-    // circleWrapper: {
-    //     width: 100,
-    //     height: 100,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    // },
-
-    // baseCircle: {
-    //     position: 'absolute',
-    //     width: 100,
-    //     height: 100,
-    //     borderRadius: 50,
-    //     borderWidth: 8,
-    //     borderColor: '#D1D1D1',
-    // },
 
     progressCircle: {
         position: 'absolute',
@@ -153,13 +138,13 @@ const styles = StyleSheet.create({
     },
     rateButton: {
         borderWidth: 1,
-        borderColor: '#00A651',
+        borderColor: '#D6752D',
         paddingVertical: 10,
         borderRadius: 6,
         alignItems: 'center',
     },
     rateButtonText: {
-        color: '#00A651',
+        color: '#D6752D',
         fontWeight: '600',
         fontSize: 14,
     },

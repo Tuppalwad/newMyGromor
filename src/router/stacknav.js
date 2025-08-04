@@ -89,7 +89,7 @@ import ViewAllProduct from '../pages/product_modules/components/ViewAllProduct';
 // import ProductDetail from '../pages/product_Modules/product-details/ProductDetailContainer';
 import AgriVideo from '../pages/dashboard_modules/tabs/ad-video/AgriVideo';
 import MyCart from '../pages/product_modules/my-cart';
-import MyOrdersScreen from '../pages/product_modules/order/orderScreen';
+import MyOrdersScreen from '../pages/product_modules/order/component/orderScreen';
 import ProductCategories from '../pages/product_modules/product-category';
 import ProductDetails from '../pages/product_modules/product-details';
 import purchases from '../pages/product_modules/order/component/purchases';
@@ -107,6 +107,8 @@ import NewServiceRequestScreen from '../pages/service_modules/spraying-service/n
 import SuccessScreen from '../pages/product_modules/components/SuccessScreen';
 import WeatherScreen from '../pages/product_modules/weather/weatherScreen';
 import Next7DaysScreen from '../pages/product_modules/weather/next7days';
+import MyOrders from '../pages/product_modules/order';
+import MyBookingDetails from '../pages/product_modules/order/component/MyBooking';
 // import WeatherScreen from '../pages/product_modules/weather/wheatherScreen';
 // import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
@@ -156,11 +158,7 @@ const StackNav = ({ navigation }) => {
         component={LanguageScreen}
       />
 
-      {/* <Stack.Screen
-        options={{ headerShown: false }}
-        name={Screen.homes}
-        component={Home}
-      /> */}
+
 
       <Stack.Screen
         options={{ headerShown: false }}
@@ -199,7 +197,6 @@ const StackNav = ({ navigation }) => {
         component={AgriVideo}
       />
 
-
       <Stack.Screen
         name={Screen.myCart}
         options={{ headerShown: false }}
@@ -207,15 +204,21 @@ const StackNav = ({ navigation }) => {
       />
 
       <Stack.Screen
-        name={Screen.myOrderHistory}
+        name={Screen.MyOrder}
         options={{ headerShown: false }}
-        component={MyOrdersScreen}
+        component={MyOrders}
       />
       <Stack.Screen
-        name={Screen.Purchase}
+        name={Screen.PurchaseDetail}
         options={{ headerShown: false }}
         component={PurchaseDetail}
       />
+      <Stack.Screen
+        name={Screen.BookingDetails}
+        options={{ headerShown: false }}
+        component={MyBookingDetails}
+      />
+
       <Stack.Screen
         name={Screen.MyBooking}
         options={{ headerShown: false }}

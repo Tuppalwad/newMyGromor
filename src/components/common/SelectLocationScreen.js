@@ -5,47 +5,65 @@ import {
   TouchableOpacity,
   StyleSheet,
   PermissionsAndroid,
-  Platform
+  Platform,
+  Image,
+  SafeAreaView,
+  Alert,
 } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import Geolocation from '@react-native-community/geolocation';
 
-const SelectLocationScreen = () => {
-  const [location, setLocation] = useState({
-    latitude: 19.18,
-    longitude: 78.68,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  });
+import LocationIcon from '../../assets/images/common/locationGreen.png';
+import locationPin from '../../assets/images/common/locationPin.png';
+import { HEToast } from '../toast';
+import CustomButton from './CustomButton';
+
+const SelectLocationScreen = ({ navigation }) => {
+  const [location, setLocation] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     requestLocationPermission();
   }, []);
 
   const requestLocationPermission = async () => {
-    if (Platform.OS === 'android') {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    try {
+      if (Platform.OS === 'android') {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          getCurrentLocation();
+        } else {
+          Alert.alert('Permission Denied', 'Location permission is required.');
+          setLoading(false);
+        }
+      } else {
         getCurrentLocation();
       }
-    } else {
-      getCurrentLocation();
+    } catch (err) {
+      console.warn(err);
+      setLoading(false);
     }
   };
 
   const getCurrentLocation = () => {
     Geolocation.getCurrentPosition(
       (position) => {
+        const { latitude, longitude } = position.coords;
         setLocation({
-          ...location,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
+          latitude,
+          longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
         });
+        setLoading(false);
       },
       (error) => {
         console.warn(error.message);
+        // Alert.alert('Error', 'Could not fetch location.');
+        HEToast("Could not fetch location.", "error")
+        setLoading(false);
       },
       { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
     );
@@ -53,77 +71,172 @@ const SelectLocationScreen = () => {
 
   const onMapPress = (e) => {
     const coords = e.nativeEvent.coordinate;
-    setLocation({
-      ...location,
+    setLocation((prev) => ({
+      ...prev,
       latitude: coords.latitude,
       longitude: coords.longitude,
-    });
+    }));
+  };
+
+  const onMarkerDragEnd = (e) => {
+    const coords = e.nativeEvent.coordinate;
+    setLocation((prev) => ({
+      ...prev,
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+    }));
   };
 
   const handleSave = () => {
-    console.log('Selected LatLong:', location.latitude, location.longitude);
-    // You can pass this data to parent or store in global state
+    if (location) {
+      console.log('Selected LatLong:', location.latitude, location.longitude);
+    }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>📍 Select Location</Text>
+    <SafeAreaView style={styles.safeArea}>
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <Image source={LocationIcon} style={styles.headerIcon} />
+          <Text style={styles.title}>Select Location</Text>
+        </View>
+        <TouchableOpacity style={styles.closeButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={{ color: '#fff', fontWeight: 'bold' }}>X</Text>
+        </TouchableOpacity>
+      </View>
 
-      <MapView
-        style={styles.map}
-        region={location}
-        onPress={onMapPress}
-      >
-        <Marker coordinate={location} />
-      </MapView>
+      {/* Map */}
+      <View style={styles.mapContainer}>
+        {!loading && location ? (
+          <MapView
+            style={styles.map}
+            region={location}
+            onPress={onMapPress}
+            provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
+            showsUserLocation
+            showsMyLocationButton
+            loadingEnabled
+          >
+            <Marker
+              coordinate={location}
+              draggable
+              onDragEnd={onMarkerDragEnd}
+            />
+          </MapView>
+        ) : (
+          <View style={styles.loaderContainer}>
+            <Text>Loading map...</Text>
+          </View>
+        )}
+      </View>
 
-      <TouchableOpacity style={styles.locationButton} onPress={getCurrentLocation}>
-        <Text style={styles.buttonText}>📍 Use my current location</Text>
-      </TouchableOpacity>
+      {/* Bottom Buttons */}
+      <View style={styles.bottomButtons}>
+        <TouchableOpacity style={styles.locationButton} onPress={getCurrentLocation}>
+          <Image source={locationPin} style={styles.buttonIcon} />
+          <Text style={styles.buttonText}>Use my current location</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.buttonText}>Save</Text>
-      </TouchableOpacity>
-    </View>
+        <CustomButton
+          title={"Save"}
+          onPress={() => { }}
+          show={false}
+          disabled={false}
+        />
+
+      </View>
+    </SafeAreaView>
   );
 };
 
 export default SelectLocationScreen;
 
+
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    marginTop: 34
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    marginRight: 6,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 10,
-    textAlign: 'center',
+  },
+  closeButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#01AD41',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mapContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+    marginTop: 10,
   },
   map: {
-    width: '100%',
-    height: '65%',
-    borderRadius: 10,
+    flex: 1,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bottomButtons: {
+
+    position: 'absolute',
+    bottom: 20,
+    left: 16,
+    right: 16,
   },
   locationButton: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#e6f9ed',
     padding: 12,
     borderRadius: 10,
-    marginTop: 15,
     borderColor: '#2ecc71',
     borderWidth: 1,
+    marginBottom: 10,
   },
   saveButton: {
     backgroundColor: '#2ecc71',
     padding: 14,
     borderRadius: 10,
-    marginTop: 10,
+    alignItems: 'center',
   },
   buttonText: {
-    textAlign: 'center',
-    color: '#000',
     fontWeight: '600',
+    color: '#000',
+  },
+  buttonIcon: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+    marginRight: 10,
   },
 });

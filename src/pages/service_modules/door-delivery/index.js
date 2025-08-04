@@ -8,10 +8,15 @@ import checkIcon from '../../../assets/images/common/checkIcon.png'
 import AddressCard from '../../../components/common/AddressCard';
 import DeliveryAddress from '../../product_modules/components/AddressInputs';
 import LinearGradient from 'react-native-linear-gradient';
+import Webview_popup from '../../../components/common/WebViewPopup';
+import { UserManager } from '../../../storage';
+import constants from '../../../config/constants';
 
 const DoorDeliveryComponent = ({ navigation }) => {
     const [sameAddress, setSameAddress] = useState(true);
-
+    const appLanguage = UserManager?.getAppMultiLanguage;
+    const [allowTerm, setAllowTerm] = useState(false)
+    const [showTerms_Conditions, setShowTerms_Conditions] = useState(false);
     const [address, setAddress] = useState({
         location: '',
         address1: '',
@@ -24,13 +29,13 @@ const DoorDeliveryComponent = ({ navigation }) => {
     });
     return (
 
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={{ flex: 1 }}>
 
             {/* Header */}
-            <View >
+            <View style={{ marginTop: 30, }}>
                 <CustomHeader
                     type="door delivery"
-                    topTitle="door delivery"
+                    topTitle="Door Delivery"
                     showLocation={true}
                     subtitle={true}
                     onBackPress={() => navigation.goBack()}
@@ -38,16 +43,11 @@ const DoorDeliveryComponent = ({ navigation }) => {
                     onNotificationPress={() => console.log('Notification pressed')}
                 />
             </View>
-            <ScrollView style={{ paddingHorizontal: 16 }} >
-                {/* Billing Address */}
+
+            <ScrollView style={styles.container} >
+
                 <Text style={styles.sectionTitle}>Billing Address</Text>
-                <View style={styles.card}>
-                    <Text style={styles.boldText}>Siddharth Chhajer</Text>
-                    <Text style={styles.lightText}>
-                        Plot no. 2-4-197/A, Cinema Road, Below Margadarsi Office, Adilabad, Begumpet Telangana, 504001
-                    </Text>
-                    <Text style={styles.lightText}>+91 9999912345</Text>
-                </View>
+                <AddressCard />
 
                 {/* Delivery Address */}
                 <Text style={styles.sectionTitle}>Delivery Address</Text>
@@ -81,9 +81,30 @@ const DoorDeliveryComponent = ({ navigation }) => {
                     <Text style={styles.totalAmount}>₹50</Text>
                 </View>
 
-                <Text style={styles.footerText}>
-                    By placing the order, you agree to our <Text style={{ color: '#1AC46D' }}>Terms and Conditions</Text>
-                </Text>
+                <View style={{
+                    flexDirection: 'row', alignItems: 'center',
+                    paddingBottom: 100, paddingVertical: 10, justifyContent: 'center'
+                }}>
+                    <TouchableOpacity
+                        onPress={() => setAllowTerm(!allowTerm)}
+                        style={[styles.customCheckbox, allowTerm && styles.customCheckboxChecked]}>
+                        <Image
+                            source={checkIcon}
+                            style={{ width: 15, height: 15, tintColor: '#fff' }}
+                            resizeMode='contain'
+                        />
+                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={styles.termsText}>  By placing the order, you agree to our{' '}  </Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                setShowTerms_Conditions(true);
+                            }}
+                        >
+                            <Text style={styles.termsLink}>Terms and Conditions</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
 
             </ScrollView>
             <View style={styles.bottomContainer}>
@@ -101,6 +122,15 @@ const DoorDeliveryComponent = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <Webview_popup
+                isPopupHidden={false}
+                popupTitle={appLanguage?.terms ?? 'Terms and Conditions'}
+                popupVisible={showTerms_Conditions}
+                onPressClose={() => {
+                    setShowTerms_Conditions(false);
+                }}
+                WebViewURL={constants.termsAndCondition}
+            />
         </SafeAreaView>
     );
 };
@@ -109,7 +139,7 @@ export default DoorDeliveryComponent;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // padding: 12,
+        paddingHorizontal: 16,
         backgroundColor: '#f3f2f2ff'
     },
 
@@ -117,7 +147,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 12
+        // marginBottom: 12
     },
     headerText: {
         fontSize: 16,
@@ -249,19 +279,6 @@ const styles = StyleSheet.create({
         fontWeight: 600,
         marginBottom: 30,
         paddingBottom: 50
-    },
-    bottomContainer: {
-        // position: 'absolute',
-        // bottom: 0,
-        // left: 0,
-        // right: 0,
-        // backgroundColor: '#fff',
-        // paddingVertical: 12,
-        // paddingHorizontal: 16,
-        // borderTopWidth: 1,
-        // borderTopColor: '#fff',
-        // justifyContent: 'center',
-        // alignItems: 'center'
     },
 
     footer: {

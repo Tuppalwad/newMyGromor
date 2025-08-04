@@ -491,6 +491,9 @@ const ProductDetails = ({ navigation, route }) => {
   };
 
   const onPressMinus = () => {
+    if (quantity == 1) {
+      return
+    }
     setQuantity(quantity - 1);
     setIsAddedToCart(false);
   };
@@ -600,6 +603,7 @@ const ProductDetails = ({ navigation, route }) => {
         onPressAdd={onPressAdd}
         onPressMinus={onPressMinus}
         quantity={quantity}
+        setQuantity={setQuantity}
         onPressViewAllReview={() => {
           navigation.navigate(Screen.viewAllReview, { data: productData });
         }}

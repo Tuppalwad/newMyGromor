@@ -25,6 +25,10 @@ import checkIcon from '../../../assets/images/common/checkIcon.png'
 import { defConfigImageURL } from "../../dashboard_modules/tabs/home/index.service";
 import { useSelector } from 'react-redux';
 import PriceDetails from './PriceDetails';
+import Webview_popup from '../../../components/common/WebViewPopup';
+import constants from '../../../config/constants';
+import { HEToast } from '../../../components/toast';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
 
 
 const MyCartContainer = ({
@@ -68,21 +72,19 @@ const MyCartContainer = ({
     setCheckBillAdd,
     checkBillingAddress,
     enablePayment,
-    showDeliveryMethodErrro
+    showDeliveryMethodErrro,
+    setAllowTerm,
+    allowTerm,
+    CodVisible,
+    setCODVisible,
+    setShowDeliveryMethodErrro
 }) => {
-    // const [sameAddress, setSameAddress] = useState(true);
     const navigation = useNavigation();
-    const [quantity, setQuantity] = useState(1)
     let Card_ArrayData = activeTab.id == 2 ? cartFertilizersData : cartData;
 
     const count_item = Card_ArrayData.length;
+    const [showTerms_Conditions, setShowTerms_Conditions] = useState(false);
 
-    const handleIncrement = () => setQuantity(quantity + 1);
-
-    const handleDecrement = () => {
-        if (quantity > 1) setQuantity(quantity - 1);
-
-    };
     const BannerData = useSelector(state => state.product.bannerData);
 
     const renderItem = ({ item, index }) => (
@@ -320,10 +322,9 @@ const MyCartContainer = ({
 
                                 <TouchableOpacity
                                     style={{ ...styles.row, marginBottom: 0, backgroundColor: '#f3f2f2ff' }}
-                                    onPress={checkBillingAddress}
+                                    onPress={() => { checkBillingAddress(), setCheckBillAdd(!checkBillAdd) }}
                                 >
-                                    <View style={[styles.customCheckbox, !checkBillAdd && styles.customCheckboxChecked]}>
-                                        {/* {checkBillAdd && <Text style={styles.checkmark}>✔</Text>} */}
+                                    <View style={[styles.customCheckbox, checkBillAdd && styles.customCheckboxChecked]}>
                                         <Image
                                             source={checkIcon}
                                             style={{ width: 15, height: 15, tintColor: '#fff' }}
@@ -333,7 +334,7 @@ const MyCartContainer = ({
                                     <Text style={styles.checkboxLabel}>Delivery address same as billing address</Text>
                                 </TouchableOpacity>
 
-                                {checkBillAdd && <DeliveryAddress address={address} setAddress={setAddress} placesRef={placesRef} />}
+                                {!checkBillAdd && <DeliveryAddress address={address} setAddress={setAddress} placesRef={placesRef} />}
 
                                 <View style={{ marginTop: 10 }}>
                                     <AddressCard cardType="StoreType" />
@@ -343,10 +344,31 @@ const MyCartContainer = ({
                                 <Text style={styles.heading}>Price Details</Text>
                                 <PriceDetails priceData={priceData} styles={styles} />
 
-                                <Text style={styles.termsText}>
-                                    By placing the order, you agree to our{' '}
-                                    <Text style={styles.termsLink}>Terms and Conditions</Text>
-                                </Text>
+
+                                <View style={{
+                                    flexDirection: 'row', alignItems: 'center',
+                                    paddingBottom: 100, paddingVertical: 10, justifyContent: 'center'
+                                }}>
+                                    <TouchableOpacity
+                                        onPress={() => setAllowTerm(!allowTerm)}
+                                        style={[styles.customCheckbox, allowTerm && styles.customCheckboxChecked]}>
+                                        <Image
+                                            source={checkIcon}
+                                            style={{ width: 15, height: 15, tintColor: '#fff' }}
+                                            resizeMode='contain'
+                                        />
+                                    </TouchableOpacity>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        <Text style={styles.termsText}>  By placing the order, you agree to our{' '}  </Text>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                setShowTerms_Conditions(true);
+                                            }}
+                                        >
+                                            <Text style={styles.termsLink}>Terms and Conditions</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
                             </View>
                         </View>
 
@@ -382,34 +404,119 @@ const MyCartContainer = ({
                 />
             </CustomPopupModal>
 
+
+            {/* <CustomPopupModal
+                visible={CodVisible ?? false}
+                icon={Icon.warning}
+                isRed={true}
+                title={appLanguage?.lblConfirmation ?? 'Confirmation!'}
+                buttonText={appLanguage?.lblProceed ?? 'Proceed'}
+                button2Text={appLanguage?.cancel ?? 'Cancel'}
+                isHiddenCrossIcon={true}
+                onPressDone={() => onPressCheckOut('COD')}
+                onPressClose={() => {
+                    setCODVisible(false);
+                }}
+                onPressButton2={() => {
+                    setCODVisible(false);
+                }}>
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <CTText
+                        text={
+                            appLanguage?.lblContinuethispayment ??
+                            'Are you sure you want to continue this payment?'
+                        }
+                        medium
+                        style={{ textAlign: 'center' }}
+                    />
+                </View>
+            </CustomPopupModal> */}
+
+            <ConfirmationModal
+                visible={CodVisible ?? false}
+                title="Confirm"
+                subtitle="Are you sure you want to continue this payment?"
+                onCancel={() => setCODVisible(false)}
+                onConfirm={() =>{ onPressCheckOut('COD')}}
+                position="center"
+            />
+
+
+            <Webview_popup
+                isPopupHidden={false}
+                popupTitle={appLanguage?.terms ?? 'Terms and Conditions'}
+                popupVisible={showTerms_Conditions}
+                onPressClose={() => {
+                    setShowTerms_Conditions(false);
+                }}
+                WebViewURL={constants.termsAndCondition}
+            />
+
             <View style={styles.bottomContainer}>
                 <View style={styles.footer}>
-                    <TouchableOpacity style={{
-                        ...styles.codButton,
-                        borderColor: enablePayment ? '#FF6F00' : palette.disabled_Button,
+                    {activeTab.id === 1 ? <>
+                        <TouchableOpacity style={{
+                            ...styles.codButton,
+                            borderColor: enablePayment ? '#FF6F00' : palette.disabled_Button,
 
-                    }}
-                        disabled={!enablePayment}
-                    >
-                        <Text style={{
-                            ...styles.codText,
-                            color: enablePayment ? '#FF6F00' : palette.disabled_Button,
-
-                        }}>Cash on Delivery</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.payButtonWrapper}
-                        disabled={!enablePayment}
-
-                    >
-                        <LinearGradient
-                            colors={[enablePayment ? '#1E8153' : palette.disabled_Button, enablePayment ? '#4EA618' : palette.disabled_Button]}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={styles.payButton}
+                        }}
+                            disabled={!enablePayment}
                         >
-                            <Text style={styles.payText}>Pay ₹{priceData.totalCost}</Text>
-                        </LinearGradient>
-                    </TouchableOpacity>
+                            <Text style={{
+                                ...styles.codText,
+                                color: enablePayment ? '#FF6F00' : palette.disabled_Button,
+
+                            }}>Cash on Delivery</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.payButtonWrapper}
+                            disabled={!enablePayment}
+                            onPress={() => {
+                                if (!allowTerm) {
+                                    HEToast("Please allow Term and conditions")
+                                    return
+                                }
+
+                                if (deliveryType == "") {
+                                    setShowDeliveryMethodErrro(true)
+                                    return
+                                } else {
+                                    setCODVisible(true)
+                                }
+                            }}
+                        >
+                            <LinearGradient
+                                colors={[enablePayment ? '#1E8153' : palette.disabled_Button, enablePayment ? '#4EA618' : palette.disabled_Button]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                                style={styles.payButton}
+                            >
+                                <Text style={styles.payText}>Pay ₹{priceData.totalCost}</Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    </>
+                        : <TouchableOpacity style={styles.payButtonBooking}
+                            disabled={!enablePayment}
+                            onPress={() => {
+
+                                if (deliveryType == "") {
+                                    setShowDeliveryMethodErrro(true)
+                                    return
+                                } else {
+                                    onPressCheckOut('Booking')
+                                }
+                            }}
+
+                        >
+                            <LinearGradient
+                                colors={[enablePayment ? '#1E8153' : palette.disabled_Button, enablePayment ? '#4EA618' : palette.disabled_Button]}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                                style={styles.payButton}
+                            >
+                                <Text style={styles.payText}>Book Now </Text>
+                            </LinearGradient>
+                        </TouchableOpacity>
+                    }
                 </View>
             </View>
         </>
@@ -599,12 +706,6 @@ const styles = StyleSheet.create({
         color: '#000',
     },
 
-    // productImage: {
-    //     width: '100%',
-    //     height: 120,
-    //     resizeMode: 'contain',
-    //     marginBottom: 8,
-    // },
     card: {
         backgroundColor: '#fff',
         borderRadius: 6,
@@ -763,11 +864,11 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     termsText: {
+        alignItems: 'center',
         fontSize: 12,
-        paddingVertical: 20,
+        // paddingVertical: 20,
         textAlign: 'center',
         color: '#333',
-        paddingBottom: 100
     },
     termsLink: {
         color: 'green',
@@ -806,6 +907,9 @@ const styles = StyleSheet.create({
 
     payButtonWrapper: {
         width: '48%',
+    },
+    payButtonBooking: {
+        width: '98%',
     },
 
     payButton: {

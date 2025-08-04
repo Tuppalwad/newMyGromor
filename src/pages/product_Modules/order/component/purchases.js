@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
 import parcelIcon from '../../../../assets/images/common/parcel.png'; // Assuming you have a parcel icon
 import product1 from '../../../../assets/images/shop/product1.png'; // Assuming you have a product image
 import shop from '../../../../assets/images/common/shop.png';
@@ -7,43 +7,231 @@ import location from '../../../../assets/images/common/location.png';
 import phone from '../../../../assets/images/common/phone.png'
 import progress from '../../../../assets/images/splash/timer.png'
 import CustomHeader from '../../../../components/common/CustomHeader';
+import checkIcon from '../../../../assets/images/common/checkIcon.png'
+import { UserManager } from '../../../../storage';
+import { useOperation } from '../../../../redux/operation';
+import { useDispatch, useSelector } from 'react-redux';
+import { createLoadingSelector } from '../../../../redux/loading-reducer';
+import { useIsFocused } from '@react-navigation/native';
+import { OrderType } from '../../../../redux/order/type';
+import { HEToast } from '../../../../components/toast';
+import moment from 'moment';
+import { defConfigImageURL } from '../../../dashboard_modules/tabs/home/index.service';
+import AddressCard from '../../../../components/common/AddressCard';
+import Indicator from '../../../../components/common/Indicator';
 
-export default function PurchaseDetail({ navigation }) {
+export default function PurchaseDetail({ navigation, route }) {
 
-    const steps = [
-        {
-            title: 'Order Placed',
-            time: '3:46 PM, Wednesday, 06-05-2025',
-            completed: true,
-        },
-        {
-            title: 'Approved',
-            time: '4:00 PM, Thursday, 07-05-2025',
-            completed: true,
-        },
-        {
-            title: 'Agent Assigned',
-            time: '10:30 AM, Saturday, 09-05-2025',
-            completed: true,
-        },
-        {
-            title: 'Agent Pickup',
-            completed: false,
-        },
-        {
-            title: 'In Transit',
-            completed: false,
-        },
-        {
-            title: 'Delivered',
-            completed: false,
-        },
-    ];
+    const appLanguage = UserManager?.getAppMultiLanguage;
+    const operation = useOperation();
+    const dispatch = useDispatch();
+    const loadingSelector = createLoadingSelector([
+        OrderType.deliveryStatus,
+        OrderType.orderShipmentDetails,
+        OrderType.downloadInvoiceMethod,
+        OrderType.orderTrackingDetails,
+        OrderType.downloadinvoiceDetails,
+    ]);
+    const isLoading = useSelector(state => loadingSelector(state));
+    const data = route?.params?.data;
+    const isFocussed = useIsFocused();
+    const [statusData, setStatusData] = useState([]);
+    const [trackingArray, setTrackingArray] = useState(false);
+    const [orderData, setOrderData] = useState({});
+    const [newDeliveryStatus, setnewDeliveryStatus] = useState(true);
+    const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
+    const BannerData = useSelector(state => state.product.bannerData);
+
+    const [invoiceData, setinvoiceData] = useState({
+        visible: false,
+        invoice_URL: '',
+    });
+    const farmerLanguage = useSelector(state => state.farmer.FarmerLanguageID);
+
+    useEffect(() => {
+        if (isFocussed) {
+            let params = {
+                magicId: data?.magicOrderId,
+                transactionId: data?.transactionId,
+                costingId: data?.costingId,
+                farmerId: data?.farmerId,
+                farmerLanguage: farmerLanguage,
+                orderStatus: data?.orderStatus,
+            };
+            getDeliveryDetails(params);
+        }
+    }, [data, isFocussed]);
+
+    const getDeliveryDetails = param => {
+        if (
+            param?.orderStatus === 'Inprogress' ||
+            param?.orderStatus === 'PaymentFailed' ||
+            param?.orderStatus === 'PaymentReceived' ||
+            param?.orderStatus === 'Notrack'
+        ) {
+            dispatch(operation.order.orderDeliveryDetails(param))
+                .then(res => {
+                    setOrderData(res.data ?? {});
+                    setTrackingArray(true);
+                })
+                .catch(err => {
+                    dispatch(
+                        operation.user.getErrorHandling(err, 'orderDeliveryDetails'),
+                    );
+                });
+        } else {
+            dispatch(operation.order.orderShipmentDetails(param))
+                .then(res => {
+                    setOrderData(res.data ?? {});
+                    getDeliveryStatus(param);
+                })
+                .catch(err => {
+                    setnewDeliveryStatus(false);
+                    dispatch(
+                        operation.user.getErrorHandling(err, 'orderShipmentDetails'),
+                    );
+                });
+        }
+    };
+
+    const getDeliveryStatus = param => {
+        dispatch(operation.order.orderTrackingDetails(param))
+            .then(res => {
+                let trackingList = [];
+                res?.map((item, index) => {
+                    item.isDone = true;
+                    trackingList.push(item);
+                });
+                setStatusData(trackingList ?? []);
+                setnewDeliveryStatus(true);
+            })
+            .catch(err => {
+                // dispatch(operation.user.getErrorHandling(err, 'orderTrackingDetails'));
+            });
+    };
+
+    useEffect(() => {
+        if (!newDeliveryStatus) {
+            let params = {
+                magicId: data?.magicOrderId,
+                transactionId: data?.transactionId,
+                costingId: data?.costingId,
+                farmerId: data?.farmerId,
+            };
+            dispatch(operation.order.deliveryStatus(params))
+                .then(res => {
+                    let trackingList = [];
+                    res?.map((item, index) => {
+                        item.isDone = true;
+                        trackingList.push(item);
+                    });
+                    setStatusData(trackingList ?? []);
+                    setOrderData(route?.params?.data);
+                })
+                .catch(err => {
+                    setTrackingArray(true);
+                    dispatch(operation.user.getErrorHandling(err, 'deliveryStatus'));
+                });
+        }
+    }, [data, newDeliveryStatus]);
+
+    const onPressInvoice = param => {
+        try {
+            if (param) {
+                let transactionId = data?.transactionId;
+                dispatch(operation.order.downloadinvoiceDetails(transactionId))
+                    .then(res => {
+                        try {
+                            if (res) {
+                                const invoice = { ...invoiceData };
+                                invoice.visible = param;
+                                invoice.invoice_URL = res ?? '';
+                                setinvoiceData(invoice);
+                                HEToast(
+                                    (appLanguage?.lblInvoiceGeneratedfor ?? 'Invoice Generated for ') +
+                                    transactionId,
+                                    'success',
+                                );
+                            } else {
+                                HEToast(appLanguage?.something_went_wrong_try ?? 'Something went wrong', 'error');
+                            }
+                        } catch (innerError) {
+                            console.error('Error while processing response:', innerError);
+                            HEToast(appLanguage?.something_went_wrong_try ?? 'Something went wrong', 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('API Error:', err);
+                        // HEToast(
+                        //   appLanguage?.lblErrorDownloadingInvoice ?? 'Error downloading invoice', 
+                        //   'error'
+                        // );
+                        dispatch(
+                            operation.user.getErrorHandling(err, 'downloadinvoiceDetails'),
+                        );
+                    });
+            } else {
+                const invoice = { ...invoiceData };
+                invoice.visible = param;
+                setinvoiceData(invoice);
+            }
+        } catch (error) {
+            console.error('Unexpected error:', error);
+            HEToast(appLanguage?.something_went_wrong_try ?? 'Something went wrong', 'error');
+        }
+    };
+
+
+    const onPressBuy = () => {
+        const item = {
+            ...data,
+            id: data?.productId,
+            categoryId: data?.categoryId,
+        };
+        navigation.navigate(Screen.productDetails, {
+            data: item,
+            storeCode: farmerAddress?.storeCode,
+        });
+    };
+
+
+    const renderItem = ({ item }) => {
+        return (
+            <View style={styles.itemCard}>
+                <Image
+                    source={{
+                        uri: defConfigImageURL(
+                            BannerData.imageBaseURL,
+                            item?.productImage,
+                        ),
+                    }}
+                    style={styles.productImage}
+                />
+                <View>
+                    <View style={styles.itemInfo}>
+                        <Text style={styles.itemTitle}>{item?.itemName}</Text>
+                        <Text style={styles.itemWeight}>{item?.size}</Text>
+                    </View>
+
+                    <View style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginLeft: 10,
+                        gap: 10
+                    }}>
+                        <Text style={styles.itemQty}>Qty. x{item.quantity}</Text>
+                        <Text style={styles.itemPrice}>₹{item.actualPrice * item.quantity}</Text>
+                    </View>
+                </View>
+            </View>
+        );
+    };
+
 
     return (
-        <View style={{ flex: 1, marginTop: 30 }}>
+        <SafeAreaView style={{ flex: 1, marginTop: 30 }}>
             <View>
-
                 <CustomHeader
                     type="Purchase Details"
                     topTitle="Purchase Details"
@@ -58,85 +246,65 @@ export default function PurchaseDetail({ navigation }) {
                 <View style={styles.cardCentered}>
                     <Image source={parcelIcon} style={styles.parcelIcon} />
                     <Text style={styles.orderLabel}>Order No.</Text>
-                    <Text style={styles.orderId}>PP250506844158</Text>
+                    <Text style={styles.orderId}>{orderData?.soNumber}</Text>
                     <View style={styles.statusChip}>
                         <Image source={progress} style={{ height: 12, width: 12, marginTop: 4, tintColor: '#5E5B00' }} />
-                        <Text style={styles.statusText}>In-progress</Text>
+                        <Text style={styles.statusText}>{orderData?.status}</Text>
                     </View>
                 </View>
 
                 {/* Order Details */}
                 <Text style={styles.sectionTitle}>Order Details</Text>
                 <View style={styles.detailCard}>
-                    <DetailRow label="Order Date" value="06-05-2025" />
-                    <DetailRow label="Store Code" value="S0393" hasBorder />
-                    <DetailRow label="Order Type" value="Paid Online" />
-                    <DetailRow label="Sub Total" value="₹2,990" />
-                    <DetailRow label="Delivery Charges" value="₹50" />
-                    <DetailRow label="Total Amount" value="₹3,049" isBold />
+                    <DetailRow label="Order Date" value={moment(orderData?.orderDate).format("DD-MM-YYYY")} />
+                    <DetailRow label="Store Code" value={orderData?.storeCode} hasBorder />
+                    <DetailRow label="Order Type" value={orderData?.paymentType == 1 ? "Paid Offline" : "Paid Online"} />
+                    <DetailRow label="Sub Total" value={`₹ ${orderData.totalAmount}`} />
+                    <DetailRow label="Delivery Charges" value={`₹ ${orderData.deliveryCharge}`} />
+                    <DetailRow label="Total Amount" value={`₹ ${orderData.totalAmount}`} isBold />
                 </View>
 
                 {/* Item Details */}
                 <Text style={styles.sectionTitle}>Item Details</Text>
                 <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>
-
                     <Text style={styles.itemCount}>Total Quantity </Text>
-                    <Text style={styles.boldText}>2 Items</Text>
+                    <Text style={styles.boldText}>{(orderData?.orderItems || orderData?.shipmentItems || [])?.length} Items</Text>
                 </View>
-                <View style={styles.itemCard}>
-                    <Image
-                        source={product1}
-                        style={styles.productImage}
-                    />
-                    <View>
-                        <View style={styles.itemInfo}>
-                            <Text style={styles.itemTitle}>Gromor nutri drip 12-61-0</Text>
-                            <Text style={styles.itemWeight}>25 kg</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginLeft: 10, gap: 10 }}>
-                            <Text style={styles.itemQty}>Qty. x1</Text>
-                            <Text style={styles.itemPrice}>₹249</Text>
-                        </View>
-                    </View>
-                </View>
-                <View style={styles.itemCard}>
-                    <Image
-                        source={product1}
-                        style={styles.productImage}
-                    />
-                    <View>
-                        <View style={styles.itemInfo}>
-                            <Text style={styles.itemTitle}>Gromor nutri drip 12-61-0</Text>
-                            <Text style={styles.itemWeight}>25 kg</Text>
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginLeft: 10, gap: 10 }}>
-                            <Text style={styles.itemQty}>Qty. x1</Text>
-                            <Text style={styles.itemPrice}>₹249</Text>
-                        </View>
-                    </View>
-                </View>
+
+                <FlatList
+                    data={(orderData?.orderItems || orderData?.shipmentItems) ?? []}
+                    renderItem={renderItem}
+                />
 
                 {/* order delivary status */}
 
                 <Text style={styles.orderHeading}>Order Tracking</Text>
                 <View style={styles.timelineContainer}>
-                    {steps.map((step, index) => (
+                    {(statusData || [])?.map((step, index) => (
                         <View key={index} style={styles.stepRow}>
                             {/* Icon + Line */}
                             <View style={styles.iconColumn}>
-                                <View style={[styles.iconCircle, step.completed ? styles.completed : styles.pending]}>
-                                    {step.completed && <Text style={styles.check}>✔</Text>}
+                                <View style={[styles.iconCircle, step.isDone ? styles.completed : styles.pending]}>
+                                    {step.isDone && <Image
+                                        source={checkIcon}
+                                        style={{ width: 10, height: 10, fontWeight: 600, resizeMode: 'contain', tintColor: '#fff' }}
+                                    />
+                                    }
                                 </View>
-                                {index < steps.length - 1 && <View style={styles.verticalLine} />}
+                                {index < statusData?.length - 1 && <View style={styles.verticalLine} />}
                             </View>
 
                             {/* Content */}
                             <View style={styles.textColumn}>
                                 <Text style={[styles.stepTitle, step.completed && styles.completedText]}>
-                                    {step.title}
+                                    {step?.status.toLowerCase()
+                                        .split('_')
+                                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                        .join(' ')
+                                    }
                                 </Text>
-                                {step.time && (
-                                    <Text style={styles.timeText}>{step.time}</Text>
+                                {step.createdOn && (
+                                    <Text style={styles.timeText}>{moment(step?.createdOn).format('h:mm A, dddd, DD-MM-YYYY')}</Text>
                                 )}
                             </View>
                         </View>
@@ -145,47 +313,24 @@ export default function PurchaseDetail({ navigation }) {
 
                 {/* Billing Address */}
                 <Text style={styles.sectionTitle}>Billing Address</Text>
-                <View style={styles.card}>
-                    <Text style={styles.name}>Siddharth Chhajer</Text>
-                    <Text style={styles.address}>
-                        Plot no. 2-4-197/A, Cinema Road, Below Margadarsi Office, Adilabad, Begumpet{'\n'}
-                        Telangana, 504001
-                    </Text>
-                    <Text style={styles.phone}>+91 9999912345</Text>
-                </View>
+
+                <AddressCard />
 
                 {/* store address */}
                 <Text style={styles.storeHeading}>Store Address</Text>
 
-                <View style={styles.card}>
-                    <View style={styles.storeCodeBox}>
-                        <Text style={styles.storeCodeLabel}><Image source={shop} style={{ height: 15, width: 15, tintColor: '#2E7D32' }} /> Store Code:</Text>
-                        <Text style={styles.storeCodeValue}> S0393</Text>
-                    </View>
 
-                    <View style={styles.addressBlock}>
-                        <Image source={location} style={{ height: 15, width: 15, tintColor: '#000', marginTop: 4 }} />
-                        <View>
-                            <Text style={styles.locationTitle}> Mana Gromor Centre A.kondapuram</Text>
-                            <Text style={styles.addressText}>
-                                Coromandel International Ltd,{'\n'}
-                                c/o Mana Gromor Center, Building No. 110/1,{'\n'}
-                                A.kondapuram, Putlur Mandal, Anantapur
-                            </Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.phoneBlock}>
-                        <Image source={phone} style={{ height: 10, width: 10, tintColor: '#000', marginTop: 4 }} />
-                        <Text style={styles.phoneText}>+91 8978780010</Text>
-                    </View>
+                <View style={{ marginTop: 10 }}>
+                    <AddressCard cardType="StoreType" />
                 </View>
+
                 {/* download button */}
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>🧾  Download Invoice</Text>
+                <TouchableOpacity style={styles.button} onPress={() => onPressInvoice(true)}>
+                    <Text style={styles.buttonText}>🧾 Download Invoice</Text>
                 </TouchableOpacity>
             </ScrollView>
-        </View>
+            <Indicator Indicator={!isLoading} />
+        </SafeAreaView>
     );
 }
 
@@ -333,7 +478,7 @@ const styles = StyleSheet.create({
     stepRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        marginBottom: 20,
+        marginBottom: 5,
         position: 'relative',
     },
     iconColumn: {
@@ -360,10 +505,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     verticalLine: {
-        width: 2,
-        flex: 1,
-        backgroundColor: '#ccc',
+        width: 1.5,
+        // flex: 1,
+        backgroundColor: '#01AD41',
         marginTop: 2,
+        height:40
+
     },
     textColumn: {
         marginLeft: 12,
@@ -472,7 +619,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#219653', // green gradient base color (if no gradient)
-        marginTop: 30
+        // marginTop: 30
+        marginVertical: 30
+
     },
     buttonText: {
         color: 'white',

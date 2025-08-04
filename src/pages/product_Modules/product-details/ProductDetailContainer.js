@@ -35,14 +35,16 @@ export default function ProductDetailContainer({
     onPressFavourite,
     onPressAddToCart,
     onPressDeleteFav,
-    onPressBuy,
     onPressSeeAll,
-    onPressItem
+    onPressItem,
+    onPressAdd,
+    onPressMinus,
+    quantity,
+    setQuantity
 }) {
 
     const [selectedSizeId, setSelectedSizeId] = useState(productData?.costings?.[0] ?? null);
     const navigation = useNavigation()
-    const [quantity, setQuantity] = useState(1);
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [isDosageExpanded, setIsDosageExpanded] = useState(false);
     const [isHowToUseExpanded, setIsHowToUseExpanded] = useState(false);
@@ -51,11 +53,7 @@ export default function ProductDetailContainer({
     const dosageRef = React.useRef(null);
     const howToUseRef = React.useRef(null);
     const scrollViewRef = React.useRef(null);
-    const handleIncrement = () => setQuantity(quantity + 1);
 
-    const handleDecrement = () => {
-        if (quantity > 1) setQuantity(quantity - 1);
-    };
 
     const data = [
         { crop: 'Cotton', dose: '0.5 - 1 ml' },
@@ -115,7 +113,7 @@ export default function ProductDetailContainer({
                             </View>
 
                             <View style={styles.quantityContainer}>
-                                <TouchableOpacity onPress={handleDecrement} style={styles.qtyCircleButton}>
+                                <TouchableOpacity onPress={onPressMinus} style={styles.qtyCircleButton}>
                                     <Text style={styles.qtyText}>−</Text>
                                 </TouchableOpacity>
                                 <TextInput
@@ -124,7 +122,7 @@ export default function ProductDetailContainer({
                                     keyboardType="numeric"
                                     onChangeText={(val) => setQuantity(parseInt(val) || 1)}
                                 />
-                                <TouchableOpacity onPress={handleIncrement} style={styles.qtyCircleButton}>
+                                <TouchableOpacity onPress={onPressAdd} style={styles.qtyCircleButton}>
                                     <Text style={styles.qtyText}>+</Text>
                                 </TouchableOpacity>
                             </View>
@@ -481,7 +479,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#000',
         marginHorizontal: 4,
-        lineHeight: 10
+        lineHeight: 14
 
     },
 

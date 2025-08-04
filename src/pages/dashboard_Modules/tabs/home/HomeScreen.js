@@ -36,8 +36,8 @@ import Indicator from '../../../../components/common/Indicator';
 import WeatherScreen from '../../../product_modules/weather/weatherScreen';
 const services = [
     { title: 'Buy Products', screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
-    { title: 'Spraying Services', screen: '', icon: SprayingService },
-    { title: 'Door Delivery', screen: Screen.MyServicesScreen, icon: DoorDelivery },
+    { title: 'Spraying Services', screen: Screen.MyServicesScreen, icon: SprayingService, state: 'Spraying Services' },
+    { title: 'Door Delivery', screen: Screen.MyServicesScreen, icon: DoorDelivery, state: 'Door Delivery' },
     { title: 'Gromor Store', screen: '', icon: GromorStore },
     { title: 'Crop Doctor', screen: '', icon: CropDoctore },
     { title: 'Ask the Experts', screen: '', icon: AskTheExperts },
@@ -69,15 +69,13 @@ const HomeScreen = ({ isloading }) => {
         <ServiceCard
             title={item.title}
             icon={item.icon}
-            onPress={() => item.screen && navigation.navigate(item.screen)}
+            onPress={() => item.screen && navigation.navigate(item.screen, { state: item?.state ?? "" })}
         />
     );
 
     const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
 
     const onPressCall = () => {
-
-        console.log('kkkkkkkkkk')
 
         let phoneNumber = Configuration.tollfreenumber_Linking;
         try {
@@ -179,8 +177,6 @@ const HomeScreen = ({ isloading }) => {
                     )}
                 />
 
-
-
                 <TouchableOpacity onPress={onPressCall} style={{ position: 'absolute', bottom: 60, right: 15 }}>
                     <Image source={callIcon} style={{ width: 50, height: 50 }} />
                 </TouchableOpacity>
@@ -189,7 +185,7 @@ const HomeScreen = ({ isloading }) => {
                 <TouchableOpacity onPress={() => setStoreModalVisible(true)}>
                     <View style={styles.footerBar}>
                         <Image source={location} style={{ width: 16, height: 18 }} resizeMode='contain' />
-                        <Text style={{ marginLeft: 10 }}>Store Code: <Text style={{ fontWeight: 600, fontSize: 16, color: '#267c2cff' }}>{storeCode}</Text> | {storeName?.slice(0, 24) + "..."}</Text>
+                        <Text style={{ marginLeft: 10 }}>Store Code: <Text style={{ fontWeight: 600, fontSize: 16, color: '#267c2cff' }}>{storeCode ?? ""}</Text> | {storeName?.slice(0, 24) ?? "" + "..."}</Text>
                         <Image
                             source={downarrow}
                             style={{ marginLeft: 10, width: 15, height: 15, tintColor: '#22a12aff' }}
@@ -268,14 +264,12 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: '#fff',
     },
     weatherStrip: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',      // vertically center content
-        // backgroundColor: '#f5f5f5',
-        paddingVertical: 8,        // increased padding
+        alignItems: 'center',
+        paddingVertical: 8,
         height: 50,
         marginTop: 25,
         paddingHorizontal: 16,

@@ -1,6 +1,6 @@
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Linking } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { View, Linking, Platform } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOperation } from '../../../redux/operation';
@@ -16,6 +16,33 @@ import { CommonActions } from '@react-navigation/native';
 import { isEmpty } from '../../../utils/validator';
 import { getMinimumCount } from '../../../redux/farmer/operation';
 import { getPreviousAddress } from '../../../redux/user/operation';
+import CustomPopupModal from '../../../components/common/CustomPopupModal';
+import { Icon } from '../../../../assets/images';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { palette } from '../../../theme/color';
+import CTText from '../../../components/ctText';
+import { BUILD, BuildTypes, Configuration, DEV_BASE_URL, PAYMENT_KEY } from '../../../config';
+import Indicator from '../../../components/common/Indicator';
+import ConfirmationModal from '../../../components/common/ConfirmationModal';
+
+
+let PayUBizSdk_Input = {
+    key: PAYMENT_KEY,
+    success: Configuration.ProductURL + '/product/payment/success',
+    failure: Configuration.ProductURL + '/product/payment/failure',
+    environment: BUILD === BuildTypes.Production ? '0' : '1',
+    primaryColor: palette.titleGreen,
+    secondaryColor: palette.white,
+    merchantResponseTimeout: 10000,
+    surePayCount: 1,
+    showExitConfirmationOnCheckoutScreen: true,
+    showExitConfirmationOnPaymentScreen: true,
+    autoSelectOtp: true,
+    showCbToolbar: true,
+    autoApprove: true,
+    merchantSMSPermission: false,
+    merchant_Name: 'MyGromor',
+};
 
 
 let defdelivery_Charge = {
@@ -24,6 +51,8 @@ let defdelivery_Charge = {
     deliveryChargeDiscount: 0,
 };
 
+var txnid = '';
+var hashCode = '';
 
 const MyCart = ({ navigation, route }) => {
     const operation = useOperation();
@@ -46,7 +75,7 @@ const MyCart = ({ navigation, route }) => {
     const isLoading = useSelector(state => loadingSelector(state));
     const { previousAddress } = useSelector(state => state.user);
     const [checkBillAdd, setCheckBillAdd] = useState(true);
-
+    const [allowTerm, setAllowTerm] = useState(false)
     const appLanguage = UserManager?.getAppMultiLanguage;
     const isFocussed = useIsFocused();
     const [promoCode, setPromoCode] = useState('');
@@ -54,7 +83,7 @@ const MyCart = ({ navigation, route }) => {
     const [cartData, setCartData] = useState([]);
     const [errorMessage, setErrorMessage] = useState('')
     const [distance, setDistance] = useState();
-
+    const [CodVisible, setCODVisible] = useState(false);
     const [BookingSuccessVisible, setBookingSuccessVisible] = useState({
         visible: false,
         transId: '',
@@ -93,6 +122,20 @@ const MyCart = ({ navigation, route }) => {
         title: '',
         description: '',
     });
+
+    const [CODSuccessVisible, setCODSuccessVisible] = useState({
+        visible: false,
+        transId: '',
+    });
+
+    const addressString = useMemo(
+        () =>
+            Object.entries(address)
+                .map(([key, value]) => value)
+                .join(', '),
+        [address],
+    );
+
     const [showDelete, setShowDelete] = useState({ item: null, visible: false });
     const cartDataArray = useSelector(state => state.product.cartData);
     const cartBookingDataArray = useSelector(
@@ -121,12 +164,18 @@ const MyCart = ({ navigation, route }) => {
     const [showDeliveryMethodErrro, setShowDeliveryMethodErrro] = useState(false)
     const isfocused = useIsFocused()
 
+    const [payFailureVisible, setPayFailureVisible] = useState({
+        visible: false,
+        title: '',
+        description: '',
+        type: '',
+        buttonText: '',
+    });
+
     useEffect(() => {
         getAddress()
-        if (previousAddress) {
-            setCheckBillAdd(false)
-        }
-    }, [previousAddress])
+        checkBillingAddress()
+    }, [previousAddress, checkBillAdd])
 
 
     useEffect(() => {
@@ -209,7 +258,7 @@ const MyCart = ({ navigation, route }) => {
             };
 
 
-            if (deliveryType.type == (appLanguage?.door_delivery ?? "Door Delivery") && checkoutType === "fertilizer") {
+            if (deliveryType == 1 && activeTab.id === 2) {
                 let quantity = 0
                 cartBookingDataArray.length > 0 && cartBookingDataArray.forEach(element => {
                     quantity += element.quantity
@@ -226,20 +275,17 @@ const MyCart = ({ navigation, route }) => {
             }
 
 
-            if ((address.address1 || address.address2) && address.city && address.pincode && address.state && address.latitude && address.longitude) {
-                setEnablePayment(true);
+            if ((address.address1 || address.address2) && address.city && address.state && address.latitude && address.longitude) {
                 getDeliveryCharges(tempParams)
+                setEnablePayment(true);
             } else {
                 setEnablePayment(false);
                 return;
             }
-            if (deliveryType.type != 2) {
-                getDeliveryCharges(tempParams)
-            }
-
 
         }
     }, [Card_ArrayData, activeTab.id, address.latitude, address.longitude, checkBillAdd]);
+
 
     useEffect(() => {
 
@@ -383,42 +429,307 @@ const MyCart = ({ navigation, route }) => {
         }
     };
 
-    const onPressCheckOut = checkoutType => {
-        let outOfStock = false;
-        cartData.length > 0 && cartData?.map((item, index) => {
-            if (
-                !item?.inStock ||
-                item?.inStock === 'false' ||
-                parseInt(item?.sellingPrice) == 0
-            ) {
-                outOfStock = true;
-                return;
-            }
-        });
 
-        cartFertilizersData.length > 0 && cartFertilizersData?.map((item, index) => {
-            if (
-                !item?.inStock ||
-                item?.inStock === 'false' ||
-                parseInt(item?.sellingPrice) == 0
-            ) {
-                outOfStock = true;
+    const onPressCheckOut = (type = 'COD') => {
+
+
+        try {
+            setCODVisible(false);
+            hashCode = '';
+            let outOfStock = false;
+            cartData.length > 0 && cartData?.map((item, index) => {
+                if (!item?.inStock || item?.inStock === 'false') {
+                    outOfStock = true;
+                    return;
+                }
+            });
+
+            cartBookingDataArray.length > 0 && cartBookingDataArray?.map((item, index) => {
+                if (!item?.inStock || item?.inStock === 'false') {
+                    outOfStock = true;
+                    return;
+                }
+            });
+
+            if (outOfStock) {
+                setShowNoCode({
+                    visible: true,
+                    title: appLanguage?.out_of_stock ?? 'Out Of Stock',
+                    description:
+                        appLanguage?.lblremoveproduct ??
+                        'Please remove out of stock products before making payment',
+                    type: 'NORMAL',
+                });
                 return;
             }
-        });
-        if (outOfStock) {
-            setShowNoCode({
-                visible: true,
-                title: appLanguage?.out_of_stock ?? 'Out Of Stock',
-                description:
-                    appLanguage?.lblremoveproduct ??
-                    'Please delete out of stock item from your cart to purchase.',
-                type: 'NORMAL',
-            });
-            return;
-        }
-        navigation.navigate(Screen.checkoutNew, { checkoutType });
+            if (
+                isEmpty(farmerAddress?.address?.addressLine1) ||
+                isEmpty(addressString) && deliveryType == 1
+            ) {
+                setShowNoCode({
+                    visible: true,
+                    title: appLanguage?.check_your_address ?? 'Check Your Address',
+                    description:
+                        appLanguage?.lblCheckAddressDecs ??
+                        'Please provide your address to make payment.',
+                    type: 'ADDRESS',
+                });
+                return;
+            }
+
+            if (isEmpty(addressString) && deliveryType == 1) {
+                setShowNoCode({
+                    visible: true,
+                    title: appLanguage?.check_your_address ?? 'Check Your Address',
+                    description:
+                        appLanguage?.lblCheckAddressDecs ??
+                        'Please provide your address to make payment.',
+                    type: 'ADDRESS',
+                });
+                return;
+            }
+
+            if (isEmpty(farmerAddress?.storeCode)) {
+                setShowNoCode({
+                    visible: true,
+                    title: appLanguage?.lblcontactcoromandel ?? 'Contact Coromandel',
+                    description:
+                        appLanguage?.lblNoStoreCodeDecs ??
+                        'No store code mapped for the provided address, Please contact Coromandel',
+                    type: 'ADDRESS',
+                });
+                return;
+            }
+            if (isEmpty(farmerAddress?.villageCode)) {
+                setShowNoCode({
+                    visible: true,
+                    title: appLanguage?.lblcontactcoromandel ?? 'Contact Coromandel',
+                    description:
+                        appLanguage?.lblNoVillageCodeDecs ??
+                        'No village code mapped for the provided address, Please contact Coromandel',
+                    type: 'ADDRESS',
+                });
+                return;
+            }
+            getOrderPlacedmethod(type);
+        } catch (e) { }
     };
+
+
+
+    const getOrderPlacedmethod = async (type) => {
+
+        if (deliveryType == "") {
+            setShowDeliveryMethodErrro(true)
+            return
+        }
+
+        try {
+
+            let tempOrderData = [];
+
+            if (activeTab.id === 2) {
+                cartBookingDataArray.forEach(data => {
+                    tempOrderData.push({
+                        itemNumber: data.itemNumber,
+                        costingId: data.costingId,
+                        quantity: data.quantity,
+                        actualPrice: data.actualPrice,
+                        priceAfterDiscount: data.sellingPrice,
+                        productInfo: data.nameToShowOnSite,
+                    });
+                });
+            }
+            else {
+                cartData.forEach(data => {
+                    tempOrderData.push({
+                        itemNumber: data.itemNumber,
+                        costingId: data.costingId,
+                        quantity: data.quantity,
+                        actualPrice: data.actualPrice,
+                        priceAfterDiscount: data.sellingPrice,
+                        productInfo: data.nameToShowOnSite,
+                    });
+                });
+
+            }
+
+            let tempData = {
+                farmerId: farmerAddress.farmerIdentityId,
+                devicePlatform: Platform.OS,
+                environment: PayUBizSdk_Input.environment,
+                deliveryType:
+                    deliveryType == 2 ? 1 : 2,
+                deliveryCharge:
+                    deliveryType !== 2
+                        ? deliverCharges?.deliveryCharge ?? 0
+                        : 0,
+                deliveryChargeDiscount:
+                    deliveryType !== 2
+                        ? deliverCharges?.deliveryChargeDiscount
+                        : 0,
+                deliveryChargeCalc:
+                    deliveryType !== 2
+                        ? deliverCharges?.deliveryChargeCalc
+                        : 0,
+                storeCode: farmerAddress?.storeCode,
+                orderItems: tempOrderData,
+            };
+
+            if (type === 'COD') {
+                const COD_payload = {
+                    ...tempData,
+                    deliveryAddress: addressString,
+                    latitude: address.latitude,
+                    longitude: address.longitude,
+                };
+                dispatch(operation.payment.generateCodOrder(COD_payload))
+                    .then(res => {
+                        if (res.errors == null || res.errors.length === 0) {
+                            navigation.navigate(Screen.SuccessScreen)
+                        } else {
+                            dispatch(operation.user.getErrorHandling(res, 'createTransaction'));
+                        }
+                    })
+                    .catch(err => {
+                        const { message, title } = err;
+                        if (message?.includes('401')) {
+                            navigation.dispatch(
+                                CommonActions.reset({ index: 1, routes: [{ name: Screen.welcome }] }),
+                            );
+                        } else {
+                            dispatch(operation.user.getErrorHandling(err, 'createTransaction'));
+                        }
+                    });
+
+                // const url = DEV_BASE_URL + "/product.api/api/product/generateCodOrder";
+
+                // const res = await fetch(url, {
+                //     method: 'post',
+                //     body: JSON.stringify(COD_payload),
+                //     headers: {
+                //         "Content-Type": "application/json",
+                //         "Authorization": 'Bearer ' + UserManager.getAccessToken,
+                //     }
+                // })
+
+                // console.log(res.data, 'ddddddddd')
+
+
+
+            } else if (type === 'Predpaid') {
+                dispatch(operation.payment.generatePredpaidOrder(tempData))
+                    .then(res => {
+                        if (res.errors == null || res.errors.length === 0) {
+                            if (
+                                farmerAddress?.mobileNumber &&
+                                farmerAddress?.storeCode &&
+                                farmerAddress?.villageCode &&
+                                farmerAddress?.farmerIdentityId &&
+                                res?.toString() !== ''
+                            ) {
+                                const paymentData = {
+                                    amount: parseFloat(
+                                        priceData.totalCost + deliverCharges?.deliveryCharge,
+                                    ).toFixed(1),
+                                    productinfo: 'Gromor',
+                                    phone: farmerAddress?.mobileNumber,
+                                    transactionid: res.toString(),
+                                    firstname: farmerAddress?.name ?? '',
+                                    email: farmerAddress?.emailId ?? '',
+                                    udf1: farmerAddress?.storeCode, // store code
+                                    udf2: farmerAddress?.villageCode, // village code
+                                    udf3: farmerAddress?.farmerIdentityId, // farmeridentity
+                                };
+
+                                const preparedData = createPaymentParams(paymentData);
+
+                                // PayUBizSdk.openCheckoutScreen(preparedData);
+
+                            } else {
+                                dispatch(
+                                    operation.user.getErrorHandling(res, 'createTransaction'),
+                                );
+                            }
+                        } else {
+                            dispatch(operation.user.getErrorHandling(res, 'createTransaction'));
+                        }
+                    })
+                    .catch(err => {
+                        console.log('err', err);
+                        const { message, title } = err;
+                        if (message?.includes('401')) {
+                            navigation.dispatch(
+                                CommonActions.reset({ index: 1, routes: [{ name: Screen.welcome }] }),
+                            );
+                        } else {
+                            dispatch(operation.user.getErrorHandling(err, 'createTransaction'));
+                        }
+                    });
+            } else if (type === 'Booking') {
+                let bookingPayload = {
+                    deliveryType:
+                        deliveryType == 2 ? 1 : 2,
+                    deliveryCharge:
+                        deliveryType !== 2
+                            ? deliverCharges?.deliveryCharge ?? 0
+                            : 0,
+                    deliveryChargeDiscount:
+                        deliveryType !== 2
+                            ? deliverCharges?.deliveryChargeDiscount
+                            : "",
+                    deliveryChargeCalc:
+                        deliveryType !== 2
+                            ? deliverCharges?.deliveryChargeCalc
+                            : "",
+                    storeCode: farmerAddress?.storeCode,
+                    deliveryAddress: addressString,
+                    latitude: address.latitude,
+                    longitude: address.longitude,
+                    farmerId: farmerAddress.farmerIdentityId,
+                    language: farmerLanguage
+                };
+
+                dispatch(operation.product.bookNowFromcart(bookingPayload))
+                    .then(async res => {
+                        if (res?.bookingId && res?.bookingId?.length != 0) {
+                            // setBookingSuccessVisible({ visible: true, transId: res });
+                            const parms = {
+                                farmerId: farmerAddress?.farmerIdentityId,
+                                language: farmerLanguage,
+                            }
+                            await dispatch(operation.product.getMyCart(parms))
+                            await dispatch(operation.product.getMyCartBooking(parms))
+
+                            navigation.navigate(Screen.SuccessScreen)
+
+                        } else {
+                            dispatch(operation.user.getErrorHandling(res, 'bookNow'));
+                        }
+                    })
+                    .catch(err => {
+                        const { message, title } = err;
+                        if (message?.includes('401')) {
+                            navigation.dispatch(
+                                CommonActions.reset({
+                                    index: 1,
+                                    routes: [{ name: Screen.welcome }],
+                                }),
+                            );
+                        } else {
+                            dispatch(operation.user.getErrorHandling(err, 'bookNowFromcart'));
+                        }
+                    });
+            } else {
+                HEToast(appLanguage?.something_went_wrong_try ?? 'Something went wrong', 'error');
+            }
+        } catch (error) {
+            console.log(error, 'e')
+        }
+
+    };
+
+
 
     const onPressAddQuantity = (item, index) => {
 
@@ -659,7 +970,7 @@ const MyCart = ({ navigation, route }) => {
                     );
                 } else {
                     // console.log('kkkkkkkkkkkkkkkkkkkkkkkk')
-                    // console.log(err, 'kkk')
+                    console.log(err, 'eeeeeeeeeeeeeeee')
                     HEToast(err?.message, 'error');
                     setEnablePayment(false);
                 }
@@ -667,14 +978,10 @@ const MyCart = ({ navigation, route }) => {
     };
 
 
-    console.log(previousAddress, 'ppppppppppp')
-
     const checkBillingAddress = () => {
-        // Mark this as an intentional change to avoid triggering useEffect
-        // setIgnoreNextEffect(true);
 
-        if (checkBillAdd) {
-            setCheckBillAdd(false);
+        if (!checkBillAdd) {
+            // setCheckBillAdd(false);
             getAddress();
         } else {
             const address = farmerAddress.address;
@@ -756,7 +1063,7 @@ const MyCart = ({ navigation, route }) => {
 
             const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(preAddress)}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
 
-            setCheckBillAdd(false)
+            // setCheckBillAdd(false)
             fetch(geocodeURL)
                 .then(response => response.json())
                 .then(data => {
@@ -894,7 +1201,7 @@ const MyCart = ({ navigation, route }) => {
             if (shomap) {
                 setShowMaps(true)
             }
-            setCheckBillAdd(false)
+            // setCheckBillAdd(false)
             fetch(geocodeURL)
                 .then(response => response.json())
                 .then(data => {
@@ -957,9 +1264,13 @@ const MyCart = ({ navigation, route }) => {
         [setAddress],
     );
 
-
-    console.log(address, 'aaaaaaaaaaaaaad')
-
+    const getNotification = () => {
+        let param = {
+            userId: farmerAddress?.farmerIdentityId,
+            hasRead: 1,
+        };
+        dispatch(operation.farmer.getNotification(param));
+    };
 
     return (
         <View style={{ flex: 1, backgroundColor: "#dfdfdf" }}>
@@ -1013,9 +1324,16 @@ const MyCart = ({ navigation, route }) => {
                 setCheckBillAdd={setCheckBillAdd}
                 checkBillAdd={checkBillAdd}
                 showDeliveryMethodErrro={showDeliveryMethodErrro}
-
-
+                allowTerm={allowTerm}
+                setAllowTerm={setAllowTerm}
+                setCODVisible={setCODVisible}
+                CodVisible={CodVisible}
+                setShowDeliveryMethodErrro={setShowDeliveryMethodErrro}
             />
+
+
+
+            <Indicator Indicator={!isLoading} />
         </View>
     );
 };

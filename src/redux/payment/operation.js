@@ -91,7 +91,7 @@ export const generateCodOrder = data => {
     return new Promise(async (resolve, reject) => {
       try {
         const payment = await dispatch(generateCodOrderAction(data));
-        // console.log(payment,"datadatadataASnasfnlsaf")
+        console.log(payment,"datadatadataASnasfnlsaf")
         const transaction = payment.data;
         resolve(transaction);
       } catch (e) {

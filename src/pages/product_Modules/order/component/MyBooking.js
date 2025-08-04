@@ -1,5 +1,5 @@
 import { ScrollView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import bookingIcon from '../../../../assets/images/common/booking.png'
 import product1 from '../../../../assets/images/shop/product1.png'
 import cancel from '../../../../assets/images/common/failed.png'
@@ -7,7 +7,66 @@ import shop from '../../../../assets/images/common/shop.png';
 import location from '../../../../assets/images/common/location.png';
 import phone from '../../../../assets/images/common/phone.png'
 import CustomHeader from '../../../../components/common/CustomHeader'
-const MyBooking = () => {
+import { UserManager } from '../../../../storage'
+import { useOperation } from '../../../../redux/operation'
+import { useDispatch, useSelector } from 'react-redux'
+import { createLoadingSelector } from '../../../../redux/loading-reducer'
+import { useIsFocused } from '@react-navigation/native'
+import { ProductType } from '../../../../redux/product/type'
+import moment from 'moment'
+import { FlatList } from 'react-native-gesture-handler'
+import checkIcon from '../../../../assets/images/common/checkIcon.png'
+import { defConfigImageURL } from '../../../dashboard_modules/tabs/home/index.service'
+import AddressCard from '../../../../components/common/AddressCard'
+import Indicator from '../../../../components/common/Indicator'
+
+
+const MyBookingDetails = ({ navigation, route }) => {
+    const BannerData = useSelector(state => state.product.bannerData);
+    const appLanguage = UserManager?.getAppMultiLanguage
+    const operation = useOperation();
+    const dispatch = useDispatch();
+    const loadingSelector = createLoadingSelector([ProductType.bookingShipmentDetails]);
+    const isLoading = useSelector(state => loadingSelector(state));
+    const data = route?.params?.data
+    const isFocussed = useIsFocused();
+    const bookingDetailsArray = useSelector((state) => state.product.bookingShipmentArray)
+
+    useEffect(() => {
+        if (isFocussed) {
+            let params = data?.bookingId ?? ""
+            dispatch(operation.product.bookingShipmentDetails(params))
+        }
+    }, [data, isFocussed])
+
+    const { trackBookingHistory, bookingId, storeCode, orderedTotalBookingAmount, bookingStatus, createdOn, productName, deliveryCharge, trackBookingDetails } = bookingDetailsArray
+
+    const renderItem = ({ item }) => {
+        return (
+            <View style={styles.itemCard}>
+                <Image
+                    source={{
+                        uri: defConfigImageURL(
+                            BannerData.imageBaseURL,
+                            item?.productImage,
+                        ),
+                    }}
+                    style={styles.productImage}
+                />
+                <View>
+                    <View style={styles.itemInfo}>
+                        <Text style={styles.itemTitle}>{item?.productName}</Text>
+                        <Text style={styles.itemWeight}>{item?.productSize}</Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginLeft: 10, gap: 10 }}>
+                        <Text style={styles.itemQty}>Qty. x{item?.orderedQuantity}</Text>
+                        <Text style={styles.itemPrice}>₹{item?.orderedTotalAmount}</Text>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
     return (
         <View style={{ flex: 1, marginTop: 30 }}>
             <View>
@@ -25,11 +84,19 @@ const MyBooking = () => {
                 <View style={styles.headerCard}>
                     <Image source={bookingIcon} style={styles.bookingIcon} />
                     <Text style={styles.soNoLabel}>SO No.</Text>
-                    <Text style={styles.soNoValue}>BD250429214586</Text>
+                    <Text style={styles.soNoValue}>{bookingId}</Text>
 
-                    <TouchableOpacity style={styles.cancelButton}>
-                        <Image source={cancel} style={{ height: 15, width: 15, tintColor: '#E00C0C', resizeMode: 'contain' }} />
-                        <Text style={styles.cancelButtonText}> Cancel In-progress</Text>
+                    <TouchableOpacity style={{
+                        ...styles.cancelButton,
+                        backgroundColor: bookingStatus?.toLowerCase().includes('canc') ? '#FFEDED' : "#DCFFD9",
+
+                    }}>
+                        <Image source={cancel} style={{ height: 15, width: 15, tintColor: bookingStatus?.toLowerCase().includes('canc') ? '#E00C0C' : "#147045", resizeMode: 'contain' }} />
+                        <Text style={{
+                            ...styles.cancelButtonText,
+                            color: bookingStatus?.toLowerCase().includes('canc') ? '#E00C0C' : "#147045",
+
+                        }}> {bookingStatus}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -39,17 +106,17 @@ const MyBooking = () => {
 
                     <View style={styles.detailRow}>
                         <Text style={styles.detailLabel}>Booking No.</Text>
-                        <Text style={styles.detailValue}>BD250429737593</Text>
+                        <Text style={styles.detailValue}>{bookingId}</Text>
                     </View>
 
                     <View style={styles.detailRow}>
                         <Text style={styles.detailLabel}>Order Date</Text>
-                        <Text style={styles.detailValue}>06-05-2025</Text>
+                        <Text style={styles.detailValue}>{moment(createdOn).format("DD-MM-YYYY")}</Text>
                     </View>
 
                     <View style={styles.detailRow}>
                         <Text style={styles.detailLabel}>Store Code</Text>
-                        <Text style={[styles.detailValue, styles.underline]}>S0393</Text>
+                        <Text style={[styles.detailValue,]}>{storeCode}</Text>
                     </View>
                     <View style={{ height: 1, backgroundColor: '#A3D2B5', marginVertical: 8 }} />
 
@@ -60,17 +127,17 @@ const MyBooking = () => {
 
                     <View style={styles.detailRow}>
                         <Text style={styles.detailLabel}>Sub Total</Text>
-                        <Text style={styles.detailValue}>₹2,990</Text>
+                        <Text style={styles.detailValue}>₹{orderedTotalBookingAmount}</Text>
                     </View>
 
                     <View style={styles.detailRow}>
                         <Text style={styles.detailLabel}>Delivery Charges</Text>
-                        <Text style={styles.detailValue}>₹130</Text>
+                        <Text style={styles.detailValue}>₹{deliveryCharge}</Text>
                     </View>
 
                     <View style={styles.detailRow}>
                         <Text style={styles.detailLabel}>Total Amount</Text>
-                        <Text style={[styles.detailValue, { fontWeight: 'bold' }]}>₹6063</Text>
+                        <Text style={[styles.detailValue, { fontWeight: 'bold' }]}>₹{orderedTotalBookingAmount}</Text>
                     </View>
                 </View>
 
@@ -79,124 +146,82 @@ const MyBooking = () => {
                 <View style={styles.detailCard}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Text style={styles.quantityText}>Total Quantity</Text>
-                        <Text style={{ fontWeight: 'bold' }}>2 Items</Text>
-
+                        <Text style={{ fontWeight: 'bold' }}>{trackBookingDetails?.length} Items</Text>
                     </View>
 
-                    {/* Item Row */}
-                    {/* item 1 */}
-                    <View style={styles.itemCard}>
-                        <Image
-                            source={product1}
-                            style={styles.productImage}
-                        />
-                        <View>
-                            <View style={styles.itemInfo}>
-                                <Text style={styles.itemTitle}>Gromor nutri drip 12-61-0</Text>
-                                <Text style={styles.itemWeight}>25 kg</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginLeft: 10, gap: 10 }}>
-                                <Text style={styles.itemQty}>Qty. x1</Text>
-                                <Text style={styles.itemPrice}>₹249</Text>
-                            </View>
-                        </View>
-                    </View>
-                    {/* item 2 */}
+                    <FlatList
+                        data={trackBookingDetails ?? []}
+                        renderItem={renderItem}
+                    />
 
-                    <View style={styles.itemCard}>
-                        <Image
-                            source={product1}
-                            style={styles.productImage}
-                        />
-                        <View>
-                            <View style={styles.itemInfo}>
-                                <Text style={styles.itemTitle}>Gromor nutri drip 12-61-0</Text>
-                                <Text style={styles.itemWeight}>25 kg</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginLeft: 10, gap: 10 }}>
-                                <Text style={styles.itemQty}>Qty. x1</Text>
-                                <Text style={styles.itemPrice}>₹249</Text>
-                            </View>
-                        </View>
-                    </View>
+
                 </View>
 
                 {/* order tracking */}
                 <Text style={styles.heading}>Order Tracking</Text>
 
-                <View style={styles.card}>
-                    {/* Booked */}
-                    <View style={styles.row}>
-                        <View style={styles.leftColumn}>
-                            <View style={styles.greenCircle}>
-                                <Text style={styles.tickText}>✓</Text>
-                            </View>
-                            <View style={styles.verticalLine} />
-                        </View>
+                {(trackBookingHistory || []).map((item, index) => {
+                    return (
+                        <View key={index} style={styles.card}>
+                            {!item?.status?.toLowerCase().includes('canc') ? (
+                                <View style={styles.row}>
+                                    <View style={styles.leftColumn}>
+                                        <View style={styles.greenCircle}>
+                                            <Image
+                                                source={checkIcon}
+                                                style={{ width: 10, height: 10, resizeMode: 'contain', tintColor: "#fff" }}
+                                            />
+                                        </View>
+                                        {index < trackBookingHistory?.length - 1 && <View style={styles.verticalLine} />}
+                                    </View>
 
-                        <View style={styles.textColumn}>
-                            <Text style={styles.statusBooked}>Booked</Text>
-                            <Text style={styles.dateText}>3:46 PM, Wednesday, 06-05-2025</Text>
-                        </View>
-                    </View>
+                                    <View style={styles.textColumn}>
+                                        <Text style={styles.statusBooked}>{item?.status}</Text>
+                                        <Text style={styles.timeText}>
+                                            {moment(item?.createdOn).format('h:mm A, dddd, DD-MM-YYYY')}
+                                        </Text>
+                                    </View>
+                                </View>
+                            ) : (
+                                <View style={styles.row}>
+                                    <View style={styles.leftColumn}>
+                                        <View style={styles.redCircle}>
+                                            <Text style={styles.crossText}>✕</Text>
+                                        </View>
+                                    </View>
 
-                    {/* Cancelled */}
-                    <View style={styles.row}>
-                        <View style={styles.leftColumn}>
-                            <View style={styles.redCircle}>
-                                <Text style={styles.crossText}>✕</Text>
-                            </View>
+                                    <View style={styles.textColumn}>
+                                        <Text style={styles.statusCancelled}>{item?.status}</Text>
+                                        <Text style={styles.timeText}>
+                                            {moment(item?.createdOn).format('h:mm A, dddd, DD-MM-YYYY')}
+                                        </Text>
+                                    </View>
+                                </View>
+                            )}
                         </View>
+                    );
+                })}
 
-                        <View style={styles.textColumn}>
-                            <Text style={styles.statusCancelled}>Cancelled</Text>
-                            <Text style={styles.dateText}>4:00 PM, Thursday, 07-05-2025</Text>
-                        </View>
-                    </View>
-                </View>
-                {/* Billing Address */}
+
                 <Text style={styles.sectionTitle}>Billing Address</Text>
-                <View style={styles.card}>
-                    <Text style={styles.name}>Siddharth Chhajer</Text>
-                    <Text style={styles.address}>
-                        Plot no. 2-4-197/A, Cinema Road, Below Margadarsi Office, Adilabad, Begumpet{'\n'}
-                        Telangana, 504001
-                    </Text>
-                    <Text style={styles.phone}>+91 9999912345</Text>
-                </View>
+
+                <AddressCard />
+
                 {/* store address */}
                 <Text style={styles.storeHeading}>Store Address</Text>
 
-                <View style={styles.StoreCard}>
-                    <View style={styles.storeCodeBox}>
-                        <Text style={styles.storeCodeLabel}><Image source={shop} style={{ height: 15, width: 15, tintColor: '#2E7D32' }} /> Store Code:</Text>
-                        <Text style={styles.storeCodeValue}> S0393</Text>
-                    </View>
 
-                    <View style={styles.addressBlock}>
-                        <Image source={location} style={{ height: 15, width: 15, tintColor: '#000', marginTop: 4 }} />
-                        <View>
-                            <Text style={styles.locationTitle}> Mana Gromor Centre A.kondapuram</Text>
-                            <Text style={styles.addressText}>
-                                Coromandel International Ltd,{'\n'}
-                                c/o Mana Gromor Center, Building No. 110/1,{'\n'}
-                                A.kondapuram, Putlur Mandal, Anantapur
-                            </Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.phoneBlock}>
-                        <Image source={phone} style={{ height: 10, width: 10, tintColor: '#000', marginTop: 4 }} />
-                        <Text style={styles.phoneText}>+91 8978780010</Text>
-                    </View>
+                <View style={{ marginBottom: 40 }}>
+                    <AddressCard cardType="StoreType" />
                 </View>
 
             </ScrollView>
+            <Indicator Indicator={!isLoading} />
         </View>
 
     );
 };
-export default MyBooking
+export default MyBookingDetails
 
 
 const styles = StyleSheet.create({
@@ -227,17 +252,28 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginBottom: 10,
     },
+    storeHeading: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#000',
+        marginBottom: 10,
+        marginTop: 30,
+    },
     cancelButton: {
         flexDirection: "row",
-        backgroundColor: '#FFEDED',
         paddingHorizontal: 15,
         paddingVertical: 6,
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'center'
     },
+    // sectionTitle: {
+    //     marginTop: 20,
+    //     fontSize: 16,
+    //     fontWeight: '600',
+    //     color: '#222',
+    // },
     cancelButtonText: {
-        color: '#B51010',
         fontWeight: '500',
         fontSize: 14,
         // lineHeight: 18
@@ -357,7 +393,7 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
-        marginBottom: 20,
+        // marginBottom: 20,
     },
     leftColumn: {
         width: 30,
@@ -393,7 +429,7 @@ const styles = StyleSheet.create({
     verticalLine: {
         width: 2,
         height: 40,
-        backgroundColor: 'green',
+        backgroundColor: '##01AD41',
         position: 'absolute',
         top: 20,
     },
@@ -436,13 +472,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         color: '#333',
     },
-    storeHeading: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#000',
-        marginBottom: 10,
-        marginTop: 30,
-    },
+
     StoreCard: {
         backgroundColor: '#fff',
         padding: 12,

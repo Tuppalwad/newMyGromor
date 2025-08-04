@@ -2,25 +2,29 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'; // Make sure you have this installed
 import { useNavigation } from '@react-navigation/native';
-import checkIcon from '../../../assets/images/common/checkIcon.png'
+import Sucess from '../../../assets/images/common/success.gif'
 import SprayingServiceDetail from '../../service_modules/spraying-service';
-const SuccessScreen = () => {
+import SuccessGif from '../../../components/common/SuccessGif';
+import { Screen } from '../../../router/screen';
+const SuccessScreen = ({ id }) => {
     const navigation = useNavigation();
 
     return (
         <View style={styles.container}>
-            <Image
-                source={checkIcon} // Replace with your tick icon path
-                style={styles.checkIcon}
-            />
+
+            <View style={{ marginBottom: 20, width: 100, height: 100, borderRadius: 50, backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center' }}>
+
+                <SuccessGif image={Sucess} />
+
+            </View>
 
             <Text style={styles.title}>Submitted Successfully!</Text>
             <Text style={styles.subtitle}>
                 Your service has been placed successfully.{"\n"}
-                <Text style={styles.serviceId}>Service ID #CD250701031942</Text>
+                <Text style={styles.serviceId}>Service ID {id}</Text>
             </Text>
 
-            <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate(SprayingServiceDetail)}>
+            <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('')}>
                 <LinearGradient
                     colors={['#1E8153', '#4EA618']}
                     start={{ x: 0, y: 0 }}
@@ -32,7 +36,7 @@ const SuccessScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.navigate(Screen.homes)}
                 style={styles.homeLink}
             >
                 <Text style={styles.homeText}>Go to Home</Text>
@@ -53,9 +57,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     checkIcon: {
-        width: 60,
-        height: 60,
+        width: 50,
+        height: 50,
         marginBottom: 20,
+        resizeMode: 'contain'
     },
     title: {
         fontSize: 20,
@@ -75,12 +80,12 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     buttonContainer: {
-        width: '100%',
+        width: '50%',
         marginBottom: 20,
     },
     gradientButton: {
-        paddingVertical: 12,
-        borderRadius: 8,
+        paddingVertical: 14,
+        borderRadius: 10,
         alignItems: 'center',
     },
     buttonText: {

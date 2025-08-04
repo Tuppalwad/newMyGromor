@@ -36,7 +36,7 @@ export default StoreCard = ({ storeCode, storeName, addressLines, phoneNumber })
                 onPress={() => Linking.openURL(`tel:${phoneNumber}`)}
             >
                 <Image source={Contact} style={{ ...styles.icon, marginTop: 4, tintColor: '#4E4E4E' }} />
-                <Text style={styles.text}>{"+ " + phoneNumber}</Text>
+                <Text style={styles.text}>{"+91 " + phoneNumber}</Text>
             </TouchableOpacity>
         </View>
     );

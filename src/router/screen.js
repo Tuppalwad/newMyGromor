@@ -80,5 +80,8 @@ export const Screen = {
   newServiceRequest: 'NewServiceRequestScreen',
   SuccessScreen: 'SuccessScreen',
   WeatherScreen: 'WeatherScreen',
-  Next7Days: 'Next7DaysScreen'
+  Next7Days: 'Next7DaysScreen',
+  MyOrder: "MyOrder",
+  PurchaseDetail: "PurchaseDetail",
+  BookingDetails: "BookingDetails"
 };

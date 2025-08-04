@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, StatusBar, Platform } from 'react-native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaView, StyleSheet, StatusBar, Platform, PermissionsAndroid } from 'react-native';
 import { CProvider } from './src/redux';
 import AppStack from './src/router/router';
 import Toast from 'react-native-toast-message';
 import { ToastConfig } from './src/components/toast';
 import { UserManager } from './src/storage';
 import NetInfo from '@react-native-community/netinfo';
-import { Isplatform_Android } from './src/config/resposiveSize';
 import messaging from '@react-native-firebase/messaging';
-import JailMonkey from 'jail-monkey';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
-const Stack = createNativeStackNavigator();
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
@@ -40,16 +35,41 @@ const getFcmToken = async () => {
 
 export default function App() {
 
+
+  useEffect(() => {
+    // Assume a message-notification contains a "type" property in the data payload of the screen to open
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log(
+        'Notification caused app to open from background state:',
+        remoteMessage.notification,
+      );
+      // navigation.navigate(remoteMessage.data.type);
+    });
+  }, []);
+
   useEffect(() => {
     const init = async () => {
       await requestUserPermission();
       messaging().onMessage(async (remoteMessage: any) => {
-        Toast.show({ type: 'info', text1: remoteMessage.notification.title });
+        if (remoteMessage?.notification?.title) {
+          Toast.show({
+            type: 'info',
+            text1: remoteMessage.notification.title,
+            text2: remoteMessage.notification.body ?? '', // Optional body
+          });
+        } else {
+          console.warn('Notification format is invalid', remoteMessage);
+        }
       });
+      messaging().setBackgroundMessageHandler(
+        async ({ data }) => {
+          // console.log('in background wer received FCM');
+        },
+      );
+
     };
     init();
   }, []);
-
 
   return (
     <CProvider>

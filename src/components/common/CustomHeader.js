@@ -120,9 +120,6 @@ export default function CustomHeader({
                                     style={{ marginRight: 15 }} >
                                     {isFav ? <Image source={LikeIcon} style={{ width: 25, height: 25 }} resizeMode='contain' /> : <Image source={Hart} style={styles.icon} resizeMode='contain' />}
                                 </TouchableOpacity>
-                                {/* <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
-                                    <Image source={cartIcon} style={styles.icon} resizeMode='contain' />
-                                </TouchableOpacity> */}
 
                                 <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
                                     <View style={{ position: 'relative' }}>
@@ -141,7 +138,8 @@ export default function CustomHeader({
                             <>
                                 <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
                                     <Image source={bellIcon} style={{
-                                        ...styles.icon,
+                                        width: 22,
+                                        height: 22,
                                         tintColor: type == "profile" ? "#fff" : '#222',
 
                                     }} resizeMode='contain' />
@@ -250,8 +248,8 @@ const styles = StyleSheet.create({
         right: -2,
     },
     icon: {
-        width: 20,
-        height: 20,
+        width: 18,
+        height: 18,
         resizeMode: 'contain',
     },
 

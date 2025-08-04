@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import colors from '../../utils/theam';
 import RightArrowIcon from '../../assets/images/common/rightArrow.png';
 
-const CustomButton = ({ title, onPress, style, textStyle, disabled }) => {
+const CustomButton = ({ title, onPress, style, textStyle, disabled, show = true }) => {
     const gradientColors = disabled ? ['#ccc', '#ccc'] : ['#1E8153', '#4EA618'];
 
     return (
@@ -21,11 +21,11 @@ const CustomButton = ({ title, onPress, style, textStyle, disabled }) => {
                 style={[styles.button, disabled && styles.disabledButton]}
             >
                 <Text style={[styles.buttonText, textStyle]}>{title}</Text>
-                <Image
+                {show && <Image
                     source={RightArrowIcon}
                     style={{ width: 10, height: 10, marginLeft: 10, tintColor: 'white' }}
                     resizeMode="contain"
-                />
+                />}
             </LinearGradient>
         </TouchableOpacity>
     );
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
-        
+
     },
     buttonText: {
         lineHeight: 20,
