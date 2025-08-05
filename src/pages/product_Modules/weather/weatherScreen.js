@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 import location from '../../../assets/images/splash/location.png'
 import CustomHeader from '../../../components/common/CustomHeader';
 import Next7DaysScreen from './next7days';
-const WeatherScreen = () => {
+const WeatherScreen = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState('Today');
     const [selectedHour, setSelectedHour] = useState(null);
     const weatherData = {

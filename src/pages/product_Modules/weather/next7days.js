@@ -8,7 +8,7 @@ const Next7DaysScreen = () => {
         {
             day: 'Today',
             date: '18/06',
-            icon: require('../../../assets/images/common/rain.png'),
+            icon: require('../../../assets/images/common/heavyRain.png'),
             wind: '21 km/h',
             humidity: '86%',
             rain: '91%',
@@ -19,7 +19,7 @@ const Next7DaysScreen = () => {
         {
             day: 'Thu',
             date: '19/06',
-            icon: require('../../../assets/images/common/rain.png'),
+            icon: require('../../../assets/images/common/lightRain.png'),
             wind: '10 km/h',
             humidity: '69%',
             rain: '80%',
@@ -29,7 +29,7 @@ const Next7DaysScreen = () => {
         {
             day: 'Fri',
             date: '20/06',
-            icon: require('../../../assets/images/common/rain.png'),
+            icon: require('../../../assets/images/common/sun.png'),
             wind: '12 km/h',
             humidity: '52%',
             rain: '10%',
@@ -39,7 +39,7 @@ const Next7DaysScreen = () => {
         {
             day: 'Sat',
             date: '21/06',
-            icon: require('../../../assets/images/common/rain.png'),
+            icon: require('../../../assets/images/common/cloudy.png'),
             wind: '12 km/h',
             humidity: '32%',
             rain: '10%',
@@ -57,30 +57,30 @@ const Next7DaysScreen = () => {
                 >
                     {/* Top Row */}
                     <View style={styles.rowTop}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                             <View>
                                 <Text style={styles.dayText}>{item.day}</Text>
                                 <Text style={styles.dateText}>{item.date}</Text>
                             </View>
-                            <Image source={item.icon} style={styles.icon} />
+                            <Image source={item.icon} style={{ ...styles.icon, marginLeft: 20 }} />
                         </View>
+                        <View style={styles.divider} />
 
                         <View style={styles.stats}>
-                            <View >
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                 <Image source={wind} style={styles.statsImg} />
                                 <Text style={styles.statText}>{item.wind}</Text>
-                            </View>
-                            <View >
+                            </View >
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                 <Image source={humidity} style={styles.statsImg} />
                                 <Text style={styles.statText}>{item.humidity}</Text>
                             </View>
-                            <View >
+                            <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                                 <Image source={raindrop} style={styles.statsImg} />
                                 <Text style={styles.statText}>{item.rain}</Text>
                             </View>
                         </View>
                     </View>
-
                     {/* Bottom Row */}
                     <View style={styles.rowBottom}>
                         <Text style={styles.description}>{item.description}</Text>
@@ -96,39 +96,42 @@ export default Next7DaysScreen;
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#f0f0f0',
+        // backgroundColor: '#f0f0f0',
         flex: 1,
         paddingVertical: 10,
     },
     card: {
         backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 12,
-        marginHorizontal: 16,
+        borderRadius: 10,
+        // padding: 12,
+        // marginHorizontal: 16,
         marginVertical: 8,
-        elevation: 2,
+        // elevation: 2,
     },
     todayHighlight: {
         borderWidth: 1.5,
         borderColor: '#28a745',
     },
     rowTop: {
+        padding: 12,
+        paddingHorizontal: 12,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     dayText: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: '700',
         marginRight: 6,
     },
     dateText: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: 16,
+        fontWeight: 600,
+        color: '#4E4E4E',
     },
     icon: {
-        width: 28,
-        height: 28,
+        width: 36,
+        height: 36,
         marginLeft: 8,
     },
     stats: {
@@ -145,19 +148,31 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         marginHorizontal: 4,
     },
+    divider: {
+        width: 1,
+        height: 81,
+        backgroundColor: '#DFDFDF', // light grey line like in your screenshot
+        marginHorizontal: 3,       // spacing on both sides
+    },
     rowBottom: {
         marginTop: 10,
-        borderTopWidth: 1,
-        borderColor: '#F2F8F4',
-        paddingTop: 8,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 10,
+        backgroundColor: '#F2F8F4',
+        // backgroundColor: '#F2F8F4',
+        // borderTopWidth: 1,
+        // borderColor: '#F2F8F4',
+        // paddingTop: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
     description: {
-        color: '#28a745',
+        color: '#147045',
         fontWeight: '600',
     },
     temp: {
+        color: '#147045',
         fontWeight: '600',
     },
 });

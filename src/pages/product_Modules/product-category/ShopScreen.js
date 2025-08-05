@@ -21,7 +21,7 @@ export default function ShopScreen({ searchData, setSearchData, onPressCategory,
     return (
 
         <>
-            <View style={{ marginTop: 30 }}>
+            <View>
                 <CustomHeader
                     type="shop"
                     topTitle="Shop"

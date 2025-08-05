@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 8,
         height: 50,
-        marginTop: 25,
+        // marginTop: 25,
         paddingHorizontal: 16,
     },
     servicesContainer: {
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     weatherText: {
         fontSize: 12,
         color: '#333',
-        lineHeight: 10
+        lineHeight: 15
     },
     weatherLink: {
         fontSize: 12,

@@ -156,7 +156,7 @@ const MyCartContainer = ({
     return (
 
         <>
-            <View style={{ marginTop: 30 }}>
+            <View >
                 <CustomHeader
                     type="cart"
                     topTitle="My Cart"
@@ -437,7 +437,7 @@ const MyCartContainer = ({
                 title="Confirm"
                 subtitle="Are you sure you want to continue this payment?"
                 onCancel={() => setCODVisible(false)}
-                onConfirm={() =>{ onPressCheckOut('COD')}}
+                onConfirm={() => { onPressCheckOut('COD') }}
                 position="center"
             />
 

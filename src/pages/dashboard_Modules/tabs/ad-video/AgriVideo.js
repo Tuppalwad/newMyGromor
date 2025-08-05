@@ -24,6 +24,8 @@ import CustomHeader from '../../../../components/common/CustomHeader';
 import { extractVideoData } from '../../../../utils/utils';
 import FilterModal from '../../../product_modules/components/FilterModal';
 import Indicator from '../../../../components/common/Indicator';
+import AgriFilterModal from './AgriFilterModal';
+import LinearGradient from 'react-native-linear-gradient';
 
 const categories = ['All', 'Newest', 'Most Viewed', 'Learning', 'Advisory'];
 
@@ -198,7 +200,12 @@ const AgriVideo = () => {
 
 
             {/* Sort & Filter */}
-            <View style={styles.bottomBar}>
+            <LinearGradient
+                colors={['#1E8153', '#4EA618']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.bottomBar}>
+
                 <TouchableOpacity style={styles.bottomButton} onPress={() => console.log('Sort pressed')}>
                     <Text style={styles.bottomIcon}>⇅</Text>
                     <Text style={styles.bottomText}>Sort by</Text>
@@ -211,8 +218,9 @@ const AgriVideo = () => {
                     <Text style={styles.bottomText}>Filters</Text>
                     <View style={styles.dot} />
                 </TouchableOpacity>
-            </View>
-            <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
+            </LinearGradient>
+
+            <AgriFilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
 
             <Indicator Indicator={!isLoading} />
         </SafeAreaView>
