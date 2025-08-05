@@ -34,20 +34,6 @@ import { useOperation } from '../../../../redux/operation';
 import SearchBar from '../../../../components/common/SearchBar';
 import Indicator from '../../../../components/common/Indicator';
 import WeatherScreen from '../../../product_modules/weather/weatherScreen';
-const services = [
-    { title: 'Buy Products', screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
-    { title: 'Spraying Services', screen: Screen.MyServicesScreen, icon: SprayingService, state: 'Spraying Services' },
-    { title: 'Door Delivery', screen: Screen.MyServicesScreen, icon: DoorDelivery, state: 'Door Delivery' },
-    { title: 'Gromor Store', screen: '', icon: GromorStore },
-    { title: 'Crop Doctor', screen: '', icon: CropDoctore },
-    { title: 'Ask the Experts', screen: '', icon: AskTheExperts },
-    { title: 'My Crop Advisory', screen: '', icon: CropAdvisory },
-    { title: 'Agri Video', screen: Screen.adVideo, icon: AgriVideo },
-    { title: 'My Crops', screen: '', icon: MyCrop },
-    { title: 'Gromor Connect', screen: '', icon: GromorConnect },
-    { title: 'Mandi Rates', screen: '', icon: MandiRates },
-    { title: 'Fertilizer Calculator', screen: '', icon: fertilizerCal },
-];
 
 const numColumns = 3;
 const screenWidth = Dimensions.get('window').width;
@@ -60,10 +46,27 @@ const HomeScreen = ({ isloading }) => {
     const StoreCodeDetails = useSelector(
         state => state.farmer.farmerStoreCodeDetails,
     );
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
     const numColumns = 3;
     const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
     const operation = useOperation();
     const dispatch = useDispatch()
+
+
+    const services = [
+        { title:  appLanguages.buy_products ?? 'Buy Products' , screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
+        { title: 'Spraying Services', screen: Screen.MyServicesScreen, icon: SprayingService, state: 'Spraying Services' },
+        { title: 'Door Delivery', screen: Screen.MyServicesScreen, icon: DoorDelivery, state: 'Door Delivery' },
+        { title: 'Gromor Store', screen: '', icon: GromorStore },
+        { title: 'Crop Doctor', screen: '', icon: CropDoctore },
+        { title: 'Ask the Experts', screen: '', icon: AskTheExperts },
+        { title: 'My Crop Advisory', screen: '', icon: CropAdvisory },
+        { title: 'Agri Video', screen: Screen.adVideo, icon: AgriVideo },
+        { title: 'My Crops', screen: '', icon: MyCrop },
+        { title: 'Gromor Connect', screen: '', icon: GromorConnect },
+        { title: 'Mandi Rates', screen: '', icon: MandiRates },
+        { title: 'Fertilizer Calculator', screen: '', icon: fertilizerCal },
+    ];
 
     const renderItem = ({ item }) => (
         <ServiceCard
@@ -94,6 +97,8 @@ const HomeScreen = ({ isloading }) => {
     const onChangeText = () => {
 
     }
+
+    console.log(appLanguages, 'aaaaaaaa')
 
     return (
         <SafeAreaView style={styles.container}>

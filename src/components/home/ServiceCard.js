@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 const ServiceCard = ({ title, icon, onPress }) => {
+    
     return (
         <TouchableOpacity style={styles.card} onPress={onPress}>
             <View style={styles.iconContainer}>
