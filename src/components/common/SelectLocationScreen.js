@@ -18,6 +18,7 @@ import locationPin from '../../assets/images/common/locationPin.png';
 import { HEToast } from '../toast';
 import CustomButton from './CustomButton';
 
+
 const SelectLocationScreen = ({ navigation }) => {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -65,7 +66,7 @@ const SelectLocationScreen = ({ navigation }) => {
         HEToast("Could not fetch location.", "error")
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 10000 }
     );
   };
 
@@ -73,8 +74,8 @@ const SelectLocationScreen = ({ navigation }) => {
     const coords = e.nativeEvent.coordinate;
     setLocation((prev) => ({
       ...prev,
-      latitude: coords.latitude,
-      longitude: coords.longitude,
+      latitude: coords?.latitude,
+      longitude: coords?.longitude,
     }));
   };
 
@@ -82,14 +83,14 @@ const SelectLocationScreen = ({ navigation }) => {
     const coords = e.nativeEvent.coordinate;
     setLocation((prev) => ({
       ...prev,
-      latitude: coords.latitude,
-      longitude: coords.longitude,
+      latitude: coords?.latitude,
+      longitude: coords?.longitude,
     }));
   };
 
   const handleSave = () => {
     if (location) {
-      console.log('Selected LatLong:', location.latitude, location.longitude);
+      console.log('Selected LatLong:', location?.latitude, location?.longitude);
     }
   };
 

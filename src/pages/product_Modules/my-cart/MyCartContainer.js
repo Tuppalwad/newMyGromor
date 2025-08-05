@@ -461,6 +461,19 @@ const MyCartContainer = ({
 
                         }}
                             disabled={!enablePayment}
+                            onPress={() => {
+                                if (!allowTerm) {
+                                    HEToast("Please allow Term and conditions")
+                                    return
+                                }
+
+                                if (deliveryType == "") {
+                                    setShowDeliveryMethodErrro(true)
+                                    return
+                                } else {
+                                    setCODVisible(true)
+                                }
+                            }}
                         >
                             <Text style={{
                                 ...styles.codText,
@@ -480,7 +493,7 @@ const MyCartContainer = ({
                                     setShowDeliveryMethodErrro(true)
                                     return
                                 } else {
-                                    setCODVisible(true)
+                                    onPressCheckOut('Predpaid')
                                 }
                             }}
                         >
@@ -519,6 +532,9 @@ const MyCartContainer = ({
                     }
                 </View>
             </View>
+
+
+
         </>
 
 

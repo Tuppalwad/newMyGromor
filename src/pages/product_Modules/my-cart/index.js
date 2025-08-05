@@ -24,6 +24,7 @@ import CTText from '../../../components/ctText';
 import { BUILD, BuildTypes, Configuration, DEV_BASE_URL, PAYMENT_KEY } from '../../../config';
 import Indicator from '../../../components/common/Indicator';
 import ConfirmationModal from '../../../components/common/ConfirmationModal';
+import PayUBizSdk from 'payu-non-seam-less-react';
 
 
 let PayUBizSdk_Input = {
@@ -432,7 +433,6 @@ const MyCart = ({ navigation, route }) => {
 
     const onPressCheckOut = (type = 'COD') => {
 
-
         try {
             setCODVisible(false);
             hashCode = '';
@@ -586,6 +586,8 @@ const MyCart = ({ navigation, route }) => {
                 dispatch(operation.payment.generateCodOrder(COD_payload))
                     .then(res => {
                         if (res.errors == null || res.errors.length === 0) {
+                            getMyCart({ farmerId: farmerAddress?.farmerIdentityId });
+                            getNotification();
                             navigation.navigate(Screen.SuccessScreen)
                         } else {
                             dispatch(operation.user.getErrorHandling(res, 'createTransaction'));
@@ -601,21 +603,6 @@ const MyCart = ({ navigation, route }) => {
                             dispatch(operation.user.getErrorHandling(err, 'createTransaction'));
                         }
                     });
-
-                // const url = DEV_BASE_URL + "/product.api/api/product/generateCodOrder";
-
-                // const res = await fetch(url, {
-                //     method: 'post',
-                //     body: JSON.stringify(COD_payload),
-                //     headers: {
-                //         "Content-Type": "application/json",
-                //         "Authorization": 'Bearer ' + UserManager.getAccessToken,
-                //     }
-                // })
-
-                // console.log(res.data, 'ddddddddd')
-
-
 
             } else if (type === 'Predpaid') {
                 dispatch(operation.payment.generatePredpaidOrder(tempData))
@@ -644,7 +631,7 @@ const MyCart = ({ navigation, route }) => {
 
                                 const preparedData = createPaymentParams(paymentData);
 
-                                // PayUBizSdk.openCheckoutScreen(preparedData);
+                                PayUBizSdk.openCheckoutScreen(preparedData);
 
                             } else {
                                 dispatch(
@@ -1331,9 +1318,8 @@ const MyCart = ({ navigation, route }) => {
                 setShowDeliveryMethodErrro={setShowDeliveryMethodErrro}
             />
 
-
-
             <Indicator Indicator={!isLoading} />
+
         </View>
     );
 };
