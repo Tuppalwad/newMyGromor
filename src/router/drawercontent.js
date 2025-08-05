@@ -103,12 +103,14 @@ const DrawerContent = (props) => {
             <Image source={language} style={{ height: 15, width: 15 }} />
             <Text style={styles.languageLabel}> Language:</Text>
           </View>
-          <View style={{ alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate(Screen.language)}
+            style={{ alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
 
             <Text style={styles.languageValue}>English</Text>
             <Image source={require('../../src/assets/drawer/forwardArrow.png')} style={{ width: 9, height: 9, objectFit: 'contain' }} />
 
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Menu Options */}
