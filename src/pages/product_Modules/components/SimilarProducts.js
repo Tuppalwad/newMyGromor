@@ -6,15 +6,16 @@ import ProductCard from './ProductCard';
 const SimilarProducts = ({ productdata, onPressProductItem, onPressFavourite, onPressDeleteFav, onPressSeeAll }) => {
 
     const renderProduct = ({ item, index, isSimilar }) => <ProductCard item={item} index={index} onPressProductItem={onPressProductItem} onPressFavourite={onPressFavourite} onPressDeleteFav={onPressDeleteFav} type={isSimilar} />;
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
 
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Similar Products</Text>
+                <Text style={styles.title}>{appLanguages.similar_products ?? "Similar Products"}</Text>
                 <TouchableOpacity
                     onPress={onPressSeeAll}
                 >
-                    <Text style={styles.viewAll}>View All</Text>
+                    <Text style={styles.viewAll}>{appLanguages.view_all ?? "View All"}</Text>
                 </TouchableOpacity>
             </View>
 

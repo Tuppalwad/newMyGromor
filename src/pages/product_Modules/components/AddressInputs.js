@@ -23,6 +23,8 @@ import { Screen } from '../../../router/screen';
 const DeliveryAddress = ({ address, setAddress, placesRef }) => {
     const [errors, setErrors] = useState({});
     const appLanguage = UserManager?.getAppMultiLanguage;
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
+
     const navigation = useNavigation();
     const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Pune'];
     const states = ['Maharashtra', 'Delhi', 'Karnataka'];
@@ -86,7 +88,7 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
 
     return (
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-            <Text style={styles.label}>Location</Text>
+            <Text style={styles.label}>{appLanguage.location ?? "Location"}</Text>
             {/* <GooglePlacesAutocomplete
                 ref={placesRef}
                 placeholder="Search your address"
@@ -170,10 +172,10 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
                 onPress={() => navigation.navigate(Screen.MapScreen)}
             >
                 <Image source={locationPin} style={styles.locationPin} />
-                <Text style={styles.selectLocationText}> Select Location</Text>
+                <Text style={styles.selectLocationText}>{appLanguages.select_location ?? "Select Location"}</Text>
             </TouchableOpacity>
 
-            <Text style={styles.label}>Address Line 1</Text>
+            <Text style={styles.label}>{appLanguages.address_line_1 ?? "Address Line 1"}</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Address Line 1"
@@ -183,7 +185,7 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
             />
             {errors.address1 ? <Text style={styles.errorText}>{errors.address1}</Text> : null}
 
-            <Text style={styles.label}>Address Line 2</Text>
+            <Text style={styles.label}>{appLanguages.address_line_2 ?? "Address Line 2"}</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Address Line 2"
@@ -195,7 +197,7 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
             <View style={styles.row}>
                 <View style={{ flex: 1, marginRight: 8 }}>
                     <Dropdown
-                        label="City"
+                        label={appLanguages.city ?? "City"}
                         options={cities}
                         selectedValue={address.city}
                         onSelect={(value) => handleChange('city', value)}
@@ -204,7 +206,7 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
                 </View>
                 <View style={{ flex: 1, marginLeft: 8 }}>
                     <Dropdown
-                        label="State"
+                        label={appLanguages.state ?? "State"}
                         options={states}
                         selectedValue={address.state}
                         onSelect={(value) => handleChange('state', value)}
@@ -213,10 +215,10 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
                 </View>
             </View>
 
-            <Text style={styles.label}>Pin Code</Text>
+            <Text style={styles.label}>{appLanguages.pincode ?? "Pin Code"}</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Enter Pincode"
+                placeholder={appLanguages.pincode_placeholder ?? "Enter Pincode"}
                 value={address.pincode}
                 onChangeText={(text) => handleChange('pincode', text)}
                 keyboardType="numeric"
@@ -226,7 +228,7 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
 
             <TouchableOpacity style={{ ...styles.selectLocationButton, marginTop: 10 }}>
                 {/* <Image source={locationPin} style={styles.locationPin} /> */}
-                <Text style={styles.selectLocationText}> Use this address</Text>
+                <Text style={styles.selectLocationText}>{appLanguage.use_this_address ?? "Use this address"}</Text>
             </TouchableOpacity>
         </ScrollView>
     );

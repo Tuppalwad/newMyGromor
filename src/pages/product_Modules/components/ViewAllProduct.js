@@ -28,6 +28,7 @@ const ViewAllProduct = () => {
 
     const navigation = useNavigation();
     const route = useRoute()
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
 
     UserManager.loadUser()
     const appLanguage = UserManager?.getAppMultiLanguage
@@ -301,7 +302,7 @@ const ViewAllProduct = () => {
             />
             <SearchBar onChangeText={(text) => setSearchData(text)} />
 
-            <Text style={styles.itemCount}>{productData.length} items</Text>
+            <Text style={styles.itemCount}>{productData.length} {appLanguages.items ?? "items"}</Text>
 
             <FlatList
                 data={productData || []}
@@ -334,14 +335,14 @@ const ViewAllProduct = () => {
             <View style={styles.bottomBar}>
                 <TouchableOpacity style={styles.bottomButton} onPress={() => setModalVisible(true)}>
                     <Text style={styles.bottomIcon}>⇅</Text>
-                    <Text style={styles.bottomText}>Sort by</Text>
+                    <Text style={styles.bottomText}>{appLanguages.sort_by ?? "Sort by"}</Text>
                 </TouchableOpacity>
 
                 <View style={styles.divider} />
 
                 <TouchableOpacity style={styles.bottomButton} onPress={() => setFilterVisible(true)}>
                     <Text style={styles.bottomIcon}>≡</Text>
-                    <Text style={styles.bottomText}>Filters</Text>
+                    <Text style={styles.bottomText}>{appLanguages.filter ?? "Filter"}</Text>
                     <View style={styles.dot} />
                 </TouchableOpacity>
             </View>

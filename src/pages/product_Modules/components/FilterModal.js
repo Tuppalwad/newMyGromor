@@ -19,6 +19,7 @@ export default function FilterModal({ visible, onClose }) {
         }
         onPressChoice
     })
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
 
     return (
         <Modal
@@ -35,9 +36,9 @@ export default function FilterModal({ visible, onClose }) {
                         <View style={styles.header}>
                             <View></View>
                             <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-                                <Text style={styles.title}>Filters</Text>
+                                <Text style={styles.title}>{appLanguages.filter ?? "Filter"}</Text>
                                 <TouchableOpacity>
-                                    <Text style={styles.clearAll}>Clear All</Text>
+                                    <Text style={styles.clearAll}>{appLanguages.clear_all ?? "Clear All"}</Text>
                                 </TouchableOpacity>
                             </View>
                             <TouchableOpacity onPress={onClose}>
@@ -78,7 +79,7 @@ export default function FilterModal({ visible, onClose }) {
 
                         {/* Apply Button */}
                         <TouchableOpacity style={styles.applyButton}>
-                            <Text style={styles.applyText}>Apply</Text>
+                            <Text style={styles.applyText}>{appLanguages.apply ?? "Apply"}</Text>
                         </TouchableOpacity>
 
                     </View>

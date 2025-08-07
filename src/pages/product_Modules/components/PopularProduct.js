@@ -5,6 +5,9 @@ import LinearGradient from 'react-native-linear-gradient';
 
 
 const PopularProduct = ({ popularProductData, onPressProductItem }) => {
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
+
+
     return (
 
         <LinearGradient
@@ -15,9 +18,9 @@ const PopularProduct = ({ popularProductData, onPressProductItem }) => {
         >
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Popular Product</Text>
+                    <Text style={styles.title}>{appLanguages.popular_product ?? "Popular Product"}</Text>
                     <TouchableOpacity>
-                        <Text style={styles.viewAll}>View All</Text>
+                        <Text style={styles.viewAll}>{appLanguages.view_all ?? "View All"}</Text>
                     </TouchableOpacity>
                 </View>
 

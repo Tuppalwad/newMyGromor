@@ -8,6 +8,7 @@ import SuccessGif from '../../../components/common/SuccessGif';
 import { Screen } from '../../../router/screen';
 const SuccessScreen = ({ id }) => {
     const navigation = useNavigation();
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
 
     return (
         <View style={styles.container}>
@@ -18,10 +19,10 @@ const SuccessScreen = ({ id }) => {
 
             </View>
 
-            <Text style={styles.title}>Submitted Successfully!</Text>
+            <Text style={styles.title}>{appLanguages.successful_message ?? "Submitted Successfully!"}</Text>
             <Text style={styles.subtitle}>
-                Your service has been placed successfully.{"\n"}
-                <Text style={styles.serviceId}>Service ID {id}</Text>
+                {appLanguages.successful_submessage ?? "Your service has been placed successfully."}{"\n"}
+                <Text style={styles.serviceId}>{appLanguages.lblServiceId ?? "Service ID"} {id}</Text>
             </Text>
 
             <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('')}>
@@ -31,7 +32,7 @@ const SuccessScreen = ({ id }) => {
                     end={{ x: 1, y: 0 }}
                     style={styles.gradientButton}
                 >
-                    <Text style={styles.buttonText}>View Order</Text>
+                    <Text style={styles.buttonText}>{appLanguages.view_order ?? "View Order"}</Text>
                 </LinearGradient>
             </TouchableOpacity>
 
@@ -39,7 +40,7 @@ const SuccessScreen = ({ id }) => {
                 onPress={() => navigation.navigate(Screen.homes)}
                 style={styles.homeLink}
             >
-                <Text style={styles.homeText}>Go to Home</Text>
+                <Text style={styles.homeText}>{appLanguages.go_to_home ?? "Go to Home"}</Text>
                 <Text style={styles.arrow}>{' >'}</Text>
             </TouchableOpacity>
         </View>

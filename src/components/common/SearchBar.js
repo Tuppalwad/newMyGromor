@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import searchIcon from '../../assets/images/splash/search.png';
+import { useSelector } from 'react-redux';
 
 const SearchBar = ({ onChangeText, value, onPressFilter }) => {
   const placeholderItems = ['seeds', 'Potato', 'Onion'];
@@ -37,6 +38,7 @@ const SearchBar = ({ onChangeText, value, onPressFilter }) => {
     setText(inputText);
     onChangeText?.(inputText);
   };
+  const appLanguages = useSelector(state => state.user.appMultiLanguage);
 
   return (
     <View style={styles.container}>
@@ -49,7 +51,7 @@ const SearchBar = ({ onChangeText, value, onPressFilter }) => {
       />
       {text.length === 0 && (
         <View style={styles.placeholderWrapper}>
-          <Text style={styles.staticText}>Search for </Text>
+          <Text style={styles.staticText}>{appLanguages.search_for ?? "Search for"}</Text>
           <View style={styles.animatedWrapper}>
             <Animated.View
               style={{

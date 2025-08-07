@@ -5,13 +5,16 @@ import { WebView } from 'react-native-webview';
 import constants from "../../../../config/constants";
 import { palette } from "../../../../theme/color";
 import CustomHeader from "../../../../components/common/CustomHeader";
+import { useSelector } from "react-redux";
 
 const MarketValue = ({ navigation }) => {
+  const appLanguages = useSelector(state => state.user.appMultiLanguage);
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
         type="marketValue"
-        topTitle="Market Value"
+        topTitle={appLanguages.market_value ?? "Market Value"}
         subtitle=""
         onBackPress={() => navigation.goBack()}
         onCartPress={() => console.log('Cart pressed')}

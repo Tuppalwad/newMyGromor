@@ -15,10 +15,12 @@ import checkIcon from '../../../../assets/images/common/checkIcon.png';
 const { height } = Dimensions.get('window');
 import search from '../../../../assets/images/common/searchIcon.png'
 import LinearGradient from 'react-native-linear-gradient';
+import { useSelector } from 'react-redux';
 
 const tabs = ["Crop", "Language"];
 
 const AgriFilterModal = ({ visible, onClose }) => {
+    const appLanguage = UserManager?.getAppMultiLanguage
     const [activeTab, setActiveTab] = useState("Crop");
     const [selectedOptions, setSelectedOptions] = useState({ Crop: [], Language: [] });
     const [searchTerm, setSearchTerm] = useState("");
@@ -67,9 +69,9 @@ const AgriFilterModal = ({ visible, onClose }) => {
                     <View style={styles.headerRow}>
                         {/* <View></View> */}
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={styles.headerText}>Filters</Text>
+                            <Text style={styles.headerText}>{appLanguage.filter ?? "Filter"}</Text>
                             <TouchableOpacity onPress={clearAll}>
-                                <Text style={styles.clearText}>Clear All</Text>
+                                <Text style={styles.clearText}>{appLanguage.clear_all ?? "Clear All"}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -146,7 +148,7 @@ const AgriFilterModal = ({ visible, onClose }) => {
                             style={styles.payButton}
                         >
 
-                            <Text style={styles.applyText}>Apply</Text>
+                            <Text style={styles.applyText}>{appLanguage.apply_filter ?? "Apply"}</Text>
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>

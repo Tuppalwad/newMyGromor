@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity, Modal, StyleSheet, FlatList } from 'react
 
 const SortModal = ({ modalVisible, setModalVisible }) => {
   const [selectedSort, setSelectedSort] = useState('Popular');
+  const appLanguages = useSelector(state => state.user.appMultiLanguage);
 
   const sortOptions = [
     'Newest',
@@ -33,9 +34,9 @@ const SortModal = ({ modalVisible, setModalVisible }) => {
           <View style={styles.header}>
             <View></View>
             <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-              <Text style={styles.title}>Filters</Text>
+              <Text style={styles.title}>{appLanguages.filter ?? "Filter"}</Text>
               <TouchableOpacity>
-                <Text style={styles.clearAll}>Reset</Text>
+                <Text style={styles.clearAll}>{appLanguages.reset ?? "Reset"}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     position: 'relative',
     marginTop: -20,
-    padding:10
+    padding: 10
   },
   clearAll: {
     color: '#0A8F43',
