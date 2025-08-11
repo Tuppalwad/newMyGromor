@@ -1,6 +1,6 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Linking, Platform } from 'react-native';
+import { View, Linking, Platform, NativeEventEmitter } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useOperation } from '../../../redux/operation';
@@ -21,11 +21,13 @@ import { Icon } from '../../../../assets/images';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { palette } from '../../../theme/color';
 import CTText from '../../../components/ctText';
-import { BUILD, BuildTypes, Configuration, DEV_BASE_URL, PAYMENT_KEY } from '../../../config';
+import { BUILD, BuildTypes, Configuration, DEV_BASE_URL, PAYMENT_KEY, PAYMENT_SALT } from '../../../config';
 import Indicator from '../../../components/common/Indicator';
 import ConfirmationModal from '../../../components/common/ConfirmationModal';
 import PayUBizSdk from 'payu-non-seam-less-react';
-
+import SelectLocationScreen from '../../../components/common/SelectLocationScreen';
+import { sha512 } from 'js-sha512';
+import SuccessScreen from '../components/SuccessScreen';
 
 let PayUBizSdk_Input = {
     key: PAYMENT_KEY,
@@ -69,6 +71,9 @@ const MyCart = ({ navigation, route }) => {
         ProductType.productCartBooking,
     ]);
     const placesRef = useRef();
+    const [transId, setTransId] = useState({ orderId: '', transactionId: '' });
+    const [showSuccess, setShowSuccess] = useState(false)
+    const [showMap, setShowMap] = useState(false);
     const [deliverCharges, setDeliverCharges] = useState(defdelivery_Charge);
     const [deliveryType, setDeliveryType] = useState('');
     const [activeCategory, setActiveCategory] = useState('non-fertilizers');
@@ -84,6 +89,7 @@ const MyCart = ({ navigation, route }) => {
     const [cartData, setCartData] = useState([]);
     const [errorMessage, setErrorMessage] = useState('')
     const [distance, setDistance] = useState();
+    const [loading, setLoading] = useState(false)
     const [CodVisible, setCODVisible] = useState(false);
     const [BookingSuccessVisible, setBookingSuccessVisible] = useState({
         visible: false,
@@ -163,7 +169,6 @@ const MyCart = ({ navigation, route }) => {
     const [activeTab, setActiveTab] = useState(tabData[0]);
     const [cartFertilizersData, setCartFertilizersData] = useState([]);
     const [showDeliveryMethodErrro, setShowDeliveryMethodErrro] = useState(false)
-    const isfocused = useIsFocused()
 
     const [payFailureVisible, setPayFailureVisible] = useState({
         visible: false,
@@ -172,6 +177,34 @@ const MyCart = ({ navigation, route }) => {
         type: '',
         buttonText: '',
     });
+
+    useEffect(() => {
+        const eventEmitter = new NativeEventEmitter(PayUBizSdk);
+
+        const payUOnPaymentSuccess = eventEmitter.addListener(
+            'onPaymentSuccess',
+            onPaymentSuccess,
+        );
+        const payUOnPaymentFailure = eventEmitter.addListener(
+            'onPaymentFailure',
+            onPaymentFailure,
+        );
+        const payUOnPaymentCancel = eventEmitter.addListener(
+            'onPaymentCancel',
+            onPaymentCancel,
+        );
+        const payUOnError = eventEmitter.addListener('onError', onError);
+        const payUGenerateHash = eventEmitter.addListener('generateHash', generateHash);
+
+        return () => {
+            payUOnPaymentSuccess.remove();
+            payUOnPaymentFailure.remove();
+            payUOnPaymentCancel.remove();
+            payUOnError.remove();
+            payUGenerateHash.remove();
+        };
+    }, []);
+
 
     useEffect(() => {
         getAddress()
@@ -204,6 +237,7 @@ const MyCart = ({ navigation, route }) => {
             });
         }
     }, [activeTab, isFocussed]);
+
 
     const Card_ArrayData = activeTab.id == 2 ? cartFertilizersData : cartData;
 
@@ -285,7 +319,7 @@ const MyCart = ({ navigation, route }) => {
             }
 
         }
-    }, [Card_ArrayData, activeTab.id, address.latitude, address.longitude, checkBillAdd]);
+    }, [Card_ArrayData, activeTab.id, address.latitude, address.longitude, checkBillAdd,]);
 
 
     useEffect(() => {
@@ -318,18 +352,230 @@ const MyCart = ({ navigation, route }) => {
 
 
     // useEffect(() => {
-    //     if (isfocused) dispatch(getMinimumCount())
-    //     setPreviousAddress()
-    // }, [isfocused])
+    //     const eventEmitter = new NativeEventEmitter(PayUBizSdk);
+
+    //     const payUOnPaymentSuccess = eventEmitter.addListener(
+    //         'onPaymentSuccess',
+    //         onPaymentSuccess,
+    //     );
+    //     const payUOnPaymentFailure = eventEmitter.addListener(
+    //         'onPaymentFailure',
+    //         onPaymentFailure,
+    //     );
+    //     const payUOnPaymentCancel = eventEmitter.addListener(
+    //         'onPaymentCancel',
+    //         onPaymentCancel,
+    //     );
+    //     const payUOnError = eventEmitter.addListener(
+    //         'onError',
+    //         onError,
+    //     );
+    //     const payUGenerateHash = eventEmitter.addListener(
+    //         'generateHash',
+    //         generateHash,
+    //     );
+
+    //     return () => {
+    //         payUOnPaymentSuccess.remove();
+    //         payUOnPaymentFailure.remove();
+    //         payUOnPaymentCancel.remove();
+    //         payUOnError.remove();
+    //         payUGenerateHash.remove();
+    //     };
+    // }, []);
 
 
-    // const setPreviousAddress = async () => {
-    //     try {
-    //         await dispatch(getPreviousAddress(farmerAddress.farmerIdentityId))
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
+    const onPaymentSuccess = e => {
+        const paymentData = JSON.parse(e?.payuResponse);
+        const paymentId = JSON.parse(e?.payuResponse)?.id;
+        setTransId(paymentId);
+        if (paymentData?.bank_ref_no) {
+            let params = {
+                transactionId: txnid,
+                mobileNumber: farmerAddress?.mobileNumber,
+                paymentStatus: 'success',
+                paymentReference: paymentData?.bank_ref_no,
+                storeCode: farmerAddress?.storeCode,
+                villageCode: farmerAddress?.villageCode,
+                name: farmerAddress?.name ?? 'Gromor',
+                farmerId: farmerAddress?.farmerIdentityId,
+                paymentCode: 4,
+                tenderCode: 2,
+                paymentMode: paymentData?.mode,
+                paymentGatewayResponse: paymentData,
+            };
+
+            if (paymentData?.mihpayid) {
+                params.mihpayid = paymentData?.mihpayid;
+            } else {
+                params.mihpayid = paymentData?.id;
+            }
+            dispatch(operation.payment.paymentUpdate(params))
+                .then(res => {
+
+                    if (!isEmpty(res)) {
+                        setShowSuccess(true)
+                        setCODSuccessVisible({ visible: true, transId: txnid });
+                        getMyCart({ farmerId: farmerAddress?.farmerIdentityId });
+                        getNotification();
+                        setPaySuccessVisible(true);
+                    } else {
+                        setPayFailureVisible({
+                            visible: true,
+                            title: appLanguage?.warning ?? 'Warning!',
+                            buttonText: appLanguage?.okay ?? 'Okay',
+                            description: `${appLanguage?.lblPaymentreceived ??
+                                'Payment received unable to generate order now so please check after sometime in MY ORDER HISTORY, use the below Id for your reference'
+                                } \n${appLanguage?.order_no ?? 'Order Id:'} #${txnid}`,
+                        });
+                    }
+                })
+                .catch(err => {
+                    setPayFailureVisible({
+                        visible: true,
+                        title: err.description ?? '',
+                        buttonText: appLanguage?.okay ?? 'Okay',
+                        description: `${appLanguage?.lblPaymentreceived ??
+                            'Payment received unable to generate order now so please check after sometime in MY ORDER HISTORY, use the below Id for your reference'
+                            } \n${appLanguage?.order_no ?? 'Order Id:'} #${txnid}`,
+                    });
+                    dispatch(operation.user.getErrorHandling(err, 'paymentUpdate'));
+                });
+        } else {
+            paymentUpdate_Method(
+                appLanguage?.lblBankreferencenumber ?? 'Bank reference number is empty',
+            );
+            setPayFailureVisible({
+                visible: true,
+                title: appLanguage?.lblorderfailed ?? 'Order Failed!',
+                buttonText: appLanguage?.lblTryagain ?? 'Try again',
+                description:
+                    appLanguage?.lblSorryBankreference ??
+                    'Sorry,Bank reference number is empty',
+            });
+        }
+    };
+
+
+    const onPaymentFailure = e => {
+        paymentUpdate_Method(appLanguage?.lblpaymentfailed ?? 'Payment Failed!');
+        setPayFailureVisible({
+            visible: true,
+            title: appLanguage?.lblpaymentfailed ?? 'Payment Failed!',
+            buttonText: appLanguage?.lblTryagain ?? 'Try again',
+            description:
+                appLanguage?.lblSorryyourorderhasfailed ??
+                'Sorry, your payment has been failed.',
+        });
+    };
+
+    const onError = e => {
+        console.log('onError', e);
+        paymentUpdate_Method(appLanguage?.['lblPaymentError!'] ?? 'Payment Error');
+        setPayFailureVisible({
+            visible: true,
+            title: appLanguage?.['lblPaymentError!'] ?? 'Payment Error',
+            buttonText: appLanguage?.lblTryagain ?? 'Try again',
+            description:
+                appLanguage?.lblSorryyourorderhasfailed ??
+                'Sorry, your order has been failed.',
+        });
+    };
+
+    const onPaymentCancel = e => {
+        console.log('onPaymentCancel', e);
+        paymentUpdate_Method('Payment Cancelled');
+        setPayFailureVisible({
+            visible: true,
+            title: appLanguage?.lblordercancelled ?? 'Order Cancelled!',
+            buttonText: appLanguage?.lblTryagain ?? 'Try again',
+            description:
+                appLanguage?.lblyourordercancelled ??
+                'Sorry, your order has been cancelled.',
+        });
+    };
+
+    const paymentUpdate_Method = Error_Name => {
+        let params = {
+            transactionId: txnid,
+            mobileNumber: farmerAddress?.mobileNumber,
+            paymentStatus: Error_Name,
+            storeCode: farmerAddress?.storeCode,
+            villageCode: farmerAddress?.villageCode,
+            name: farmerAddress?.name ?? 'Gromor',
+            farmerId: farmerAddress?.farmerIdentityId,
+            paymentCode: 4,
+            tenderCode: 2,
+        };
+        dispatch(operation.payment.paymentUpdate(params));
+    };
+
+    let generateHash = e => {
+        var hashName = e.hashName;
+        var result = { [hashName]: hashCode };
+        sendBackHash(e.hashName, e.hashString + PAYMENT_SALT);
+    };
+
+    const sendBackHash = (hashName, hashData) => {
+        // dispatch(operation.payment.paymentHash(hashData)).then(response => {
+        const response = calculateHash(hashData);
+        var result = { [hashName]: response };
+        console.log('hash result :>> ', result);
+        PayUBizSdk.hashGenerated(result);
+        // });
+    };
+
+    const calculateHash = data => {
+        console.log('Hash -- data', data);
+        const result = sha512(data);
+        console.log(result);
+        return result;
+    };
+
+    const createPaymentParams = data => {
+        try {
+            txnid = data.transactionid;
+            let payUPaymentParams = {
+                key: PayUBizSdk_Input.key,
+                transactionId: txnid,
+                amount: data.amount.toString(),
+                productInfo: data.productinfo,
+                firstName: data.firstname,
+                email: data.email,
+                phone: data.phone,
+                ios_surl: PayUBizSdk_Input.success,
+                ios_furl: PayUBizSdk_Input.failure,
+                android_surl: PayUBizSdk_Input.success,
+                android_furl: PayUBizSdk_Input.failure,
+                environment: PayUBizSdk_Input.environment,
+                userCredential: farmerAddress?.farmerIdentityId,
+                additionalParam: {
+                    udf1: data.udf1,
+                    udf2: data.udf2,
+                    udf3: data.udf3,
+                },
+            };
+
+            let payUCheckoutProConfig = {
+                primaryColor: PayUBizSdk_Input.primaryColor,
+                secondaryColor: PayUBizSdk_Input.secondaryColor,
+                merchantName: PayUBizSdk_Input.merchant_Name,
+                // showExitConfirmationOnCheckoutScreen: PayUBizSdk_Input.showExitConfirmationOnCheckoutScreen,
+                // showExitConfirmationOnPaymentScreen: PayUBizSdk_Input.showExitConfirmationOnPaymentScreen,
+                // surePayCount: PayUBizSdk_Input.surePayCount,
+                // merchantResponseTimeout: PayUBizSdk_Input.merchantResponseTimeout,
+                // autoSelectOtp: PayUBizSdk_Input.autoSelectOtp,
+                // autoApprove: PayUBizSdk_Input.autoApprove,
+                // merchantSMSPermission: PayUBizSdk_Input.merchantSMSPermission,
+                // showCbToolbar: PayUBizSdk_Input.showCbToolbar,
+            };
+
+            return {
+                payUPaymentParams: payUPaymentParams,
+                payUCheckoutProConfig: payUCheckoutProConfig,
+            };
+        } catch (e) { }
+    };
 
 
     const getMyCart = param => {
@@ -512,9 +758,10 @@ const MyCart = ({ navigation, route }) => {
                 return;
             }
             getOrderPlacedmethod(type);
-        } catch (e) { }
+        } catch (e) {
+            console.log(e)
+        }
     };
-
 
 
     const getOrderPlacedmethod = async (type) => {
@@ -523,9 +770,9 @@ const MyCart = ({ navigation, route }) => {
             setShowDeliveryMethodErrro(true)
             return
         }
+        setLoading(true)
 
         try {
-
             let tempOrderData = [];
 
             if (activeTab.id === 2) {
@@ -588,12 +835,19 @@ const MyCart = ({ navigation, route }) => {
                         if (res.errors == null || res.errors.length === 0) {
                             getMyCart({ farmerId: farmerAddress?.farmerIdentityId });
                             getNotification();
-                            navigation.navigate(Screen.SuccessScreen)
+                            // navigation.navigate(Screen.SuccessScreen)
+                            setCODSuccessVisible({ visible: true, transId: res });
+                            setShowSuccess(true)
+
                         } else {
+
                             dispatch(operation.user.getErrorHandling(res, 'createTransaction'));
                         }
+                        setLoading(false)
                     })
                     .catch(err => {
+                        setLoading(false)
+
                         const { message, title } = err;
                         if (message?.includes('401')) {
                             navigation.dispatch(
@@ -637,13 +891,19 @@ const MyCart = ({ navigation, route }) => {
                                 dispatch(
                                     operation.user.getErrorHandling(res, 'createTransaction'),
                                 );
+
                             }
+                            setLoading(false)
                         } else {
                             dispatch(operation.user.getErrorHandling(res, 'createTransaction'));
+                            setLoading(false)
+
                         }
                     })
                     .catch(err => {
                         console.log('err', err);
+                        setLoading(false)
+
                         const { message, title } = err;
                         if (message?.includes('401')) {
                             navigation.dispatch(
@@ -680,7 +940,7 @@ const MyCart = ({ navigation, route }) => {
                 dispatch(operation.product.bookNowFromcart(bookingPayload))
                     .then(async res => {
                         if (res?.bookingId && res?.bookingId?.length != 0) {
-                            // setBookingSuccessVisible({ visible: true, transId: res });
+                            setBookingSuccessVisible({ visible: true, transId: res });
                             const parms = {
                                 farmerId: farmerAddress?.farmerIdentityId,
                                 language: farmerLanguage,
@@ -688,14 +948,20 @@ const MyCart = ({ navigation, route }) => {
                             await dispatch(operation.product.getMyCart(parms))
                             await dispatch(operation.product.getMyCartBooking(parms))
 
-                            navigation.navigate(Screen.SuccessScreen)
+                            // navigation.navigate(Screen.SuccessScreen)
+                            setShowSuccess(true)
+
 
                         } else {
                             dispatch(operation.user.getErrorHandling(res, 'bookNow'));
                         }
+                        setLoading(false)
+
                     })
                     .catch(err => {
                         const { message, title } = err;
+                        setLoading(false)
+
                         if (message?.includes('401')) {
                             navigation.dispatch(
                                 CommonActions.reset({
@@ -708,15 +974,18 @@ const MyCart = ({ navigation, route }) => {
                         }
                     });
             } else {
+                setLoading(false)
+
                 HEToast(appLanguage?.something_went_wrong_try ?? 'Something went wrong', 'error');
             }
         } catch (error) {
             console.log(error, 'e')
+            setLoading(false)
+
         }
 
+
     };
-
-
 
     const onPressAddQuantity = (item, index) => {
 
@@ -956,8 +1225,6 @@ const MyCart = ({ navigation, route }) => {
                         CommonActions.reset({ index: 1, routes: [{ name: Screen.welcome }] }),
                     );
                 } else {
-                    // console.log('kkkkkkkkkkkkkkkkkkkkkkkk')
-                    console.log(err, 'eeeeeeeeeeeeeeee')
                     HEToast(err?.message, 'error');
                     setEnablePayment(false);
                 }
@@ -968,7 +1235,6 @@ const MyCart = ({ navigation, route }) => {
     const checkBillingAddress = () => {
 
         if (!checkBillAdd) {
-            // setCheckBillAdd(false);
             getAddress();
         } else {
             const address = farmerAddress.address;
@@ -1003,7 +1269,6 @@ const MyCart = ({ navigation, route }) => {
                                     component.types.includes("postal_code")
                                 )?.long_name || "";
 
-                            console.log(pincode, 'kkkkkkkkkkkkkkkddddddd');
 
                             const { lat, lng } = data.results[0].geometry.location;
                             const longaddress = location.split(',').slice(1).join(',').trim().split(',');
@@ -1111,52 +1376,24 @@ const MyCart = ({ navigation, route }) => {
 
 
     const saveAddress = useCallback(
+
         async address => {
-            const preAddress = address
+            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
 
-            console.log(preAddress, 'preAddress')
-
-            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(preAddress)}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
-
-            // setCheckBillAdd(false)
             fetch(geocodeURL)
                 .then(response => response.json())
                 .then(data => {
 
                     if (data.status === 'OK' && data.results?.length > 0) {
-                        const addressComponents = data.results[0].address_components;
-                        const location = data.results[0]?.formatted_address
-                        // Safely extract the address components
-
-                        const city =
-                            addressComponents.find((component) =>
-                                component.types.includes("locality")
-                            )?.long_name || "";
-
-                        const state =
-                            addressComponents.find((component) =>
-                                component.types.includes("administrative_area_level_1")
-                            )?.long_name || "";
-
-                        const pincode =
-                            addressComponents.find((component) =>
-                                component.types.includes("postal_code")
-                            )?.long_name || ""; // May not be available in your response
 
                         const { lat, lng } = data.results[0].geometry.location;
 
-                        const longaddress = location.split(',').slice(1).join(',').trim().split(',');;
                         setAddress(prev => ({
                             ...prev,
-                            address1: longaddress?.slice(0, 2)?.join(',').trim(),
-                            address2: longaddress?.slice(2)?.join(',').trim(),
-                            city: city,
-                            state: state,
-                            pincode: pincode,
                             latitude: lat,
                             longitude: lng
                         }));
-                        placesRef.current?.clear();
+                        // placesRef.current?.clear();
                     } else {
                         if (deliveryType.type !== (appLanguage?.pick_up ?? "Pick Up")) {
                             HEToast(appLanguage.lblSaveDeliveryAddressToProceed ?? 'Location Not found');
@@ -1169,8 +1406,6 @@ const MyCart = ({ navigation, route }) => {
                     console.error('Error fetching address:', error);
                 })
                 .finally(() => {
-
-                    // setLoadMap(false);
                     return false
                 });
         },
@@ -1178,77 +1413,6 @@ const MyCart = ({ navigation, route }) => {
             address.latitude,
             address.longitude
         ],
-    );
-
-
-    const getAddressFromLatLng = useCallback(
-        async (latlng, shomap = true) => {
-            // Replace YOUR_GOOGLE_MAPS_API_KEY with your actual API key
-            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng.latitude},${latlng.longitude}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
-            if (shomap) {
-                setShowMaps(true)
-            }
-            // setCheckBillAdd(false)
-            fetch(geocodeURL)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'OK') {
-                        let location = data?.results?.[0]?.formatted_address;
-
-                        console.log(location, 'location')
-                        placesRef?.current?.setAddressText(location);
-                        const addressComponents = data?.results?.[0]?.address_components;
-
-                        const city = (addressComponents ?? []).find(component =>
-                            component.types.includes('administrative_area_level_3'),
-                        );
-                        const state = (addressComponents ?? []).find(component =>
-                            component.types.includes('administrative_area_level_1'),
-                        );
-                        // const pincode = (addressComponents ?? []).find(component =>
-                        //   component.types.includes('postal_code'),
-                        // );
-
-                        let pincode = data?.results?.[0]?.address_components.find(
-                            x => x.types[0] === 'postal_code',
-                        );
-                        const englishTextPin = pincode?.long_name.replace(
-                            /\D/g,
-                            '',
-                        );
-
-                        const longaddress = location.split(',').slice(1).join(',').trim().split(',');
-
-                        setAddress(prev => ({
-                            ...prev,
-                            address1: longaddress?.slice(0, 2)?.join(',').trim(),
-                            address2: longaddress?.slice(2)?.join(',').trim(),
-                            city: city,
-                            state: state,
-                            pincode: pincode,
-                            latitude: lat,
-                            longitude: lng
-                        }));
-                        setRegionDetails(prev => ({
-                            ...prev,
-                            latitude: latlng?.latitude,
-                            longitude: latlng?.longitude,
-                        }));
-                    } else {
-                        console.error('Geocoding failed:', data.status);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching address:', error);
-                })
-                .finally(() => {
-
-
-                    setShowMaps(false)
-                    return
-                });
-        },
-        [setAddress],
     );
 
     const getNotification = () => {
@@ -1260,67 +1424,100 @@ const MyCart = ({ navigation, route }) => {
     };
 
     return (
-        <View style={{ flex: 1, backgroundColor: "#dfdfdf" }}>
-            <MyCartContainer
-                onPressBack={() => navigation.goBack()}
-                navigation={navigation}
-                onChangePromo={onChangePromo}
-                promoCode={promoCode}
-                showPromo={showPromo}
-                setShowPromo={setShowPromo}
-                cartData={cartData}
-                isLoading={isLoading}
-                onPressDelete={onPressDelete}
-                onPressCheckOut={onPressCheckOut}
-                onPressAddQuantity={onPressAddQuantity}
-                onPressMinusQuantity={onPressMinusQuantity}
-                priceData={priceData}
-                priceBookData={priceBookData}
-                showDelete={showDelete}
-                setShowDelete={setShowDelete}
-                onPressConfirmDelete={onPressConfirmDelete}
-                onPressShopNow={onPressShopNow}
-                showNoCode={showNoCode}
-                setShowNoCode={setShowNoCode}
-                onPressGoToAddress={onPressGoToAddress}
-                appLanguage={appLanguage}
-                onPressTermsAndCondition={onPressTermsAndCondition}
-                onPressItem={onPressItem}
-                StoreCodeDetails={StoreCodeDetails}
-                activeTab={activeTab}
-                handlePress={handlePress}
-                tabData={tabData}
-                onPressBook={onPressBook}
-                bookingVisible={bookingVisible}
-                setBookingVisible={setBookingVisible}
-                onPressBookingSuccess={onPressBookingSuccess}
-                setPaySuccessVisible={setPaySuccessVisible}
-                paySuccessVisible={paySuccessVisible}
-                onPressBookNow={onPressBookNow}
-                cartFertilizersData={cartFertilizersData}
-                setDeliveryType={setDeliveryType}
-                deliveryType={deliveryType}
-                setActiveCategory={setActiveCategory}
-                activeCategory={activeCategory}
-                setActiveTab={setActiveTab}
-                setAddress={setAddress}
-                address={address}
-                enablePayment={enablePayment}
-                placesRef={placesRef}
-                checkBillingAddress={checkBillingAddress}
-                setCheckBillAdd={setCheckBillAdd}
-                checkBillAdd={checkBillAdd}
-                showDeliveryMethodErrro={showDeliveryMethodErrro}
-                allowTerm={allowTerm}
-                setAllowTerm={setAllowTerm}
-                setCODVisible={setCODVisible}
-                CodVisible={CodVisible}
-                setShowDeliveryMethodErrro={setShowDeliveryMethodErrro}
-            />
+        <>
+            {showMap ? <SelectLocationScreen address={address} setAddress={setAddress} setShowMap={setShowMap} /> :
+                showSuccess ? <SuccessScreen
+                    setShowSuccess={setShowSuccess}
+                    title={payFailureVisible.visible ? "Payment failed" : activeTab?.id == 1 ? "Ordered Successfully!" : " Booked Successfully!"}
+                    subtitle={
+                        payFailureVisible.visible ? payFailureVisible?.description :
+                            activeTab?.id == 1 ? `${appLanguage?.lblyourordersuccessfull ??
+                                'Your order has been placed successfully, use the below Id for your reference'
+                                }\n${appLanguage?.order_no ?? 'Order Id:'} #${CODSuccessVisible.transId ?? ''
+                                }` : `${appLanguage?.lblyourordersuccessfull ??
+                                'Your order has been placed successfully, use the below Id for your reference'
+                                }\n${appLanguage?.order_no ?? 'Order Id:'} #${BookingSuccessVisible.transId?.bookingId ?? ''
+                            }`
+                    }
+                    state={activeTab?.id == 1 ? "purchases" : "bookings"}
+                    path={Screen.MyOrder}
+                />
+                    :
+                    <View style={{ flex: 1, backgroundColor: "#dfdfdf" }}>
+                        <MyCartContainer
+                            onPressBack={() => navigation.goBack()}
+                            navigation={navigation}
+                            onChangePromo={onChangePromo}
+                            promoCode={promoCode}
+                            setShowMap={setShowMap}
+                            showPromo={showPromo}
+                            setShowPromo={setShowPromo}
+                            cartData={cartData}
+                            isLoading={isLoading}
+                            onPressDelete={onPressDelete}
+                            onPressCheckOut={onPressCheckOut}
+                            onPressAddQuantity={onPressAddQuantity}
+                            onPressMinusQuantity={onPressMinusQuantity}
+                            priceData={priceData}
+                            priceBookData={priceBookData}
+                            showDelete={showDelete}
+                            setShowDelete={setShowDelete}
+                            onPressConfirmDelete={onPressConfirmDelete}
+                            onPressShopNow={onPressShopNow}
+                            showNoCode={showNoCode}
+                            setShowNoCode={setShowNoCode}
+                            onPressGoToAddress={onPressGoToAddress}
+                            appLanguage={appLanguage}
+                            onPressTermsAndCondition={onPressTermsAndCondition}
+                            onPressItem={onPressItem}
+                            StoreCodeDetails={StoreCodeDetails}
+                            activeTab={activeTab}
+                            handlePress={handlePress}
+                            tabData={tabData}
+                            onPressBook={onPressBook}
+                            bookingVisible={bookingVisible}
+                            setBookingVisible={setBookingVisible}
+                            onPressBookingSuccess={onPressBookingSuccess}
+                            setPaySuccessVisible={setPaySuccessVisible}
+                            paySuccessVisible={paySuccessVisible}
+                            onPressBookNow={onPressBookNow}
+                            cartFertilizersData={cartFertilizersData}
+                            setDeliveryType={setDeliveryType}
+                            deliveryType={deliveryType}
+                            setActiveCategory={setActiveCategory}
+                            activeCategory={activeCategory}
+                            setActiveTab={setActiveTab}
+                            setAddress={setAddress}
+                            address={address}
+                            enablePayment={enablePayment}
+                            placesRef={placesRef}
+                            checkBillingAddress={checkBillingAddress}
+                            setCheckBillAdd={setCheckBillAdd}
+                            checkBillAdd={checkBillAdd}
+                            showDeliveryMethodErrro={showDeliveryMethodErrro}
+                            allowTerm={allowTerm}
+                            setAllowTerm={setAllowTerm}
+                            setCODVisible={setCODVisible}
+                            CodVisible={CodVisible}
+                            setShowDeliveryMethodErrro={setShowDeliveryMethodErrro}
+                            saveAddress={saveAddress}
+                        />
+                        <ConfirmationModal
+                            visible={CodVisible ?? false}
+                            title="Confirm"
+                            subtitle={"Are you sure you want to place the order with Cash on Delivery?"}
+                            onCancel={() => setCODVisible(false)}
+                            onConfirm={() => { onPressCheckOut('COD') }}
+                            position="bottom"
+                        />
 
-            <Indicator Indicator={!isLoading} />
+                        <Indicator show={loading} />
 
-        </View>
+                    </View>
+            }
+        </>
+
+
     );
 };
 

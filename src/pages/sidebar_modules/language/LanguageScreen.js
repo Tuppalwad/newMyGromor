@@ -31,7 +31,6 @@ const LanguageScreen = ({ navigation }) => {
     useEffect(() => {
         if (isFocussed) {
             dispatch(operation.user.getAppLanguage());
-            // createChannels()
         }
     }, [isFocussed]);
 
@@ -44,7 +43,7 @@ const LanguageScreen = ({ navigation }) => {
 
     const handlePress = () => {
         dispatch(operation.user.getAppMultiLanguage({
-            language: selectedLanguageData?.id ?? 1
+            language: selectedLanguage?.id ?? 1
         })).then((res) => {
             navigation.navigate(Screen.login, {
                 selectedLanguage: selectedLanguageData,
@@ -54,14 +53,6 @@ const LanguageScreen = ({ navigation }) => {
             dispatch(operation.user.getErrorHandling(err, "getAppMultiLanguage"))
         })
     }
-
-    // const createChannels = () => {
-    //     PushNotification.createChannel({
-    //         channelId: "my-gromor",
-    //         channelName: "Gromor Notificaiton Channel"
-    //     })
-    // }
-
 
 
     return (

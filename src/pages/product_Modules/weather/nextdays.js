@@ -1,56 +1,87 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
 import wind from '../../../assets/images/common/wind.png';
 import humidity from '../../../assets/images/common/humidity.png';
 import raindrop from '../../../assets/images/common/raindrop.png'
-const Next7DaysScreen = () => {
-    const data = [
-        {
-            day: 'Today',
-            date: '18/06',
-            icon: require('../../../assets/images/common/heavyRain.png'),
-            wind: '21 km/h',
-            humidity: '86%',
-            rain: '91%',
-            description: 'Heavy Rain',
-            temp: '21°/32°',
-            isToday: true,
-        },
-        {
-            day: 'Thu',
-            date: '19/06',
-            icon: require('../../../assets/images/common/lightRain.png'),
-            wind: '10 km/h',
-            humidity: '69%',
-            rain: '80%',
-            description: 'Light Rain',
-            temp: '25°/35°',
-        },
-        {
-            day: 'Fri',
-            date: '20/06',
-            icon: require('../../../assets/images/common/sun.png'),
-            wind: '12 km/h',
-            humidity: '52%',
-            rain: '10%',
-            description: 'Clear Sky',
-            temp: '26°/37°',
-        },
-        {
-            day: 'Sat',
-            date: '21/06',
-            icon: require('../../../assets/images/common/cloudy.png'),
-            wind: '12 km/h',
-            humidity: '32%',
-            rain: '10%',
-            description: 'Mostly Cloudy',
-            temp: '26°/38°',
-        },
-    ];
+import { useDispatch, useSelector } from 'react-redux';
+import { useOperation } from '../../../redux/operation';
+import { WEATHER_APP_KEY } from '../../../config';
+import userManager from '../../../storage/user-manager';
+import Indicator from '../../../components/common/Indicator';
+
+const NextDaysScreen = ({ days, isLoading }) => {
+    const operation = useOperation();
+    const monthlyWeatherData = useSelector(state => state.weather.monthlyWeather);
+    const userLocation = userManager.getUserLocation;
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        let params = {
+            units: 'metric',
+            appid: WEATHER_APP_KEY,
+            lat: userLocation?.latitude,
+            lon: userLocation?.longitude,
+            cnt: days,
+        };
+        dispatch(operation.weather.getMonthlyWeather(params));
+    }, []);
+
+    // Helper function to get weather icon based on condition code
+    const getWeatherIcon = (weatherId) => {
+        if (weatherId >= 200 && weatherId < 300) {
+            return require('../../../assets/images/common/rain.png'); // thunderstorm
+        } else if (weatherId >= 300 && weatherId < 500) {
+            return require('../../../assets/images/common/raindrop.png'); // drizzle
+        } else if (weatherId >= 500 && weatherId < 600) {
+            return require('../../../assets/images/common/rain.png'); // rain
+        } else if (weatherId >= 600 && weatherId < 700) {
+            return require('../../../assets/images/common/snow.png'); // snow
+        } else if (weatherId >= 700 && weatherId < 800) {
+            return require('../../../assets/images/common/fog.png'); // atmosphere
+        } else if (weatherId === 800) {
+            return require('../../../assets/images/common/sun.png'); // clear
+        } else if (weatherId > 800) {
+            return require('../../../assets/images/common/suncloud.png'); // clouds
+        }
+        return require('../../../assets/images/common/suncloud.png'); // default
+    };
+
+    // Format the date to display day and date
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp * 1000);
+        const day = date.toLocaleDateString('en-US', { weekday: 'short' });
+        const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        return { day, date: formattedDate };
+    };
+
+    // Format the weekly data for display
+    const formatWeeklyData = () => {
+        if (!monthlyWeatherData || !monthlyWeatherData.list || monthlyWeatherData.list.length === 0) return [];
+
+        return monthlyWeatherData.list.map((dayData, index) => {
+            const { day, date } = formatDate(dayData.dt);
+            const weatherCondition = dayData.weather[0].id;
+
+            return {
+                day,
+                date,
+                icon: getWeatherIcon(weatherCondition),
+                wind: `${dayData.speed} km/h`,
+                humidity: `${dayData.humidity}%`,
+                rain: `${dayData.rain || 0}%`,
+                description: dayData.weather[0].description.charAt(0).toUpperCase() +
+                    dayData.weather[0].description.slice(1),
+                temp: `${Math.round(dayData.temp.day)}°C`,
+                isToday: index === 0
+            };
+        });
+    };
+
+    const weeklyData = formatWeeklyData();
 
     return (
         <ScrollView style={styles.container}>
-            {data.map((item, index) => (
+            {weeklyData.map((item, index) => (
                 <View
                     key={index}
                     style={[styles.card, item.isToday && styles.todayHighlight]}
@@ -88,25 +119,22 @@ const Next7DaysScreen = () => {
                     </View>
                 </View>
             ))}
+            <Indicator show={isLoading} />
         </ScrollView>
     );
 };
 
-export default Next7DaysScreen;
+export default NextDaysScreen;
 
 const styles = StyleSheet.create({
     container: {
-        // backgroundColor: '#f0f0f0',
         flex: 1,
         paddingVertical: 10,
     },
     card: {
         backgroundColor: '#fff',
         borderRadius: 10,
-        // padding: 12,
-        // marginHorizontal: 16,
         marginVertical: 8,
-        // elevation: 2,
     },
     todayHighlight: {
         borderWidth: 1.5,
@@ -151,8 +179,8 @@ const styles = StyleSheet.create({
     divider: {
         width: 1,
         height: 81,
-        backgroundColor: '#DFDFDF', // light grey line like in your screenshot
-        marginHorizontal: 3,       // spacing on both sides
+        backgroundColor: '#DFDFDF',
+        marginHorizontal: 3,
     },
     rowBottom: {
         marginTop: 10,
@@ -160,10 +188,6 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 10,
         backgroundColor: '#F2F8F4',
-        // backgroundColor: '#F2F8F4',
-        // borderTopWidth: 1,
-        // borderColor: '#F2F8F4',
-        // paddingTop: 8,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },

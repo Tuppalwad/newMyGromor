@@ -164,7 +164,7 @@ const AgriVideo = () => {
             <View style={{}}>
                 <CustomHeader
                     type="video"
-                    topTitle="Agri Video"
+                    topTitle={appLanguage.video ?? "Agri Video"}
                     subtitle=""
                     onBackPress={() => navigate.goBack()}
                     onCartPress={() => console.log('Cart pressed')}
@@ -208,14 +208,14 @@ const AgriVideo = () => {
 
                 <TouchableOpacity style={styles.bottomButton} onPress={() => console.log('Sort pressed')}>
                     <Text style={styles.bottomIcon}>⇅</Text>
-                    <Text style={styles.bottomText}>Sort by</Text>
+                    <Text style={styles.bottomText}>{appLanguage.sort_by ?? "Sort by"}</Text>
                 </TouchableOpacity>
 
                 <View style={styles.divider} />
 
                 <TouchableOpacity style={styles.bottomButton} onPress={() => setFilterVisible(true)}>
                     <Text style={styles.bottomIcon}>≡</Text>
-                    <Text style={styles.bottomText}>Filters</Text>
+                    <Text style={styles.bottomText}>{appLanguage.filter ?? "Filter"}</Text>
                     <View style={styles.dot} />
                 </TouchableOpacity>
             </LinearGradient>

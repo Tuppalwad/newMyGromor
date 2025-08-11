@@ -28,7 +28,8 @@ import PriceDetails from './PriceDetails';
 import Webview_popup from '../../../components/common/WebViewPopup';
 import constants from '../../../config/constants';
 import { HEToast } from '../../../components/toast';
-import ConfirmationModal from '../../../components/common/ConfirmationModal';
+import CustomButton from '../../../components/common/CustomButton';
+import { Screen } from '../../../router/screen';
 
 
 const MyCartContainer = ({
@@ -77,7 +78,9 @@ const MyCartContainer = ({
     allowTerm,
     CodVisible,
     setCODVisible,
-    setShowDeliveryMethodErrro
+    setShowDeliveryMethodErrro,
+    saveAddress,
+    setShowMap
 }) => {
     const navigation = useNavigation();
     let Card_ArrayData = activeTab.id == 2 ? cartFertilizersData : cartData;
@@ -156,7 +159,7 @@ const MyCartContainer = ({
     return (
 
         <>
-            <View >
+            <View style={{ marginTop: 30 }} >
                 <CustomHeader
                     type="cart"
                     topTitle="My Cart"
@@ -334,7 +337,7 @@ const MyCartContainer = ({
                                     <Text style={styles.checkboxLabel}>Delivery address same as billing address</Text>
                                 </TouchableOpacity>
 
-                                {!checkBillAdd && <DeliveryAddress address={address} setAddress={setAddress} placesRef={placesRef} />}
+                                {!checkBillAdd && <DeliveryAddress setShowMap={setShowMap} enablePayment={enablePayment} saveAddress={saveAddress} address={address} setAddress={setAddress} placesRef={placesRef} />}
 
                                 <View style={{ marginTop: 10 }}>
                                     <AddressCard cardType="StoreType" />
@@ -405,43 +408,6 @@ const MyCartContainer = ({
             </CustomPopupModal>
 
 
-            {/* <CustomPopupModal
-                visible={CodVisible ?? false}
-                icon={Icon.warning}
-                isRed={true}
-                title={appLanguage?.lblConfirmation ?? 'Confirmation!'}
-                buttonText={appLanguage?.lblProceed ?? 'Proceed'}
-                button2Text={appLanguage?.cancel ?? 'Cancel'}
-                isHiddenCrossIcon={true}
-                onPressDone={() => onPressCheckOut('COD')}
-                onPressClose={() => {
-                    setCODVisible(false);
-                }}
-                onPressButton2={() => {
-                    setCODVisible(false);
-                }}>
-                <View style={{ flex: 1, justifyContent: 'center' }}>
-                    <CTText
-                        text={
-                            appLanguage?.lblContinuethispayment ??
-                            'Are you sure you want to continue this payment?'
-                        }
-                        medium
-                        style={{ textAlign: 'center' }}
-                    />
-                </View>
-            </CustomPopupModal> */}
-
-            <ConfirmationModal
-                visible={CodVisible ?? false}
-                title="Confirm"
-                subtitle="Are you sure you want to continue this payment?"
-                onCancel={() => setCODVisible(false)}
-                onConfirm={() => { onPressCheckOut('COD') }}
-                position="center"
-            />
-
-
             <Webview_popup
                 isPopupHidden={false}
                 popupTitle={appLanguage?.terms ?? 'Terms and Conditions'}
@@ -454,84 +420,103 @@ const MyCartContainer = ({
 
             <View style={styles.bottomContainer}>
                 <View style={styles.footer}>
-                    {activeTab.id === 1 ? <>
-                        <TouchableOpacity style={{
-                            ...styles.codButton,
-                            borderColor: enablePayment ? '#FF6F00' : palette.disabled_Button,
 
-                        }}
-                            disabled={!enablePayment}
-                            onPress={() => {
-                                if (!allowTerm) {
-                                    HEToast("Please allow Term and conditions")
-                                    return
-                                }
+                    {
+                        count_item == 0 ?
+                            <>
+                                <TouchableOpacity style={styles.payButtonBooking}
+                                    onPress={() => navigation.navigate(Screen.viewAllCategory)}
+                                >
+                                    <LinearGradient
+                                        colors={['#1E8153', '#4EA618']}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        style={styles.payButton}
+                                    >
+                                        <Text style={styles.payText}>Continue Buying</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
 
-                                if (deliveryType == "") {
-                                    setShowDeliveryMethodErrro(true)
-                                    return
-                                } else {
-                                    setCODVisible(true)
-                                }
-                            }}
-                        >
-                            <Text style={{
-                                ...styles.codText,
-                                color: enablePayment ? '#FF6F00' : palette.disabled_Button,
+                            </> :
+                            activeTab.id === 1 ? <>
+                                <TouchableOpacity style={{
+                                    ...styles.codButton,
+                                    borderColor: (enablePayment && count_item != 0) ? '#FF6F00' : palette.disabled_Button,
 
-                            }}>Cash on Delivery</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.payButtonWrapper}
-                            disabled={!enablePayment}
-                            onPress={() => {
-                                if (!allowTerm) {
-                                    HEToast("Please allow Term and conditions")
-                                    return
-                                }
+                                }}
+                                    disabled={!enablePayment || count_item == 0}
+                                    onPress={() => {
+                                        if (!allowTerm) {
+                                            HEToast("Please allow Term and conditions")
+                                            return
+                                        }
 
-                                if (deliveryType == "") {
-                                    setShowDeliveryMethodErrro(true)
-                                    return
-                                } else {
-                                    onPressCheckOut('Predpaid')
-                                }
-                            }}
-                        >
-                            <LinearGradient
-                                colors={[enablePayment ? '#1E8153' : palette.disabled_Button, enablePayment ? '#4EA618' : palette.disabled_Button]}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 0 }}
-                                style={styles.payButton}
-                            >
-                                <Text style={styles.payText}>Pay ₹{priceData.totalCost}</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
-                    </>
-                        : <TouchableOpacity style={styles.payButtonBooking}
-                            disabled={!enablePayment}
-                            onPress={() => {
+                                        if (deliveryType == "") {
+                                            setShowDeliveryMethodErrro(true)
+                                            return
+                                        } else {
+                                            setCODVisible(true)
+                                        }
+                                    }}
+                                >
+                                    <Text style={{
+                                        ...styles.codText,
+                                        color: (enablePayment && count_item != 0) ? '#FF6F00' : palette.disabled_Button,
 
-                                if (deliveryType == "") {
-                                    setShowDeliveryMethodErrro(true)
-                                    return
-                                } else {
-                                    onPressCheckOut('Booking')
-                                }
-                            }}
+                                    }}>Cash on Delivery</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.payButtonWrapper}
+                                    disabled={!enablePayment || count_item == 0}
+                                    onPress={() => {
+                                        if (!allowTerm) {
+                                            HEToast("Please allow Term and conditions")
+                                            return
+                                        }
 
-                        >
-                            <LinearGradient
-                                colors={[enablePayment ? '#1E8153' : palette.disabled_Button, enablePayment ? '#4EA618' : palette.disabled_Button]}
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 0 }}
-                                style={styles.payButton}
-                            >
-                                <Text style={styles.payText}>Book Now </Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
+                                        if (deliveryType == "") {
+                                            setShowDeliveryMethodErrro(true)
+                                            return
+                                        } else {
+                                            onPressCheckOut('Predpaid')
+                                        }
+                                    }}
+                                >
+                                    <LinearGradient
+                                        colors={[(enablePayment && count_item != 0) ? '#1E8153' : palette.disabled_Button, (enablePayment && count_item != 0) ? '#4EA618' : palette.disabled_Button]}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        style={styles.payButton}
+                                    >
+                                        <Text style={styles.payText}>Pay ₹{priceData.totalCost}</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                            </>
+                                : <TouchableOpacity style={styles.payButtonBooking}
+                                    disabled={!enablePayment || count_item == 0}
+                                    onPress={() => {
+
+                                        if (deliveryType == "") {
+                                            setShowDeliveryMethodErrro(true)
+                                            return
+                                        } else {
+                                            onPressCheckOut('Booking')
+                                        }
+                                    }}
+
+                                >
+                                    <LinearGradient
+                                        colors={[(enablePayment && count_item != 0) ? '#1E8153' : palette.disabled_Button, (enablePayment && count_item != 0) ? '#4EA618' : palette.disabled_Button]}
+                                        start={{ x: 0, y: 0 }}
+                                        end={{ x: 1, y: 0 }}
+                                        style={styles.payButton}
+                                    >
+                                        <Text style={styles.payText}>Book Now</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
                     }
                 </View>
             </View>
+
 
 
 
@@ -882,7 +867,6 @@ const styles = StyleSheet.create({
     termsText: {
         alignItems: 'center',
         fontSize: 12,
-        // paddingVertical: 20,
         textAlign: 'center',
         color: '#333',
     },

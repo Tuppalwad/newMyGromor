@@ -64,9 +64,9 @@ const CustomerReviews = () => {
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <Text style={styles.title}>Customer Reviews</Text>
+                <Text style={styles.title}>{appLanguages.customer_reviews ?? "Customer Reviews"}</Text>
                 <TouchableOpacity>
-                    <Text style={styles.viewAll}>View All</Text>
+                    <Text style={styles.viewAll}>{appLanguages.view_all ?? "View All"}</Text>
                 </TouchableOpacity>
             </View>
 

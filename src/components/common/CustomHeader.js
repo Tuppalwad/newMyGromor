@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Share } from 'react-native';
 import colors from '../../utils/theam'; // Your color file
 import menuIcon from '../../assets/images/splash/menu.png';
 import leftArrow from '../../assets/images/splash/leftArrow.png';
@@ -11,12 +11,14 @@ import searchIcon from '../../assets/images/splash/search.png';
 import locationIcon from '../../assets/images/splash/location.png';
 import LinearGradient from 'react-native-linear-gradient';
 import { useDispatch, useSelector } from 'react-redux';
-import Share from '../../assets/images/common/share.png';
+import ShareIcon from '../../assets/images/common/share.png';
 import Hart from '../../assets/drawer/favourite.png';
 import { useNavigation } from '@react-navigation/native';
 import { Screen } from '../../router/screen';
 import LikeIcon from '../../assets/images/common/LikeIcon.png'
 import { getPreviousAddress } from '../../redux/user/operation';
+import { Isplatform_Android } from '../../config/resposiveSize';
+import constants from '../../config/constants';
 
 export default function CustomHeader({
     type = 'home', // 'home' or 'shop'
@@ -58,6 +60,16 @@ export default function CustomHeader({
             console.log(error)
         }
     }
+
+    const onPressShare = () => {
+        let refMsg = `Check this item \n\n ${Isplatform_Android ? constants.android : constants.ios
+            }`;
+        Share.share({
+            message: refMsg,
+        });
+    };
+
+
     return (
         <View>
             <View style={{
@@ -111,8 +123,8 @@ export default function CustomHeader({
                     {
                         type == "detail" ? (
                             <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity onPress={Share} style={{ marginRight: 15 }}>
-                                    <Image source={Share} style={styles.icon} resizeMode='contain' />
+                                <TouchableOpacity onPress={onPressShare} style={{ marginRight: 15 }}>
+                                    <Image source={ShareIcon} style={styles.icon} resizeMode='contain' />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => {
                                     isFav ? onPressDeleteFav(itemData) : onPressFavourite(itemData)

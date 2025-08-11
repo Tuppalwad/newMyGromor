@@ -1,13 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ProgressCircle from './ProgressCircle';
-
+import { useDispatch, useSelector } from 'react-redux';
 const RatingSummaryCard = ({ average, selectedRating, reviewCount, setSelectedRating }) => {
     const rating = average;
     const percentage = (rating / 5) * 100;
 
     const rotation = percentage > 50 ? 180 : (percentage / 100) * 360;
     const secondRotation = percentage > 50 ? ((percentage - 50) / 50) * 180 : 0;
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
+
 
     const getRatingLabel = (rating) => {
         if (rating >= 4.5) return 'Excellent';
@@ -46,13 +48,13 @@ const RatingSummaryCard = ({ average, selectedRating, reviewCount, setSelectedRa
                 <View style={styles.details}>
                     <Text style={styles.excellent}>{getRatingLabel(selectedRating)}</Text>
                     {renderStars(selectedRating, true)}
-                    <Text style={styles.ratingCount}>{reviewCount} ratings</Text>
+                    <Text style={styles.ratingCount}>{reviewCount}{appLanguages.ratings ?? "ratings"}</Text>
                 </View>
             </View>
 
             {/* Button */}
             <TouchableOpacity style={styles.rateButton}>
-                <Text style={styles.rateButtonText}>Rate Product</Text>
+                <Text style={styles.rateButtonText}>{appLanguages.rate_product ?? "Rate Product"}</Text>
             </TouchableOpacity>
         </View>
     );

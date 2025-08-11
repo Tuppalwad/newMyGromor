@@ -250,7 +250,7 @@ const ProductCard = ({ item, onPressProductItem, index, onPressFavourite, type, 
                     {item?.isFavouriteProduct ? <Image
                         source={LikeIcon}
                         style={{
-                            width: 16, height: 16,
+                            width: 20, height: 20,
                             tintColor: 'green'
                         }}
                         resizeMode="contain"

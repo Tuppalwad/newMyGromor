@@ -29,7 +29,10 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme"
-      android:supportsRtl="true">
+      android:supportsRtl="true"
+      tools:replace="android:theme"
+      xmlns:tools="http://schemas.android.com/tools"
+      >
 
        <meta-data android:name="com.dieam.reactnativepushnotification.notification_foreground"
                    android:value="false"/>
@@ -66,10 +69,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <meta-data
-            android:name="com.dieam.reactnativepushnotification.notification_foreground"
-            android:value="false"/>
+      
         <meta-data
             android:name="com.dieam.reactnativepushnotification.notification_color"
             android:resource="@color/white"/>

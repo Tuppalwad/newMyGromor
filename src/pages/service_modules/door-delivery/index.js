@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Image, SafeAreaView } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, Image, SafeAreaView, Platform } from 'react-native';
 // import { Ionicons } from '@expo/vector-icons';
 // import { LinearGradient } from 'expo-linear-gradient';
 import CustomHeader from '../../../components/common/CustomHeader';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import checkIcon from '../../../assets/images/common/checkIcon.png'
 import AddressCard from '../../../components/common/AddressCard';
 import DeliveryAddress from '../../product_modules/components/AddressInputs';
@@ -11,12 +11,69 @@ import LinearGradient from 'react-native-linear-gradient';
 import Webview_popup from '../../../components/common/WebViewPopup';
 import { UserManager } from '../../../storage';
 import constants from '../../../config/constants';
+import { useOperation } from '../../../redux/operation';
+import { useDispatch, useSelector } from 'react-redux';
+import { createLoadingSelector } from '../../../redux/loading-reducer';
+import { ProductType } from '../../../redux/product/type';
+import { servicetype } from '../../../redux/services/type';
+import { BuildTypes } from '../../../config';
+import CustomButton from '../../../components/common/CustomButton';
+import { HEToast } from '../../../components/toast';
+import { India_INRCurrency } from '../../../utils/validator';
+import { numberFormat } from '../../../utils/utils';
+import CTText from '../../../components/ctText';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { palette } from '../../../theme/color';
+
+
+let defdelivery_Charge = {
+    deliveryCharge: 0,
+    deliveryChargeCalc: 0,
+    deliveryChargeDiscount: 0,
+};
 
 const DoorDeliveryComponent = ({ navigation }) => {
     const [sameAddress, setSameAddress] = useState(true);
-    const appLanguage = UserManager?.getAppMultiLanguage;
     const [allowTerm, setAllowTerm] = useState(false)
+    const [showMap, setShowMap] = useState(false);
+    const placesRef = useRef();
+    const operation = useOperation();
+    const dispatch = useDispatch();
+    const { previousAddress } = useSelector(state => state.user)
+    const appLanguage = UserManager?.getAppMultiLanguage;
+    const farmerLanguage = useSelector(state => state.farmer.FarmerLanguageID);
+    const soNumber = useRoute()?.params?.soNumber
+    const orderItemParam = useSelector(state => state.services.doorDeliveryProduct)
     const [showTerms_Conditions, setShowTerms_Conditions] = useState(false);
+    const [paySuccessVisible, setPaySuccessVisible] = useState(false);
+    const [payFailureVisible, setPayFailureVisible] = useState({
+        visible: false,
+        title: '',
+        description: '',
+        type: '',
+        buttonText: '',
+    });
+    const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
+    const [deliverCharges, setDeliverCharges] = useState(defdelivery_Charge);
+    const [enablePayment, setEnablePayment] = useState(false);
+    const [TransdeliverCharges, setTransdeliverCharges] = useState({});
+    const [distance, setDistance] = useState()
+
+    const loadingSelector = createLoadingSelector([
+        ProductType.productFromInvoice,
+    ]);
+    const StoreCodeDetails = useSelector(
+        state => state.farmer.farmerStoreCodeDetails,
+    );
+    const [errorMessage, setErrorMessage] = useState('')
+    const getNotification = () => {
+        let param = {
+            userId: farmerAddress?.farmerIdentityId,
+            hasRead: 1,
+        };
+        dispatch(operation.farmer.getNotification(param));
+    };
+    const isLoading = useSelector(state => loadingSelector(state));
     const [address, setAddress] = useState({
         location: '',
         address1: '',
@@ -27,6 +84,445 @@ const DoorDeliveryComponent = ({ navigation }) => {
         latitude: '',
         longitude: ""
     });
+
+
+    useEffect(() => {
+        getAddress()
+    }, [previousAddress])
+
+    console.log(previousAddress, 'aalllllllll')
+
+    useEffect(() => {
+        if (orderItemParam?.orderItems && orderItemParam?.orderItems.length > 0) {
+            let items = [];
+            let price = {
+                subTotal: 0,
+                discount: 0,
+                taxes: 0,
+                couponDiscount: 0,
+                deliverCharger: 0,
+                totalCost: 0,
+                productType: 0,
+                additionalDiscount: 0,
+                additionalDiscountPercentage: 0,
+            };
+            orderItemParam?.orderItems.map((cartItem, cartIndex) => {
+                price.subTotal += cartItem?.actualPrice;
+                if (
+                    cartItem?.size?.includes('KG') ||
+                    cartItem?.size?.includes('kg') ||
+                    cartItem?.size?.includes('Kg') ||
+                    cartItem?.size?.includes('kG')
+                ) {
+                    price.productType = 1;
+                }
+                price.discount += cartItem?.actualPrice - cartItem?.priceAfterDiscount;
+                items.push(calculateSize(cartItem));
+            });
+
+            let kgValues = 0;
+            let ltValues = 0;
+
+            items?.map(item => {
+                if (item?.size === 'KG') {
+                    kgValues += item?.quantity;
+                } else if (item?.size === 'LT') {
+                    ltValues += item?.quantity;
+                }
+            });
+
+            let tempParams = {
+                kgs: kgValues,
+                ltr: ltValues,
+                amount: orderItemParam?.amount,
+                storeCode: StoreCodeDetails.storeCode,
+                latitude: address?.latitude,
+                longitude: address?.longitude,
+                farmerId: farmerAddress?.farmerIdentityId,
+                language: farmerLanguage,
+                soNumber: soNumber
+            };
+            if (
+                address?.latitude === 0 &&
+                address?.longitude === 0
+            ) {
+                return;
+            }
+
+            if ((address.address1 || address.address2) && address?.latitude && address?.longitude) {
+                getDeliveryCharges(tempParams);
+            } else {
+                console.log('ccccccccccc')
+                setEnablePayment(false);
+                return;
+            }
+
+        }
+
+    }, [
+        orderItemParam?.orderItems,
+        address?.latitude,
+        address?.longitude,
+        StoreCodeDetails.storeCode,
+    ]);
+
+
+    const getAddress = useCallback(
+        async address => {
+            const preAddress = previousAddress?.deliveryAddress?.deliveryAddress
+            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(preAddress)}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
+
+            // setCheckBillAdd(false);
+
+            fetch(geocodeURL)
+                .then(response => response.json())
+                .then(data => {
+
+                    if (data.status === 'OK' && data.results?.length > 0) {
+                        const addressComponents = data.results[0].address_components;
+                        const location = data.results[0]?.formatted_address
+
+                        const city =
+                            addressComponents.find((component) =>
+                                component.types.includes("locality")
+                            )?.long_name || "";
+
+                        const state =
+                            addressComponents.find((component) =>
+                                component.types.includes("administrative_area_level_1")
+                            )?.long_name || "";
+
+                        const pincode =
+                            addressComponents.find((component) =>
+                                component.types.includes("postal_code")
+                            )?.long_name || "";
+
+                        const { lat, lng } = data.results[0].geometry.location;
+
+                        const longaddress = location.split(',').slice(1).join(',').trim().split(',');
+
+                        setAddress(prev => ({
+                            ...prev,
+                            address1: longaddress?.slice(0, 2)?.join(',').trim(),
+                            address2: longaddress?.slice(2)?.join(',').trim(),
+                            city: city,
+                            state: state,
+                            pincode: pincode,
+                            latitude: lat,
+                            longitude: lng
+                        }));
+
+                        placesRef.current?.clear()
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching address:', error);
+                })
+                .finally(() => {
+                    // setShowMaps(false)
+                    return true
+                });
+        },
+        [setAddress,
+            previousAddress
+        ],
+    );
+
+    const calculateSize = val => {
+        let itemValue = {};
+        let value = val?.size;
+        let quantity = val?.quantity;
+
+        if (
+            value?.includes('KG') ||
+            value?.includes('kg') ||
+            value?.includes('Kg') ||
+            value?.includes('kG')
+        ) {
+            itemValue = {
+                quantity: Number(value.replace(/(\D)/g, '')) * quantity,
+                size: 'KG',
+            };
+        } else if (
+            value?.includes('GM') ||
+            value?.includes('gm') ||
+            value?.includes('Gm') ||
+            value?.includes('gM')
+        ) {
+            itemValue = {
+                quantity: (Number(value.replace(/(\D)/g, '')) * quantity) / 1000,
+                size: 'KG',
+            };
+        } else if (
+            (value?.includes('LT') ||
+                value?.includes('lt') ||
+                value?.includes('Lt') ||
+                value?.includes('lT') ||
+                value?.includes('L') ||
+                value?.includes('l')) &&
+            !value?.includes('ML') &&
+            !value?.includes('ml') &&
+            !value?.includes('Ml') &&
+            !value?.includes('mL')
+        ) {
+            itemValue = {
+                quantity: Number(value.replace(/(\D)/g, '')) * quantity,
+                size: 'LT',
+            };
+        } else if (
+            value?.includes('ML') ||
+            value?.includes('ml') ||
+            value?.includes('Ml') ||
+            value?.includes('mL')
+        ) {
+            itemValue = {
+                quantity: (Number(value.replace(/(\D)/g, '')) * quantity) / 1000,
+                size: 'LT',
+            };
+        }
+        // console.log(itemValue,"itemValue",orderItemParam?.orderItems)
+        return itemValue;
+    };
+
+    const getDeliveryCharges = param => {
+        dispatch(operation.farmer.getNewDeliveryCharges(param))
+            .then(res => {
+
+                if (
+                    typeof res?.validationMessage === 'string' &&
+                    res?.validationMessage?.length > 0
+                ) {
+                    setEnablePayment(false);
+                    HEToast(res?.validationMessage ?? '');
+
+                    setErrorMessage(res?.validationMessage)
+                    const num = res?.validationMessage.match(/\d+/)?.[0];
+                    setDistance(num)
+                    return
+                } else {
+                    setDeliverCharges(res);
+                    setTransdeliverCharges(res);
+                    setEnablePayment(true);
+                }
+            })
+            .catch(err => {
+                const { message, title } = err;
+                if (message?.includes('401')) {
+                    navigation.dispatch(
+                        CommonActions.reset({ index: 1, routes: [{ name: Screen.welcome }] }),
+                    );
+                } else {
+                    // dispatch(operation.user.getErrorHandling(err, 'getDeliveryCharges'));
+                    HEToast(err?.message, 'error');
+                    setEnablePayment(false);
+                }
+            });
+    };
+
+    const saveAddress = useCallback(
+        async address => {
+            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
+
+            fetch(geocodeURL)
+                .then(response => response.json())
+                .then(data => {
+
+                    if (data.status === 'OK' && data.results?.length > 0) {
+                        const location = data.results[0]?.formatted_address
+
+                        const { lat, lng } = data.results[0].geometry.location;
+
+                        const longaddress = location.split(',').slice(1).join(',').trim().split(',');;
+
+                        setAddress((prev) => ({
+                            ...prev,
+                            address1: longaddress?.slice(0, 2)?.join(',').trim(),
+                            address2: longaddress?.slice(2)?.join(',').trim(),
+                            latitude: lat,
+                            longitude: lng
+                        }))
+
+                        getAddressFromLatLng({ latitude: lat, longitude: lng }, false)
+
+                    } else {
+                        return false
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching address:', error);
+                })
+                .finally(() => {
+                    return false
+                });
+        },
+        [setAddress],
+    );
+
+    const getAddressFromLatLng = useCallback(
+        async (latlng, shomap = true) => {
+            // Replace YOUR_GOOGLE_MAPS_API_KEY with your actual API key
+            const geocodeURL = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latlng?.latitude},${latlng?.longitude}&key=AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8`;
+
+            fetch(geocodeURL)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'OK') {
+                        let location = data?.results?.[0]?.formatted_address;
+                        placesRef?.current?.setAddressText(location);
+                        const addressComponents = data?.results?.[0]?.address_components;
+
+                        const city = (addressComponents ?? []).find(component =>
+                            component.types.includes('administrative_area_level_3'),
+                        );
+                        const state = (addressComponents ?? []).find(component =>
+                            component.types.includes('administrative_area_level_1'),
+                        );
+
+                        let pincode = data?.results?.[0]?.address_components.find(
+                            x => x.types[0] === 'postal_code',
+                        );
+                        const englishTextPin = pincode?.long_name.replace(/\D/g, '',
+                        );
+
+                        setAddress(prev => ({
+                            ...prev,
+                            city: city?.long_name,
+                            state: state?.long_name,
+                            pincode: englishTextPin ?? pincode?.long_name,
+                        }));
+
+                    } else {
+                        console.error('Geocoding failed:', data.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching address:', error);
+                })
+                .finally(() => {
+                    return
+                });
+        },
+        [setAddress],
+    );
+
+    const onPressCheckOut = async (type) => {
+
+        const Payload = {
+            "farmerId": farmerAddress?.farmerIdentityId || "",
+            "language": farmerLanguage || 0,
+            "devicePlatform": Platform.OS,
+            "environment": BUILD === BuildTypes.Production ? '0' : '1',
+            "deliveryType": 2,
+            "deliveryCharge": deliverCharges.deliveryCharge,
+            "deliveryChargeDiscount": deliverCharges.deliveryChargeDiscount,
+            "deliveryChargeCalc": deliverCharges.deliveryChargeCalc,
+            "storeCode": farmerAddress?.storeCode || '',
+            "orderItems": orderItemParam?.orderItems,
+            "deliveryAddress": addressData.addressLine1 + " " + addressData.addressLine2 + " " + addressData.city + " " + addressData.state + " " + addressData.pinCode,
+            "latitude": address?.latitude,
+            "longitude": address?.longitude,
+            'soNumber': soNumber
+        }
+
+
+        // console.log(Payload, 'Payload')
+
+        if (type == 'COD') {
+
+            dispatch(setDoordeliveryService(Payload))
+                .then(res => {
+                    console.log(res)
+                    if (res) {
+                        // setCODSuccessVisible({ visible: true, transId: res });
+
+                    } else {
+                        dispatch(operation.user.getErrorHandling(res, 'createTransaction'));
+                    }
+                    dispatch({ type: servicetype.productFromInvoice + '_SUCCESS', payload: null })
+                    dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: null })
+
+                })
+                .catch(err => {
+                    const { message, title } = err;
+                    if (message?.includes('401')) {
+                        navigation.dispatch(
+                            CommonActions.reset({ index: 1, routes: [{ name: Screen.welcome }] }),
+                        );
+                    } else {
+                        dispatch(operation.user.getErrorHandling({ message: err?.data?.description }, 'createTransaction'));
+                    }
+                    dispatch({ type: servicetype.productFromInvoice + '_SUCCESS', payload: null })
+                    dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: null })
+
+
+                });
+        }
+        else {
+            dispatch(setDoordeliveryService(Payload))
+                .then(res => {
+                    // console.log(res,'kkkkkkres')
+                    if (res.errors == null || res.errors.length === 0) {
+                        if (
+                            farmerAddress?.mobileNumber &&
+                            farmerAddress?.storeCode &&
+                            farmerAddress?.villageCode &&
+                            farmerAddress?.farmerIdentityId &&
+                            res?.toString() !== ''
+                        ) {
+                            const paymentData = {
+                                amount: parseFloat(
+                                    deliverCharges?.deliveryCharge,
+                                ).toFixed(1),
+                                productinfo: 'Gromor',
+                                phone: farmerAddress?.mobileNumber,
+                                transactionid: res.toString(),
+                                firstname: farmerAddress?.name ?? '',
+                                email: farmerAddress?.emailId ?? '',
+                                udf1: farmerAddress?.storeCode, // store code
+                                udf2: farmerAddress?.villageCode, // village code
+                                udf3: farmerAddress?.farmerIdentityId, // farmeridentity
+                            };
+
+                            const preparedData = createPaymentParams(paymentData);
+                            // console.log(
+                            //   'preparedData :>> ',
+                            //   JSON.stringify(preparedData, null, 2),
+                            // );
+                            // PayUBizSdk.openCheckoutScreen(preparedData);
+                        } else {
+                            dispatch(
+                                operation.user.getErrorHandling({ message: err?.data?.description }, 'createTransaction'),
+                            );
+                        }
+                    } else {
+                        dispatch(operation.user.getErrorHandling({ message: err?.data?.description }, 'createTransaction'));
+                    }
+                    // dispatch({ type: servicetype.productFromInvoice + '_SUCCESS', payload: null })
+                    dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: null })
+                })
+                .catch(err => {
+                    console.log('err', err);
+                    const { message, title } = err;
+                    if (message?.includes('401')) {
+                        navigation.dispatch(
+                            CommonActions.reset({ index: 1, routes: [{ name: Screen.welcome }] }),
+                        );
+                    } else {
+                        dispatch(operation.user.getErrorHandling({ message: err?.data?.description }, 'createTransaction'));
+                    }
+                });
+            dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: null })
+
+        }
+    }
+
+    const decimalCount = num => {
+        const numStr = String(num);
+        if (numStr.includes('.')) {
+            return numStr.split('.')[1].length;
+        }
+        return 0;
+    };
     return (
 
         <SafeAreaView style={{ flex: 1 }}>
@@ -36,7 +532,7 @@ const DoorDeliveryComponent = ({ navigation }) => {
                 <CustomHeader
                     type="door delivery"
                     topTitle="Door Delivery"
-                    showLocation={true}
+                    showLocation={false}
                     subtitle={true}
                     onBackPress={() => navigation.goBack()}
                     onCartPress={() => console.log('Cart pressed')}
@@ -67,7 +563,9 @@ const DoorDeliveryComponent = ({ navigation }) => {
                     <Text style={styles.checkboxLabel}>Delivery address same as billing address</Text>
                 </TouchableOpacity>
 
-                {!sameAddress && <DeliveryAddress address={address} setAddre={setAddress} />}
+                {/* {!sameAddress && <DeliveryAddress address={address} setAddre={setAddress} />} */}
+                {!sameAddress && <DeliveryAddress setShowMap={setShowMap} saveAddress={saveAddress} address={address} setAddress={setAddress} placesRef={placesRef} />}
+
                 <Text style={styles.sectionTitle}>Store Address</Text>
 
                 <View style={{ marginTop: 10 }}>
@@ -78,7 +576,12 @@ const DoorDeliveryComponent = ({ navigation }) => {
                 <Text style={{ fontSize: 16, fontWeight: 700, marginTop: 15 }}>Price Details</Text>
                 <View style={styles.totalAmountBox}>
                     <Text style={styles.totalAmount}>Total Amount</Text>
-                    <Text style={styles.totalAmount}>₹50</Text>
+                    <Text style={styles.totalAmount}>
+                        {`${India_INRCurrency} ${enablePayment ? numberFormat(
+                            deliverCharges?.deliveryCharge ?? 0,
+                            decimalCount(deliverCharges?.deliveryCharge),
+                        ) : 0}`}
+                    </Text>
                 </View>
 
                 <View style={{
@@ -105,22 +608,43 @@ const DoorDeliveryComponent = ({ navigation }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
+                <View style={{ paddingHorizontal: 19 }}>
+
+
+                    {errorMessage?.includes('Not enough quantity') &&
+                        <CTText
+                            text={`${errorMessage} `}
+                            fontSize={RFValue(11)}
+                            textColor={palette.red}
+                        />
+                    }
+
+                    {isNaN(distance == undefined ? "a" : errorMessage.match(/\d+/)?.[0]) &&
+                        <CTText
+                            text={`${errorMessage} `}
+                            fontSize={RFValue(11)}
+                            textColor={palette.red}
+                        />
+                    }
+
+                    {!isNaN(distance == undefined ? "a" : errorMessage.match(/\d+/)?.[0]) && !enablePayment && <CTText
+                        text={`${appLanguage?.lblDoorDeliveryDistanceValidation.replace('-', distance) ??
+                            'Door Deliver service is not available for the distance more than 30 Km'
+                            } `}
+                        fontSize={RFValue(11)}
+                        textColor={palette.red}
+                    />
+                    }
+                </View>
 
             </ScrollView>
-            <View style={styles.bottomContainer}>
-                <View style={styles.footer}>
-                    <TouchableOpacity style={styles.placeOrderButton}>
-                        <LinearGradient
-                            colors={['#1E8153', '#4EA618']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 0 }}
-                            style={styles.payButton}
-                        >
-                            <Text style={styles.payText} >Place Order</Text>
-                            {/* <Text >Pay ₹{priceData.totalCost}</Text> */}
-                        </LinearGradient>
-                    </TouchableOpacity>
-                </View>
+            <View>
+                <CustomButton
+                    title={"Place Order"}
+                    onPress={onPressCheckOut}
+                    show={false}
+                    disabled={!enablePayment}
+                />
             </View>
             <Webview_popup
                 isPopupHidden={false}
@@ -280,12 +804,18 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         paddingBottom: 50
     },
-
-    footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    termsText: {
         alignItems: 'center',
+        fontSize: 12,
+        // paddingVertical: 20,
+        textAlign: 'center',
+        color: '#333',
     },
+    termsLink: {
+        color: 'green',
+        fontWeight: '500',
+    },
+
     placeOrderButton: {
         width: '100%',
     },

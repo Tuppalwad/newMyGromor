@@ -38,6 +38,8 @@ const ProductDetails = ({ navigation, route }) => {
   const [productData, setProducData] = useState(null);
   const [offer, setOffer] = useState(null);
   const [segmentIndex, setSegmentIndex] = useState(0);
+  const [selectedSizeId, setSelectedSizeId] = useState(productData?.costings?.[0] ?? null);
+
   const [specificationData, setSpecificationData] = useState({
     title: [
       appLanguage?.how_to_use ?? 'How to use',
@@ -569,7 +571,6 @@ const ProductDetails = ({ navigation, route }) => {
     navigation.navigate(Screen.myAccount);
   };
 
-  console.log(specificationData, 'kkkkkkkkkk')
 
   return (
     <View style={{ flex: 1 }}>
@@ -619,6 +620,8 @@ const ProductDetails = ({ navigation, route }) => {
         onPressGoToAddress={onPressGoToAddress}
         appLanguage={appLanguage}
         showNoDetails={showNoDetails}
+        setSelectedSizeId={setSelectedSizeId}
+        selectedSizeId={selectedSizeId}
 
       />
     </View>

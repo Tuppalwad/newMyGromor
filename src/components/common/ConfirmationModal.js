@@ -46,7 +46,6 @@ const ConfirmationModal = ({
                         </View>
 
                         <View style={{ width: '48%' }}>
-
                             <CustomButton
                                 title={"Confirm"}
                                 onPress={onConfirm}
@@ -65,16 +64,26 @@ export default ConfirmationModal;
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        paddingHorizontal: 16,
+        backgroundColor: 'rgba(0,0,0,0.3)', // Optional: slight dim background
+        alignItems: 'center',
     },
     modalContainer: {
+        position: 'absolute',
+        bottom: -30,
+        // width: width - 32,
         backgroundColor: '#fff',
-        // padding: 20,
         paddingHorizontal: 20,
         paddingVertical: 30,
-        borderRadius: 16,
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
         alignItems: 'center',
+
+        // Top shadow
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: -3 },
+        shadowOpacity: 0.2,
+        shadowRadius: 6,
+        // elevation: 10, // for Android
     },
     icon: {
         width: 32,
@@ -101,22 +110,11 @@ const styles = StyleSheet.create({
         borderColor: '#F36D45',
         borderRadius: 8,
         paddingVertical: 10,
-        justifyContent:'center',
-        alignItems:'center',
-        textAlign:'center'
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     cancelText: {
         color: '#F36D45',
-        fontWeight: '600',
-    },
-    confirmButton: {
-        backgroundColor: '#30C45A',
-        borderRadius: 8,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-    },
-    confirmText: {
-        color: '#fff',
         fontWeight: '600',
     },
 });

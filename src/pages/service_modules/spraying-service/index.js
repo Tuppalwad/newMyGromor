@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import CustomHeader from '../../../components/common/CustomHeader';
 import timer from '../../../assets/images/splash/timer.png'
@@ -14,6 +14,7 @@ import { useRoute } from '@react-navigation/native';
 import moment from 'moment';
 import AddressCard from '../../../components/common/AddressCard';
 import { splitData } from '../../../utils/utils';
+import FilterModalForOrderAndServices from '../../../components/common/FilterModalForOrderAndServices';
 
 export default function SprayingServiceDetail({ navigation }) {
     const steps = [
@@ -32,7 +33,6 @@ export default function SprayingServiceDetail({ navigation }) {
 
         }
     ]
-
     const data = useRoute().params?.data
 
     return (
@@ -188,6 +188,7 @@ export default function SprayingServiceDetail({ navigation }) {
                 <View style={{ marginTop: 10 }}>
                     <AddressCard cardType="StoreType" />
                 </View>
+
 
             </ScrollView>
         </SafeAreaView>

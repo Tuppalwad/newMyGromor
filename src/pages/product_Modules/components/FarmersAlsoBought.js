@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ProductSlider from './ProductSlider'; // Update the path as needed
 
 const FarmersAlsoBought = () => {
+    const appLanguages = useSelector(state => state.user.appMultiLanguage);
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Farmers Also Bought</Text>
+                <Text style={styles.title}>{appLanguages.farmer_also_bought ?? "Farmers Also Bought"}</Text>
                 <TouchableOpacity>
-                    <Text style={styles.viewAll}>View All</Text>
+                    <Text style={styles.viewAll}>{appLanguages.view_all ?? "View All"}</Text>
                 </TouchableOpacity>
             </View>
 

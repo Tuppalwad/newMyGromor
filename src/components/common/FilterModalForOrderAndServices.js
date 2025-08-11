@@ -9,8 +9,9 @@ import {
     Dimensions,
     Image
 } from 'react-native';
-import close from '../../../../assets/images/common/close.png'
-import checkIcon from '../../../../assets/images/common/checkIcon.png'
+import close from '../../assets/images/common/close.png'
+import checkIcon from '../../assets/images/common/checkIcon.png'
+import CustomButton from './CustomButton';
 const { height } = Dimensions.get('window');
 
 const statusOptions = [
@@ -24,7 +25,7 @@ const statusOptions = [
     "Cancel In-progress",
 ];
 
-const FilterModal = ({ visible, setVisible }) => {
+const FilterModalForOrderAndServices = ({ visible, setVisible }) => {
     const [selectedOptions, setSelectedOptions] = useState(["In-progress"]);
 
     const toggleOption = (option) => {
@@ -58,7 +59,7 @@ const FilterModal = ({ visible, setVisible }) => {
                         </View>
 
                     </View>
-                    <View style={{ position: 'absolute', top: 10, right: 10 }}>
+                    <View style={{ position: 'absolute', top: 4, right: 10,padding:20 }}>
                         <TouchableOpacity onPress={() => setVisible(false)}>
                             <Image source={close} style={{ tintColor: '#000', width: 10, height: 10, resizeMode: "contain", }} />
                         </TouchableOpacity>
@@ -71,13 +72,15 @@ const FilterModal = ({ visible, setVisible }) => {
                             <Text style={styles.categoryTab}>Status</Text>
                         </View>
 
+                        <View style={{ width: 1, height: 'auto', backgroundColor: "#DBF2EA" }}></View>
+
                         {/* Right - Options */}
                         <ScrollView style={styles.rightPane}>
 
                             {statusOptions.map((option, index) => (
                                 <TouchableOpacity
                                     key={index}
-                                    style={{ ...styles.option, backgroundColor: '#f3f2f2ff' }}
+                                    style={{ ...styles.option, }}
                                     onPress={() => toggleOption(option)}
                                 >
                                     <View style={[styles.customCheckbox, selectedOptions.includes(option) && styles.customCheckboxChecked]}>
@@ -94,18 +97,19 @@ const FilterModal = ({ visible, setVisible }) => {
                             ))}
                         </ScrollView>
                     </View>
-
-                    {/* Apply Button */}
-                    <TouchableOpacity style={styles.applyButton} onPress={applyFilters}>
-                        <Text style={styles.applyButtonText}>Apply</Text>
-                    </TouchableOpacity>
+                    <View style={{ marginBottom: 10 }}>
+                        <CustomButton
+                            title={"Apply"}
+                            show={false}
+                        />
+                    </View>
                 </View>
             </View>
         </Modal>
     );
 };
 
-export default FilterModal;
+export default FilterModalForOrderAndServices;
 
 const styles = StyleSheet.create({
     modalOverlay: {
@@ -120,7 +124,7 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 16,
         paddingHorizontal: 16,
         paddingTop: 12,
-        paddingBottom: 20,
+        // paddingBottom: 20,
         maxHeight: height * 0.8,
     },
     headerRow: {
@@ -145,46 +149,28 @@ const styles = StyleSheet.create({
     },
     leftPane: {
         width: 100,
-        paddingVertical: 10,
+        // paddingVertical: 10,
         // paddingHorizontal: 8,
         borderRadius: 6,
-        marginRight: 8,
+        // marginRight: 8,
     },
     categoryTab: {
-        padding: 10,
-        backgroundColor: '#e6f4ea',
+        padding: 13,
+        backgroundColor: '#DAFDE7',
         fontWeight: 'bold',
         fontSize: 14,
         color: '#000',
     },
     rightPane: {
         flex: 1,
+        marginLeft: 10,
     },
     option: {
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 8,
     },
-    // checkbox: {
-    //     width: 20,
-    //     height: 20,
-    //     borderWidth: 1,
-    //     borderRadius: 4,
-    //     borderColor: '#ccc',
-    //     marginRight: 10,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    // },
-    // checkboxChecked: {
-    //     backgroundColor: '#28a745',
-    //     borderColor: '#28a745',
-    // },
-    // innerCheck: {
-    //     width: 10,
-    //     height: 10,
-    //     backgroundColor: 'white',
-    //     borderRadius: 2,
-    // },
+
     customCheckbox: {
         width: 24,
         height: 24,

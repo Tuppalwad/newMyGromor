@@ -6,7 +6,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     Image,
-    AppState
+    AppState,
+    BackHandler
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { useFocusEffect, useNavigation, CommonActions, useIsFocused } from '@react-navigation/native';
@@ -53,7 +54,7 @@ export default function VerifyOtp({ route }) {
     const [intervalId, setIntervalId] = useState(null);
     const [notificationCode, setNotificationCode] = useState('');
     const [latlong, setLatlong] = useState({ latitude: 0, longitude: 0 });
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         startTimer();
@@ -221,32 +222,36 @@ export default function VerifyOtp({ route }) {
                                     ...UserManager.user,
                                     identity: res?.data ?? {}
                                 };
-                                UserManager.updateFcmToken(param.token);
-                                UserManager.saveUser(userData);
                                 navigation.dispatch(
                                     CommonActions.reset({
                                         index: 1,
                                         routes: [{ name: Screen.homes }]
                                     })
                                 );
+                                UserManager.updateFcmToken(param.token);
+                                UserManager.saveUser(userData);
                                 clearInterval(intervalId);
-
+                                setLoading(false)
                             })
                             .catch(err => {
                                 dispatch(operation.user.getErrorHandling(err, 'getFarmerpostLogin'));
+                                setLoading(false)
                             });
                     } else {
                         dispatch(operation.user.getErrorHandling('Invalid Identifier for Farmer', 'InvalidFarmerpostLogin'));
+                        setLoading(false)
                     }
                 })
                 .catch(err => {
                     dispatch(operation.user.getErrorHandling(err, 'verifyOTP'));
+                    setLoading(false)
+
                 });
         } catch (error) {
             setLoading(false)
         }
         finally {
-            setLoading(false)
+            // setLoading(false)
         }
 
     };
@@ -276,6 +281,25 @@ export default function VerifyOtp({ route }) {
 
     };
 
+
+    useEffect(() => {
+        const backAction = () => {
+            if (timer) {
+                HEToast(`${appLanguage?.please_wait ?? "Can't go back. Please wait for"} ${timer}s`);
+                return true; // Prevent default back action
+            } else {
+                navigation.goBack();
+                return true;
+            }
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove();
+    }, [timer]);
 
     return (
         <View style={styles.container}>
@@ -309,7 +333,7 @@ export default function VerifyOtp({ route }) {
                 />
 
                 {/* Verify Button */}
-                <CustomButton title={appLanguage.submit ?? "Verify OTP"} onPress={handleSubmit} disabled={isLoading} style={styles.verifyButton} />
+                <CustomButton title={appLanguage.submit ?? "Verify OTP"} onPress={handleSubmit} disabled={loading} style={styles.verifyButton} show={false} />
 
                 {/* Timer and Resend */}
                 <View style={styles.bottomRow}>
@@ -330,7 +354,7 @@ export default function VerifyOtp({ route }) {
             </View>
             <Text style={styles.footerText}>©2025 MyGromor | Version 1.0 </Text>
 
-            <Indicator Indicator={!isLoading} />
+            <Indicator show={loading} />
 
         </View>
     );

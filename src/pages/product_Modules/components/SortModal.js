@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, FlatList } from 'react-native';
 // import { Ionicons } from '@expo/vector-icons'; // or use any icon package
-
+import { useDispatch, useSelector } from 'react-redux';
 const SortModal = ({ modalVisible, setModalVisible }) => {
   const [selectedSort, setSelectedSort] = useState('Popular');
+  const appLanguages = useSelector(state => state.user.appMultiLanguage);
 
   const sortOptions = [
     'Newest',
@@ -33,9 +34,9 @@ const SortModal = ({ modalVisible, setModalVisible }) => {
           <View style={styles.header}>
             <View></View>
             <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-              <Text style={styles.title}>Filters</Text>
+              <Text style={styles.title}>{appLanguages.filter ?? "Filter"}</Text>
               <TouchableOpacity>
-                <Text style={styles.clearAll}>Reset</Text>
+                <Text style={styles.clearAll}>{appLanguages.reset ?? "Reset"}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
