@@ -37,6 +37,7 @@ export default function LoginScreen() {
         FarmerType.classificationofFarmer,
         FarmerType.farmerclassificationcode,
     ]);
+    const [loading, setLoading] = useState(false);
     const isLoading = useSelector(state => loadingSelector(state));
     const dispatch = useDispatch();
     const operation = useOperation();
@@ -50,11 +51,14 @@ export default function LoginScreen() {
 
     useEffect(() => {
         if (isFocussed) {
+            setLoading(true)
             dispatch(
                 operation.farmer.classificationofFarmerAction(
                     selectedLanguage?.id ?? 1,
                 ),
             );
+            setLoading(false)
+
         }
     }, [isFocussed]);
 
@@ -75,6 +79,7 @@ export default function LoginScreen() {
 
     useEffect(() => {
         if (mobileNumber?.length == 10) {
+            setLoading(true)
             dispatch(operation.farmer.farmerTypeAction(mobileNumber))
                 .then(res => {
                     for (let i = 0; i < cfArrayDetails.length; i++) {
@@ -86,11 +91,11 @@ export default function LoginScreen() {
                 .catch(err => {
                     dispatch(operation.user.getErrorHandling(err, 'farmerTypeAction'));
                 });
+            setLoading(false)
         } else {
             setFarmerType({});
         }
     }, [mobileNumber]);
-
 
 
     const onSubmit = () => {
@@ -98,6 +103,7 @@ export default function LoginScreen() {
         let param = { mobile: mobileNumber };
 
         try {
+            setLoading(true)
             isValidPhone(
                 mobileNumber,
                 appLanguage?.valid_number ?? 'Enter Valid Number',
@@ -117,14 +123,20 @@ export default function LoginScreen() {
                             console.log(res)
                             dispatch(operation.user.getErrorHandling(res, 'res_generateOTP'));
                         }
+                        setLoading(false)
+
                     })
                     .catch(err => {
                         console.log(err)
                         dispatch(operation.user.getErrorHandling(err, 'generateOTP'));
+                        setLoading(false)
+
                     });
             }
         } catch (e) {
             HEToast(e ?? '', 'error');
+            setLoading(false)
+
         }
     };
 
@@ -133,8 +145,6 @@ export default function LoginScreen() {
         type: null,
     });
 
-
-    console.log(showTerms_Conditions, 'kkkkkkkkk')
 
     return (
         <View style={{ flex: 1 }}>
@@ -145,7 +155,7 @@ export default function LoginScreen() {
                     <Image source={Logo} style={styles.logo} />
 
                     {/* Welcome */}
-                    <Text style={styles.welcome}>Welcome Back!</Text>
+                    <Text style={styles.welcome}>{appLanguage?.welcome ?? "Welcome"} Back!</Text>
 
                     {/* Phone Number */}
                     <View style={styles.inputBox}>
@@ -206,7 +216,7 @@ export default function LoginScreen() {
                     <Text style={styles.text}>©2025 MyGromor | Version 1.0</Text>
                 </View>
 
-                <Indicator show={isLoading} />
+                <Indicator show={loading} />
 
             </KeyboardAvoidingView>
 

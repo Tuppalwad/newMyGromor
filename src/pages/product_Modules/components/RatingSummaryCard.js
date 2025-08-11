@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ProgressCircle from './ProgressCircle';
-
+import { useDispatch, useSelector } from 'react-redux';
 const RatingSummaryCard = ({ average, selectedRating, reviewCount, setSelectedRating }) => {
     const rating = average;
     const percentage = (rating / 5) * 100;

@@ -106,7 +106,7 @@ import SelectLocationScreen from '../components/common/SelectLocationScreen';
 import NewServiceRequestScreen from '../pages/service_modules/spraying-service/newService';
 import SuccessScreen from '../pages/product_modules/components/SuccessScreen';
 import WeatherScreen from '../pages/product_modules/weather/weatherScreen';
-import Next7DaysScreen from '../pages/product_modules/weather/next7days';
+import NextDaysScreen from '../pages/product_modules/weather/nextdays';
 import MyOrders from '../pages/product_modules/order';
 import MyBookingDetails from '../pages/product_modules/order/component/MyBooking';
 // import WeatherScreen from '../pages/product_modules/weather/wheatherScreen';
@@ -247,14 +247,6 @@ const StackNav = ({ navigation }) => {
         component={SimilarProudct}
       />
 
-
-      <Stack.Screen
-        options={{ headerShown: false }}
-        name={Screen.MapScreen}
-        component={SelectLocationScreen}
-      />
-
-
       <Stack.Screen
         options={{ headerShown: false }}
         name={Screen.DoorDelivery}
@@ -282,8 +274,8 @@ const StackNav = ({ navigation }) => {
       />
       <Stack.Screen
         options={{ headerShown: false }}
-        name={Screen.Next7Days}
-        component={Next7DaysScreen}
+        name={Screen.NextDays}
+        component={NextDaysScreen}
       />
 
       {/* 

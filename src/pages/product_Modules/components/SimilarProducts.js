@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import ProductSlider from './ProductSlider';
 import ProductCard from './ProductCard';
-
+import { useDispatch, useSelector } from 'react-redux';
 const SimilarProducts = ({ productdata, onPressProductItem, onPressFavourite, onPressDeleteFav, onPressSeeAll }) => {
 
     const renderProduct = ({ item, index, isSimilar }) => <ProductCard item={item} index={index} onPressProductItem={onPressProductItem} onPressFavourite={onPressFavourite} onPressDeleteFav={onPressDeleteFav} type={isSimilar} />;

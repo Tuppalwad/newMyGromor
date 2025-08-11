@@ -1,23 +1,43 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, BackHandler } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'; // Make sure you have this installed
 import { useNavigation } from '@react-navigation/native';
-import Sucess from '../../../assets/images/common/success.gif'
-import SprayingServiceDetail from '../../service_modules/spraying-service';
-import SuccessGif from '../../../components/common/SuccessGif';
+import Sucess from '../../../assets/images/common/success1.png'
+import { useDispatch, useSelector } from 'react-redux';
 import { Screen } from '../../../router/screen';
-const SuccessScreen = ({ id }) => {
+
+const SuccessScreen = ({ path, state, title, subtitle, setShowSuccess }) => {
     const navigation = useNavigation();
     const appLanguages = useSelector(state => state.user.appMultiLanguage);
+    useEffect(() => {
+
+        const backAction = () => {
+            setShowSuccess(false); // close map instead of navigating back
+            return true;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove();
+    }, []);
+
 
     return (
         <View style={styles.container}>
 
-            <View style={{ marginBottom: 20, width: 100, height: 100, borderRadius: 50, backgroundColor: '#ffffff', justifyContent: 'center', alignItems: 'center' }}>
+            {!title?.toLowerCase().includes("failed") ?
+                <Image
+                    source={Sucess}
+                    style={{ width: 50, height: 50, resizeMode: 'contain' }}
+                /> : <View style={{ borderRadius: 25, width: 50, height: 50, justifyContent: 'center', alignItems: 'center', backgroundColor: 'red' }}>
+                    <Text style={{ color: '#fff' }}>X</Text>
+                </View>
+            }
 
-                <SuccessGif image={Sucess} />
 
-            </View>
 
             <Text style={styles.title}>{appLanguages.successful_message ?? "Submitted Successfully!"}</Text>
             <Text style={styles.subtitle}>
@@ -25,7 +45,7 @@ const SuccessScreen = ({ id }) => {
                 <Text style={styles.serviceId}>{appLanguages.lblServiceId ?? "Service ID"} {id}</Text>
             </Text>
 
-            <TouchableOpacity style={styles.buttonContainer} onPress={() => navigation.navigate('')}>
+            <TouchableOpacity style={styles.buttonContainer} onPress={() => { setShowSuccess(false), navigation.navigate(path, { state: state }) }}>
                 <LinearGradient
                     colors={['#1E8153', '#4EA618']}
                     start={{ x: 0, y: 0 }}
@@ -37,7 +57,7 @@ const SuccessScreen = ({ id }) => {
             </TouchableOpacity>
 
             <TouchableOpacity
-                onPress={() => navigation.navigate(Screen.homes)}
+                onPress={() => { setShowSuccess(false), navigation.navigate(Screen.homes) }}
                 style={styles.homeLink}
             >
                 <Text style={styles.homeText}>{appLanguages.go_to_home ?? "Go to Home"}</Text>

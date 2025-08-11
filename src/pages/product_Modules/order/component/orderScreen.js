@@ -4,17 +4,16 @@ import LinearGradient from 'react-native-linear-gradient';
 import CustomHeader from '../../../../components/common/CustomHeader';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import parcel from '../../../../assets/images/common/parcel.png';
-import booking from '../../../../assets/images/common/booking.png'; // Assuming you have a booking icon
-import timerIcon from '../../../../assets/images/splash/timer.png'; // Assuming you have a timer icon
-import deliver from '../../../../assets/images/common/deliver.png'; // Assuming you have a deliver icon
-import failed from '../../../../assets/images/common/failed.png'; // Assuming you have a failed icon
-import rightArrow from '../../../../assets/images/common/rightArrow.png'; // Assuming you have a right arrow icon
+import booking from '../../../../assets/images/common/booking.png';
+import timerIcon from '../../../../assets/images/splash/timer.png';
+import deliver from '../../../../assets/images/common/deliver.png';
+import failed from '../../../../assets/images/common/failed.png';
+import rightArrow from '../../../../assets/images/common/rightArrow.png';
 import { useNavigation } from '@react-navigation/native';
-import filterIcon from '../../../../assets/images/common/filter.png'; // Assuming you have a filter icon
-import { Screen } from '../../../../router/screen';
+import filterIcon from '../../../../assets/images/common/filter.png';
 import moment from 'moment';
 import Indicator from '../../../../components/common/Indicator';
-import FilterModal from './FilterModal';
+import FilterModalForOrderAndServices from '../../../../components/common/FilterModalForOrderAndServices';
 
 const orders = [
     { id: 1, key: 'inprogress', status: 'In-progress', color: '#FFF3CD', textColor: '#856404', image: timerIcon },
@@ -185,9 +184,9 @@ export default function MyOrdersScreen({
                         <Text style={styles.filterText}> Filters</Text>
                     </TouchableOpacity >
                 </LinearGradient>
-                <View style={{ flex: 1 }}>
-                    <FilterModal visible={visible} setVisible={setVisible} />
-                </View>
+
+
+                <FilterModalForOrderAndServices visible={visible} setVisible={setVisible} />
                 <Indicator Indicator={!isLoading} />
             </View >
         </>
@@ -331,7 +330,9 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         width: '100%',
-        padding: 12,
+        padding: 18,
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10,
     },
     filterButton: {
         flexDirection: 'row',

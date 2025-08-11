@@ -69,9 +69,9 @@ const AgriFilterModal = ({ visible, onClose }) => {
                     <View style={styles.headerRow}>
                         {/* <View></View> */}
                         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                            <Text style={styles.headerText}>{appLanguage.filter ?? "Filter"}</Text>
+                            <Text style={styles.headerText}>{appLanguage?.filter ?? "Filter"}</Text>
                             <TouchableOpacity onPress={clearAll}>
-                                <Text style={styles.clearText}>{appLanguage.clear_all ?? "Clear All"}</Text>
+                                <Text style={styles.clearText}>{appLanguage?.clear_all ?? "Clear All"}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -148,7 +148,7 @@ const AgriFilterModal = ({ visible, onClose }) => {
                             style={styles.payButton}
                         >
 
-                            <Text style={styles.applyText}>{appLanguage.apply_filter ?? "Apply"}</Text>
+                            <Text style={styles.applyText}>{appLanguage?.apply_filter ?? "Apply"}</Text>
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>

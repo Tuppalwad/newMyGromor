@@ -10,7 +10,6 @@ import CustomHeader from '../../../components/common/CustomHeader';
 import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { UserManager } from '../../../storage';
 import { useOperation } from '../../../redux/operation';
-import { useDispatch, useSelector } from 'react-redux';
 import { createLoadingSelector } from '../../../redux/loading-reducer';
 import { ProductType } from '../../../redux/product/type';
 import { isEmpty } from '../../../utils/validator';
@@ -20,7 +19,7 @@ import FlatlistComponent from '../../../components/common/FlatListComponent';
 import { Icon } from '../../../../assets/images';
 import SortModal from './SortModal';
 import Errordisplaycomponent from '../../../components/Error-display-component';
-
+import { useDispatch, useSelector } from 'react-redux';
 
 const ViewAllProduct = () => {
     const [filterVisible, setFilterVisible] = useState(false);
@@ -361,7 +360,7 @@ export default ViewAllProduct;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // marginTop: 30,
+        marginTop: 30,
         backgroundColor: '#F9FAFB',
     },
     itemCount: {

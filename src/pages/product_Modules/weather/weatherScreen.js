@@ -3,35 +3,98 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'rea
 // import CustomHeader from '../../../components/common/CustomHeader';
 import location from '../../../assets/images/splash/location.png'
 import CustomHeader from '../../../components/common/CustomHeader';
-import Next7DaysScreen from './next7days';
+import NextDaysScreen from './nextdays';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
+import Indicator from '../../../components/common/Indicator';
+import { FarmerType } from '../../../redux/farmer/type';
+import { WeatherType } from '../../../redux/weather-report/type';
+import { createLoadingSelector } from '../../../redux/loading-reducer';
 const WeatherScreen = ({ navigation }) => {
     const [activeTab, setActiveTab] = useState('Today');
     const [selectedHour, setSelectedHour] = useState(null);
+    const hourlyWeatherData = useSelector(state => state.weather.hourlyWeather);
+    const monthlyWeatherData = useSelector(state => state.weather.monthlyWeather);
+    const currentWeatherData = useSelector(state => state.weather.currentWeather);
+    const loadingSelector = createLoadingSelector([
+        WeatherType.location,
+        WeatherType.monthlyWeather,
+        WeatherType.weather,
+        WeatherType.currentWeather,
+    ]);
+    const isLoading = useSelector(state => loadingSelector(state));
+
+    // Helper function to get weather icon based on condition code
+    const getWeatherIcon = (weatherId) => {
+        if (weatherId >= 200 && weatherId < 300) {
+            return require('../../../assets/images/common/rain.png'); // thunderstorm
+        } else if (weatherId >= 300 && weatherId < 500) {
+            return require('../../../assets/images/common/raindrop.png'); // drizzle
+        } else if (weatherId >= 500 && weatherId < 600) {
+            return require('../../../assets/images/common/rain.png'); // rain
+        } else if (weatherId >= 600 && weatherId < 700) {
+            return require('../../../assets/images/common/snow.png'); // snow
+        } else if (weatherId >= 700 && weatherId < 800) {
+            return require('../../../assets/images/common/fog.png'); // atmosphere
+        } else if (weatherId === 800) {
+            return require('../../../assets/images/common/sun.png'); // clear
+        } else if (weatherId > 800) {
+            return require('../../../assets/images/common/suncloud.png'); // clouds
+        }
+        return require('../../../assets/images/common/suncloud.png'); // default
+    };
+
+    // Format the hourly data for display
+    const formatHourlyData = () => {
+        if (!hourlyWeatherData || hourlyWeatherData.length === 0) return [];
+
+        return hourlyWeatherData.map((hour) => {
+            const date = new Date(hour.dt * 1000);
+            const time = date.toLocaleTimeString([], { hour: '2-digit' });
+            const weatherCondition = hour.weather[0].id;
+
+            return {
+                time: `${time}`,
+                temp: Math.round(hour.main.temp),
+                rain: hour.rain ? `${Math.round(hour.rain['1h'] * 100)}%` : '0%',
+                icon: getWeatherIcon(weatherCondition),
+                Icon: require('../../../assets/images/common/raindrop.png')
+            };
+        });
+    };
+
+    // Get current date
+    const getCurrentDate = () => {
+        if (!currentWeatherData || !currentWeatherData.dt) return 'Mon, Jun 16';
+
+        const date = new Date(currentWeatherData.dt * 1000);
+        return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    };
+
+    // Format weather type description
+    const getWeatherType = () => {
+        if (!currentWeatherData || !currentWeatherData.weather || currentWeatherData.weather.length === 0)
+            return 'Light Rain with Sun';
+
+        const weather = currentWeatherData.weather[0];
+        return weather.description.charAt(0).toUpperCase() + weather.description.slice(1);
+    };
+
     const weatherData = {
-        location: 'Anantapur, Andhra Pradesh',
-        date: 'Mon, Jun 16',
-        temperature: 29,
-        min: 26,
-        max: 38,
-        weatherType: 'Light Rain with Sun',
-        wind: '6 km/h',
-        humidity: '22%',
-        rain: '0.31%',
-        hourly: [
-            { time: '03 PM', temp: 29, rain: '91%', icon: require('../../../assets/images/common/suncloud.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-            { time: '04 PM', temp: 26, rain: '95%', icon: require('../../../assets/images/common/rain.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-            { time: '05 PM', temp: 25, rain: '98%', icon: require('../../../assets/images/common/rain.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-            { time: '06 PM', temp: 24, rain: '99%', icon: require('../../../assets/images/common/rain.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-            { time: '07 PM', temp: 21, rain: '97%', icon: require('../../../assets/images/common/rain.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-            { time: '08 PM', temp: 22, rain: '90%', icon: require('../../../assets/images/common/rain.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-            { time: '09 PM', temp: 24, rain: '80%', icon: require('../../../assets/images/common/rain.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-            { time: '10 PM', temp: 27, rain: '88%', icon: require('../../../assets/images/common/rain.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-            { time: '11 PM', temp: 26, rain: '94%', icon: require('../../../assets/images/common/rain.png'), Icon: require('../../../assets/images/common/raindrop.png') },
-        ],
+        location: currentWeatherData?.name || 'Mali and Munjeri',
+        date: getCurrentDate(),
+        temperature: currentWeatherData?.main?.temp ? Math.round(currentWeatherData.main.temp) : 29,
+        min: currentWeatherData?.main?.temp_min ? Math.round(currentWeatherData.main.temp_min) : 26,
+        max: currentWeatherData?.main?.temp_max ? Math.round(currentWeatherData.main.temp_max) : 38,
+        weatherType: getWeatherType(),
+        wind: currentWeatherData?.wind?.speed ? `${currentWeatherData.wind.speed} km/h` : '6 km/h',
+        humidity: currentWeatherData?.main?.humidity ? `${currentWeatherData.main.humidity}%` : '22%',
+        rain: hourlyWeatherData?.[0]?.rain ? `${Math.round(hourlyWeatherData[0].rain['1h'] * 100)}%` : '0%',
+        hourly: formatHourlyData()
     };
 
     return (
-        <>
+        <SafeAreaView style={{ flex: 1 }}>
             {/* Header */}
             <CustomHeader
                 type="Wheather Forcast"
@@ -67,7 +130,7 @@ const WeatherScreen = ({ navigation }) => {
                                     <Text style={styles.minMax}>Min: {weatherData.min}°C   Max: {weatherData.max}°C</Text>
                                 </View>
                                 <Image
-                                    source={require('../../../assets/images/common/suncloud.png')}
+                                    source={getWeatherIcon(currentWeatherData?.weather?.[0]?.id || 804)}
                                     style={styles.weatherIcon}
                                 />
                             </View>
@@ -99,7 +162,7 @@ const WeatherScreen = ({ navigation }) => {
                         </View>
 
                         {/* Hourly Forecast */}
-                        <Text style={styles.hourlyTitle}>Today’s Hourly</Text>
+                        <Text style={styles.hourlyTitle}>Today's Hourly</Text>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hourlyScroll}>
                             {weatherData.hourly.map((hour, index) => (
                                 <TouchableOpacity
@@ -129,18 +192,18 @@ const WeatherScreen = ({ navigation }) => {
                 )}
 
                 {activeTab === 'Next 7 Days' && (
-                    // <View style={styles.placeholderBox}>
-                    //     <Text style={styles.placeholderText}>
-                    //         {activeTab} data will be displayed here.
-                    //     </Text>
-                    // </View>
-                    <Next7DaysScreen />
+                    <NextDaysScreen days={7} isLoading={isLoading} />
                 )}
                 {activeTab === 'Monthly' && (
-                    <Next7DaysScreen />
+                    <NextDaysScreen
+                        isLoading={isLoading}
+                        days={new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() > 30 ? 30 : new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate()}
+                    />
                 )}
+
             </ScrollView>
-        </>
+            <Indicator show={isLoading} />
+        </SafeAreaView>
     );
 };
 

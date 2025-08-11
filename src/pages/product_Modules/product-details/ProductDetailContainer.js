@@ -40,10 +40,12 @@ export default function ProductDetailContainer({
     onPressAdd,
     onPressMinus,
     quantity,
-    setQuantity
+    setQuantity,
+    selectedSizeId,
+    setSelectedSizeId
+
 }) {
 
-    const [selectedSizeId, setSelectedSizeId] = useState(productData?.costings?.[0] ?? null);
     const navigation = useNavigation()
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
     const [isDosageExpanded, setIsDosageExpanded] = useState(false);
@@ -67,6 +69,8 @@ export default function ProductDetailContainer({
 
     const BannerData = useSelector(state => state.product.bannerData);
 
+
+    console.log(selectedSizeId, 'sssssss')
 
     return (
         <>
@@ -369,17 +373,34 @@ export default function ProductDetailContainer({
                 <View style={styles.footer}>
 
                     <TouchableOpacity
-                        style={[styles.footerButton, { backgroundColor: '#fff', borderWidth: 1, borderColor: '#0A8F43' }]}
+                        style={[
+                            styles.footerButton,
+                            {
+                                backgroundColor: '#fff',
+                                borderWidth: 1,
+                                borderColor: selectedSizeId?.inStock ? '#0A8F43' : '#999'
+                            }
+                        ]}
                         onPress={() => onPressAddToCart('BUY')}
+                        disabled={!selectedSizeId?.inStock}
                     >
-                        <Text style={[styles.footerButtonText, { color: '#004F34' }]}>Buy Now</Text>
+                        <Text
+                            style={[
+                                styles.footerButtonText,
+                                { color: selectedSizeId?.inStock ? '#004F34' : '#999' }
+                            ]}
+                        >
+                            Buy Now
+                        </Text>
                     </TouchableOpacity>
+
 
                     <CustomButton style={{ width: '50%' }}
                         title="Add to Cart"
                         buttonStyle={[styles.footerButton, { backgroundColor: '#0A8F43' }]}
                         textStyle={[styles.footerButtonText, { color: '#fff' }]}
                         onPress={onPressAddToCart}
+                        disabled={!selectedSizeId?.inStock}
                     />
 
                 </View>
@@ -711,7 +732,7 @@ const styles = StyleSheet.create({
     footer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 16,
+        // paddingHorizontal: 16,
         paddingVertical: 12,
         backgroundColor: '#fff',
         borderTopWidth: 1,

@@ -429,9 +429,9 @@ const styles = StyleSheet.create({
     verticalLine: {
         width: 2,
         height: 40,
-        backgroundColor: '##01AD41',
+        backgroundColor: '#01AD41',
         position: 'absolute',
-        top: 20,
+        top: 23,
     },
     textColumn: {
         flex: 1,

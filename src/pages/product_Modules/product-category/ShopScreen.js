@@ -20,7 +20,7 @@ export default function ShopScreen({ searchData, setSearchData, onPressCategory,
 
     return (
 
-        <>
+        <SafeAreaView style={{ flex: 1, marginTop: 30 }}>
             <View>
                 <CustomHeader
                     type="shop"
@@ -108,7 +108,7 @@ export default function ShopScreen({ searchData, setSearchData, onPressCategory,
                     </LinearGradient>
 
 
-                    {/* <CustomButton title={"View All Product"} onPress={() => navigation.navigate('AllProduct')} /> */}
+                    <CustomButton title={"View All Product"} onPress={() => navigation.navigate(Screen.viewAllProduct)} />
 
                     <Indicator Indicator={newProductData?.length > 0 ? true : false} />
 
@@ -116,7 +116,7 @@ export default function ShopScreen({ searchData, setSearchData, onPressCategory,
             />
 
 
-        </>
+        </SafeAreaView>
     );
 }
 

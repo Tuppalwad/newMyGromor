@@ -61,7 +61,7 @@ const SplashScreen = () => {
                 // navigation.replace(Screen.welcome);
                 checkVersionAndNavigate();
             });
-        }, 1000);
+        }, 300);
     }, []);
 
     const operation = useOperation();

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, FlatList } from 'react-native';
 // import { Ionicons } from '@expo/vector-icons'; // or use any icon package
-
+import { useDispatch, useSelector } from 'react-redux';
 const SortModal = ({ modalVisible, setModalVisible }) => {
   const [selectedSort, setSelectedSort] = useState('Popular');
   const appLanguages = useSelector(state => state.user.appMultiLanguage);

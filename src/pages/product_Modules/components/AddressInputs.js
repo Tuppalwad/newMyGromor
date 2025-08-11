@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     View,
     Text,
@@ -7,20 +7,18 @@ import {
     StyleSheet,
     ScrollView,
     Image,
+    TouchableWithoutFeedback,
+    Keyboard,
 } from 'react-native';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Dropdown } from './AddressDropdown';
-import SearchIcon from '../../../assets/images/common/searchIcon.png';
 import locationPin from '../../../assets/images/common/locationPin.png';
-import { RFValue } from 'react-native-responsive-fontsize';
 import { palette } from '../../../theme/color';
-import { width } from '../../../config/resposiveSize';
 import { UserManager } from '../../../storage';
 import { useNavigation } from '@react-navigation/native';
 import { Screen } from '../../../router/screen';
-
-
-const DeliveryAddress = ({ address, setAddress, placesRef }) => {
+import OSMAddressSearch from './OSMAddressSearch';
+import LocationIcon from '../../../assets/images/common/locationGreen.png'
+const DeliveryAddress = ({ address, setAddress, saveAddress, setShowMap }) => {
     const [errors, setErrors] = useState({});
     const appLanguage = UserManager?.getAppMultiLanguage;
     const appLanguages = useSelector(state => state.user.appMultiLanguage);
@@ -28,6 +26,7 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
     const navigation = useNavigation();
     const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Pune'];
     const states = ['Maharashtra', 'Delhi', 'Karnataka'];
+    const [results, setResults] = useState([]);
 
     const handleChange = (key, value) => {
         setAddress(prev => ({ ...prev, [key]: value }));
@@ -54,122 +53,47 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
         setErrors(prev => ({ ...prev, [key]: errorMsg }));
     };
 
-    const handlePlaceSelect = (details) => {
-        if (!details?.address_components) return;
-
-        const components = details.address_components;
-        const getComponent = (type) =>
-            components.find(comp => comp.types.includes(type))?.long_name || '';
-
-        const city = getComponent('administrative_area_level_3') || getComponent('locality');
-        const state = getComponent('administrative_area_level_1');
-        const pincode = getComponent('postal_code');
-
-        const formattedAddress = details.formatted_address;
-        const addressParts = formattedAddress.split(',').slice(1); // skip first line
-        const address1 = addressParts.slice(0, 2).join(',').trim();
-        const address2 = addressParts.slice(2).join(',').trim();
-
-        setAddress(prev => ({
-            ...prev,
-            location: formattedAddress,
-            address1,
-            address2,
-            city,
-            state,
-            pincode,
-        }));
-    };
-    const homePlace = {
-        description: 'Home',
-        geometry: { location: { lat: 12.934, lng: 77.610 } }
-    };
-
+    useEffect(() => {
+        if (address.pincode.length == 6) {
+            saveAddress(address.address1 + address.address2 + address.city + address.state + address.pincode)
+        }
+    }, [address.pincode])
 
     return (
         <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-            <Text style={styles.label}>{appLanguage.location ?? "Location"}</Text>
-            {/* <GooglePlacesAutocomplete
-                ref={placesRef}
-                placeholder="Search your address"
-                placeholderTextColor={'black'}
-                minLength={2}
-                autoFocus={false}
-                fetchDetails={true}
-                returnKeyType={'search'}
-                keyboardShouldPersistTaps="always"
-                listViewDisplayed={'auto'}
-                enablePoweredByContainer={false}
-                renderDescription={(row) => row.description}
-                predefinedPlaces={[homePlace] || []}
-                GooglePlacesSearchQuery={{
-                    rankby: 'distance',
-                    type: 'cities',
+            <Text style={styles.label}>Location</Text>
+            <TouchableWithoutFeedback
+                onPress={() => {
+                    Keyboard.dismiss();
+                    setResults([]);
                 }}
+            >
+                <OSMAddressSearch
+                    setResults={setResults}
+                    results={results}
+                    onSelectAddress={(address) => {
+                        const addressLines = address.fullAddress.split(',');
+                        setAddress(prev => ({
+                            ...prev,
+                            location: address.fullAddress || "",
+                            address1: addressLines[0]?.trim() || '',
+                            address2: addressLines.slice(1, 3).join(', ').trim(),
+                            city: address.city,
+                            state: address.state,
+                            pincode: address.pincode,
+                            latitude: address.lat,
+                            longitude: address.lon
+                        }));
 
-                onPress={(data, details = null) => {
-                    if (!details) {
-                        console.warn('No details returned for place');
-                        return;
-                    }
+                    }}
+                />
+            </TouchableWithoutFeedback>
+            {errors.location && <Text style={styles.errorText}>{errors.location}</Text>}
 
-                    try {
-                        handlePlaceSelect(details);
-                    } catch (e) {
-                        console.error('handlePlaceSelect error', e);
-                    }
-                }}
-
-                query={{
-                    key: 'AIzaSyCq0fPRd6ZESlaPMP_JjVoy6MziX8ndvB8',
-                    language: 'en',
-                    region: 'us',
-                    type: 'establishment',
-                    components: 'country:in',
-                }}
-
-                textInputProps={{
-                    placeholderTextColor: palette.lightgray,
-                    returnKeyType: "search",
-                    // fontSize: RFValue(13),
-                    onChangeText: () => { },
-                }}
-
-                onFail={(error) => {
-                    console.warn('Places API Error:', error);
-                }}
-
-                styles={{
-                    textInput: {
-                        fontSize: 13,
-                        color: 'black',
-                        borderWidth: 1,
-                        borderColor: '#ccc',
-                        borderRadius: 6,
-                        paddingHorizontal: 10,
-                        height: 40,
-                    },
-                    textInputContainer: {
-                        borderColor: '#ddd',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                    },
-                    container: { flex: 0, zIndex: 10 },
-                    description: { color: '#000' },
-                    listView: {
-                        backgroundColor: '#fff',
-                        zIndex: 1000,
-                        position: 'absolute',
-                        top: 40,
-                    },
-                }}
-            /> */}
-
-
-            {errors.location ? <Text style={styles.errorText}>{errors.location}</Text> : null}
-
-            <TouchableOpacity style={styles.selectLocationButton}
-                onPress={() => navigation.navigate(Screen.MapScreen)}
+            {/* Rest of your component remains the same */}
+            <TouchableOpacity
+                style={styles.selectLocationButton}
+                onPress={() => setShowMap(true)}
             >
                 <Image source={locationPin} style={styles.locationPin} />
                 <Text style={styles.selectLocationText}>{appLanguages.select_location ?? "Select Location"}</Text>
@@ -196,20 +120,38 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
 
             <View style={styles.row}>
                 <View style={{ flex: 1, marginRight: 8 }}>
-                    <Dropdown
-                        label={appLanguages.city ?? "City"}
+                    {/* <Dropdown
+                        label="City"
                         options={cities}
                         selectedValue={address.city}
                         onSelect={(value) => handleChange('city', value)}
+                    /> */}
+                    <Text style={styles.label}>{appLanguages.city ?? "City"}</Text>
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder={appLanguages.city ?? "City"}
+                        value={address.city}
+                        onChangeText={(text) => handleChange('city', text)}
+                        placeholderTextColor="#878787"
                     />
                     {errors.city ? <Text style={styles.errorText}>{errors.city}</Text> : null}
                 </View>
                 <View style={{ flex: 1, marginLeft: 8 }}>
-                    <Dropdown
-                        label={appLanguages.state ?? "State"}
+                    {/* <Dropdown
+                        label="State"
                         options={states}
                         selectedValue={address.state}
                         onSelect={(value) => handleChange('state', value)}
+                    /> */}
+                    <Text style={styles.label}>{appLanguages.state ?? "State"}</Text>
+
+                    <TextInput
+                        style={styles.input}
+                        placeholder={appLanguages.state ?? "State"}
+                        value={address.state}
+                        onChangeText={(text) => handleChange('state', text)}
+                        placeholderTextColor="#878787"
                     />
                     {errors.state ? <Text style={styles.errorText}>{errors.state}</Text> : null}
                 </View>
@@ -225,11 +167,45 @@ const DeliveryAddress = ({ address, setAddress, placesRef }) => {
                 placeholderTextColor="#878787"
             />
             {errors.pincode ? <Text style={styles.errorText}>{errors.pincode}</Text> : null}
+            {
+                // (!enablePayment || (!address.address1 || !address.city || !address.state || !address.pincode)) &&
 
-            <TouchableOpacity style={{ ...styles.selectLocationButton, marginTop: 10 }}>
-                {/* <Image source={locationPin} style={styles.locationPin} /> */}
-                <Text style={styles.selectLocationText}>{appLanguage.use_this_address ?? "Use this address"}</Text>
-            </TouchableOpacity>
+                // <TouchableOpacity
+                //     style={{
+                //         ...styles.selectLocationButton,
+                //         backgroundColor:
+                //             address.address1 && address.city && address.state && address.pincode
+                //                 ? '#F2F8F4'
+                //                 : '#f0f0f0',
+                //         marginTop: 10,
+                //     }}
+                //     onPress={() => {
+                //         saveAddress(address.address1 + address.address2 + address.city + address.state + address.pincode)
+                //     }}
+                //     disabled={!address.address1 || !address.city || !address.state || !address.pincode}
+                // >
+
+                //     <Image source={LocationIcon} style={{
+                //         ...styles.locationPin,
+                //         tintColor: address.address1 && address.city && address.state && address.pincode
+                //             ? '#1C8A4B'
+                //             : '#a0a0a0',
+                //     }} />
+
+                //     <Text
+                //         style={{
+                //             ...styles.selectLocationText,
+                //             color:
+                //                 address.address1 && address.city && address.state && address.pincode
+                //                     ? '#1C8A4B'
+                //                     : '#a0a0a0',
+                //         }}
+                //     >
+                //         Use this address
+                //     </Text>
+                // </TouchableOpacity>
+            }
+
         </ScrollView>
     );
 };
@@ -274,13 +250,13 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     selectLocationButton: {
-        backgroundColor: '#EAF9F1',
         padding: 12,
         borderRadius: 6,
         alignItems: 'center',
+        backgroundColor: '#F2F8F4',
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: '#D9D9D9',
+        borderColor: '#A3D2B5',
         flexDirection: 'row',
         alignSelf: 'center',
         justifyContent: 'center',
@@ -293,6 +269,7 @@ const styles = StyleSheet.create({
         paddingRight: 10,
     },
     selectLocationText: {
+        paddingLeft: 4,
         color: '#009966',
         fontWeight: '600',
     },

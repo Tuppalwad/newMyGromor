@@ -4,7 +4,7 @@ import { useOperation } from '../../../redux/operation';
 import { useDispatch, useSelector } from 'react-redux';
 import { createLoadingSelector } from '../../../redux/loading-reducer';
 import { UserManager } from '../../../storage';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused, useRoute } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MyOrdersScreen from './component/orderScreen';
 import { OrderType } from '../../../redux/order/type';
@@ -12,7 +12,9 @@ import { Screen } from '../../../router/screen';
 
 const MyOrders = ({ navigation }) => {
 
-    const [activeCategory, setActiveCategory] = useState('purchases');
+    const state = useRoute().params?.state
+
+    const [activeCategory, setActiveCategory] = useState(state ?? 'purchases');
     const [page, setPage] = useState(0);
     const operation = useOperation();
     const dispatch = useDispatch();

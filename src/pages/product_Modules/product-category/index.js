@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { UserManager } from '../../../storage';
 import { useOperation } from '../../../redux/operation';
@@ -444,7 +444,7 @@ const ProductCategories = ({ navigation }) => {
 
 
     return (
-        <View style={{ flex: 1 }}>
+        <SafeAreaView style={{ flex: 1 }}>
             <ShopScreen
                 newProductData={newProductData}
                 popularProductData={popularProductData}
@@ -456,7 +456,7 @@ const ProductCategories = ({ navigation }) => {
                 setSearchData={setSearchData}
                 searchData={searchData}
             />
-        </View>
+        </SafeAreaView>
     );
 }
 

@@ -23,7 +23,6 @@ import moment from 'moment';
 const Home = () => {
 
   UserManager.loadUser();
-  const [appLanguage, setAppLanguage] = useState(null);
   const dispatch = useDispatch();
   const operation = useOperation();
   const isFocussed = useIsFocused();
@@ -36,6 +35,7 @@ const Home = () => {
     WeatherType.currentWeather,
     ProductType.productBanners,
   ]);
+  const [appLanguage, setAppLanguage] = useState(null);
   const isLoading = useSelector(state => loadingSelector(state));
   const hourlyWeatherData = useSelector(state => state.weather.hourlyWeather);
   const weeklyWeatherData = useSelector(state => state.weather.weeklyWeather);
@@ -110,24 +110,8 @@ const Home = () => {
     setPRODUCT(tempArr);
   }, [isFocussed, appLanguage, farmerAddress]);
 
-  // console.log('App Language:', JSON.stringify(appLanguage, null, 2));
-
-
-  const onPressItem = (items, index) => {
-    let tempArr = [...data];
-    tempArr?.map((tempItem, tempIndex) => {
-      if (tempIndex === index) {
-        tempItem['expanded'] = !tempItem['expanded'];
-      } else {
-        tempItem['expanded'] = false;
-      }
-    });
-    setData(tempArr);
-  };
 
   const onPressCall = () => {
-
-    console.log('kkkkkkkkkk')
 
     let phoneNumber = Configuration.tollfreenumber_Linking;
     try {
@@ -143,49 +127,6 @@ const Home = () => {
     } catch (e) { }
   };
 
-  const onPressProductItem = item => {
-    if (item?.id === 1) {
-      navigation.navigate(
-        appLanguage?.my_crop_advisory ?? Screen.cropAdvisory,
-        { type: 'Advisory HNI' },
-      );
-    } else if (item?.id === 2) {
-      navigation.navigate(
-        appLanguage?.my_crop_advisory ?? Screen.cropAdvisory,
-        { type: 'Advisory Crop' },
-      );
-    } else if (item?.id === 3) {
-      navigation.navigate(appLanguage?.buy_products ?? Screen.product);
-    } else if (item?.id === 4) {
-      navigation.navigate(appLanguage?.lblFeeds ?? Screen.postFeed);
-    } else if (item?.id === 5) {
-      navigation.navigate(
-        appLanguage?.my_crop_advisory ?? Screen.cropAdvisory,
-        { type: 'Advisory Farmland' },
-      );
-    } else if (item?.id === 6) {
-      navigation.navigate(Screen.Plantix);
-    } else if (item?.id === 7) {
-      navigation.navigate(appLanguage?.market_value ?? Screen.marketValue);
-    } else if (item?.id === 8) {
-      navigation.navigate(Screen.viewAllDealers);
-    } else if (item?.id === 9) {
-      navigation.navigate(
-        appLanguage?.my_crop_advisory ?? Screen.cropAdvisory,
-        { type: 'Advisory Quries' },
-      );
-    } else if (item?.id === 10) {
-      navigation.navigate(Screen.adVideo);
-    } else if (item?.id === 11) {
-      navigation.navigate(
-        appLanguage?.mana_gromor_stores ?? Screen.gromorStore,
-      );
-    } else if (item?.id === 12) {
-      navigation.navigate(Screen.FylloScreen);
-    } else if (item?.id === 13) {
-      navigation.navigate(Screen.myServices);
-    }
-  };
 
   //////// <<<<<Location_Weather - Modlues >>>>>>> ///////
   async function requestPermissions() {
@@ -231,7 +172,6 @@ const Home = () => {
           HEToast(appLanguage?.lblAuthorization ?? 'Location access is denied');
         }
       } catch (err) {
-        console.log(err, 'rrrrrrrrrs')
         HEToast(
           appLanguage?.lblLocationservice ??
           'Location service is disabled or unavailable',
@@ -321,7 +261,6 @@ const Home = () => {
     }
   }, [activeTab, location]);
 
-  console.log('monthlyWeatherData', monthlyWeatherData)
 
   useEffect(() => {
     if (activeTab.id === 1) {
@@ -386,23 +325,12 @@ const Home = () => {
     currentWeatherData,
   ]);
 
-  const onChangeWeatherSection = activeSections => {
-    setSections({ activeSections });
-  };
-
-  const handleTabPress = id => {
-    let selecteddata = tabData?.filter(e => e.id === id);
-    if (selecteddata != null && selecteddata.length > 0) {
-      setActiveTab(selecteddata[0]);
-    }
-  };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.container}>
       <HomeScreen
         onPressCall={onPressCall}
         isLoading={isLoading}
-
       />
     </SafeAreaView>
   )
@@ -411,5 +339,5 @@ const Home = () => {
 export default Home
 
 const styles = StyleSheet.create({
-
+  container: { flex: 1, }
 })

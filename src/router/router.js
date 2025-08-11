@@ -7,7 +7,7 @@ import {
 } from '@react-navigation/drawer';
 // import DrawerContent from './drawercontent';
 import StackNav from './stacknav';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, SafeAreaView, View } from 'react-native';
 import analytics from '@react-native-firebase/analytics';
 import { UserManager } from '../storage';
 import DrawerContent from './drawercontent';
@@ -25,7 +25,7 @@ export default function AppStack() {
 
 
   return (
-    <View style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }}>
 
       <NavigationContainer
         ref={navigationRef}
@@ -41,7 +41,6 @@ export default function AppStack() {
           }
           routeNameRef.current = currentRouteName;
         }}
-      // theme={AppTheme}
       >
         <Drawer.Navigator
           screenOptions={{
@@ -69,6 +68,6 @@ export default function AppStack() {
           />
         </Drawer.Navigator>
       </NavigationContainer>
-    </View>
+    </SafeAreaView>
   );
 }

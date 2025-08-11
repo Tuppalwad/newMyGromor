@@ -41,6 +41,26 @@ const screenWidth = Dimensions.get('window').width;
 const itemSize = screenWidth / numColumns;
 
 
+const getWeatherIcon = (weatherId) => {
+    if (weatherId >= 200 && weatherId < 300) {
+        return require('../../../../assets/images/common/rain.png'); // thunderstorm
+    } else if (weatherId >= 300 && weatherId < 500) {
+        return require('../../../../assets/images/common/raindrop.png'); // drizzle
+    } else if (weatherId >= 500 && weatherId < 600) {
+        return require('../../../../assets/images/common/rain.png'); // rain
+    } else if (weatherId >= 600 && weatherId < 700) {
+        return require('../../../../assets/images/common/snow.png'); // snow
+    } else if (weatherId >= 700 && weatherId < 800) {
+        return require('../../../../assets/images/common/fog.png'); // atmosphere
+    } else if (weatherId === 800) {
+        return require('../../../../assets/images/common/sun.png'); // clear
+    } else if (weatherId > 800) {
+        return require('../../../../assets/images/common/suncloud.png'); // clouds
+    }
+    return require('../../../../assets/images/common/suncloud.png'); // default
+};
+
+
 const HomeScreen = ({ isloading }) => {
     const navigation = useNavigation();
     const [storeModalVisible, setStoreModalVisible] = useState(false);
@@ -52,6 +72,7 @@ const HomeScreen = ({ isloading }) => {
     const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
     const operation = useOperation();
     const dispatch = useDispatch()
+    const currentWeatherData = useSelector(state => state.weather.currentWeather);
 
 
     const services = [
@@ -99,12 +120,9 @@ const HomeScreen = ({ isloading }) => {
 
     }
 
-    console.log(appLanguages, 'aaaaaaaa')
 
     return (
-        <SafeAreaView style={styles.container}>
-            {/* Top Weather Strip */}
-
+        <View style={styles.container}>
             <LinearGradient
                 colors={['#fcf5d7ff', '#FFFFFF']}
                 start={{ x: 0, y: 0 }}
@@ -114,8 +132,12 @@ const HomeScreen = ({ isloading }) => {
 
                 <View style={styles.weatherStrip}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Image source={Weather} style={{ width: 16, height: 16, marginRight: 4 }} resizeMode='contain' />
-                        <Text style={styles.weatherText}> 31°C  Partly cloudy and light winds</Text>
+                        <Image
+                            source={getWeatherIcon(currentWeatherData?.weather?.[0]?.id || 804)}
+                            style={{ width: 16, height: 16, marginRight: 4 }}
+                            resizeMode='contain'
+                        />
+                        <Text style={styles.weatherText}> {currentWeatherData?.main?.temp ? Math.round(currentWeatherData.main.temp) : 29}°C  Partly cloudy and light winds</Text>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableOpacity onPress={() => navigation.navigate('WeatherScreen')}>
@@ -257,11 +279,8 @@ const HomeScreen = ({ isloading }) => {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
-
             <Indicator Indicator={!isloading} />
-
-
-        </SafeAreaView>
+        </View>
     );
 };
 
@@ -270,14 +289,16 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        // marginTop:30,
     },
     weatherStrip: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 8,
-        height: 50,
-        // marginTop: 25,
+        // height: 50,
+        marginTop: 35,
+        paddingVertical: 10,
         paddingHorizontal: 16,
     },
     servicesContainer: {

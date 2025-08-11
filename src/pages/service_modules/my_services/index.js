@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {
     View, Text, TextInput, StyleSheet,
     Image, TouchableOpacity, ScrollView,
-    FlatList
+    FlatList,
+    SafeAreaView
 } from 'react-native';
 import CustomHeader from '../../../components/common/CustomHeader';
 // import parcel from '../../../assets/images/common/parcel.png'
@@ -10,20 +11,26 @@ import doorDelivery from '../../../assets/images/common/doorService.png'
 import sprayService from '../../../assets/images/common/SprayingService.png'
 import shop from '../../../assets/images/common/shop.png'
 import DoorDeliveryComponent from '../door-delivery';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import filterIcon from '../../../assets/images/common/filter.png'
 import rightArrow from '../../../assets/images/common/rightArrow.png'
 import SprayingServiceDetail from '../spraying-service';
 import NewServiceRequestScreen from '../spraying-service/newService';
 import { useDispatch, useSelector } from 'react-redux';
-import { getServicesapi } from '../../../redux/services/operation';
+import { getCondition, getProductDetailsFromInvoice, getServicesapi } from '../../../redux/services/operation';
 import { Screen } from '../../../router/screen';
 import Indicator from '../../../components/common/Indicator';
 import { splitData } from '../../../utils/utils';
+import FilterModalForOrderAndServices from '../../../components/common/FilterModalForOrderAndServices';
+import { servicetype } from '../../../redux/services/type';
+import CustomButton from '../../../components/common/CustomButton';
+import moment from 'moment';
+import { defConfigImageURL } from '../../dashboard_modules/tabs/home/index.service';
+import { getPreviousAddress } from '../../../redux/user/operation';
 
 function MyServicesScreen({ navigation }) {
-
+    const farmerLanguage = useSelector(state => state.farmer.FarmerLanguageID);
     const state = useRoute().params?.state
     const { applyedservices } = useSelector(state => state.services);
     const [loading, setLoading] = useState(false)
@@ -31,6 +38,11 @@ function MyServicesScreen({ navigation }) {
     const [activeCategory, setActiveCategory] = useState(state);
     const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
     const dispatch = useDispatch();
+    const [visible, setVisible] = useState(false);
+    const isfoucused = useIsFocused()
+    const productData = useSelector(state => state.services.doorDeliveryProduct)
+    const BannerData = useSelector(state => state.product.bannerData);
+    const isfocused = useIsFocused()
 
     const orderItems = [
         {
@@ -51,6 +63,18 @@ function MyServicesScreen({ navigation }) {
         },
     ];
 
+    useEffect(() => {
+        if (isfocused) setPreviousAddress()
+    }, [isfocused])
+
+    useEffect(() => {
+        const getdata = async () => {
+            const resdata = await dispatch(getCondition())
+            dispatch({ type: servicetype.SprayCondation, payload: resdata })
+        }
+        getdata()
+
+    }, [isfoucused])
 
     const renderItem = ({ item }) => (
         <View style={styles.sprayingcard}>
@@ -85,6 +109,15 @@ function MyServicesScreen({ navigation }) {
 
 
 
+    const setPreviousAddress = async () => {
+        try {
+            await dispatch(getPreviousAddress(farmerAddress.farmerIdentityId))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+
     const fetchData = async () => {
         try {
             setLoading(true);
@@ -97,8 +130,27 @@ function MyServicesScreen({ navigation }) {
         }
     };
 
+
+    const getDeliveryStatus = async (param) => {
+        try {
+            console.log(param, 'param')
+            setLoading(true);
+            const res = await dispatch(getProductDetailsFromInvoice(param));
+            dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: res });
+        } catch (err) {
+
+            dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: null })
+            dispatch(operation.user.getErrorHandling({ message: err?.data?.description }, 'orderTrackingDetails'));
+            console.log('Error in getDeliveryStatus', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    console.log(productData, 'pppppssppppppp')
+
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {/* Header */}
             <View>
                 <CustomHeader
@@ -138,7 +190,6 @@ function MyServicesScreen({ navigation }) {
                 <TouchableOpacity
                     onPress={() => {
                         setActiveCategory('Spraying Services');
-                        // navigation.navigate('MyBookings');
                     }}
                     style={styles.tabButton}
                 >
@@ -177,69 +228,70 @@ function MyServicesScreen({ navigation }) {
                                         maxLength={14}
                                         style={styles.input}
                                     />
-                                    <TouchableOpacity>
+                                    <TouchableOpacity
+                                        onPress={() => getDeliveryStatus({
+                                            invoiceNumber: soNumber,
+                                            language: farmerLanguage,
+                                        })}
+                                    >
                                         <Image source={require('../../../assets/images/splash/search.png')} style={styles.searchIcon} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
 
-                            <View style={styles.card}>
+                            {productData && <View style={styles.card}>
                                 <View style={styles.storeRow}>
                                     <Image source={shop} style={styles.storeIcon} />
-                                    <Text style={styles.storeText}>Store Code: <Text style={styles.storeCode}>SO393</Text></Text>
+                                    <Text style={styles.storeText}>Store Code: <Text style={styles.storeCode}>{productData?.storeCode ?? ""}</Text></Text>
                                 </View>
 
                                 <View style={styles.infoBlock}>
                                     <Text style={styles.label}>Order No.</Text>
-                                    <Text style={styles.value}>CD250701031942</Text>
+                                    <Text style={styles.value}>{soNumber ?? ""}</Text>
                                 </View>
-                                <View style={styles.separator} />
+                                <View style={{ width: '100%', height: 1, backgroundColor: "#A3D2B5", marginVertical: 4 }} />
 
                                 <View style={styles.infoBlock}>
-                                    <Text style={styles.label}>Order Amount: <Text style={styles.value}>₹3618</Text></Text>
-                                    <Text style={styles.label}>Order Date: <Text style={styles.value}>06-05-2025</Text></Text>
+                                    <Text style={styles.label}>Order Amount: <Text style={styles.value}>₹{productData?.amount ?? productData?.totalAmount ?? 0}</Text></Text>
+                                    <Text style={styles.label}>Order Date: <Text style={styles.value}>{moment(productData?.orderDate).format('DD-M-YYYY')}</Text></Text>
                                 </View>
-                                <View style={styles.separator} />
+                                <View style={{ width: '100%', height: 1, backgroundColor: "#A3D2B5", marginVertical: 4 }} />
 
-                                <Text style={styles.totalQty}>Total Quantity: 4</Text>
+                                <Text style={styles.totalQty}>Total Quantity: {productData?.totalQuantity ?? 0}</Text>
 
                                 <FlatList
-                                    data={orderItems}
-                                    keyExtractor={item => item.id}
+                                    data={productData?.orderItems || []}
+                                    keyExtractor={item => item.itemNumber}
                                     renderItem={({ item }) => (
                                         <View style={styles.itemBox}>
-                                            <Image source={item.image} style={styles.itemImage} />
+                                            <Image source={{ uri: defConfigImageURL(BannerData.productImage, item?.productImage) }} style={styles.itemImage} resizeMode={'contain'} />
+
                                             <View style={styles.itemInfo}>
-                                                <Text style={styles.itemName}>{item.name}</Text>
-                                                <Text style={styles.itemWeight}>{item.weight}</Text>
+                                                <Text style={styles.itemName}>{item?.productName}</Text>
+                                                <Text style={styles.itemWeight}>{item?.size}</Text>
                                                 <View style={styles.itemFooter}>
-                                                    <Text style={styles.itemQty}>Qty. x{item.quantity}</Text>
-                                                    <Text style={styles.itemPrice}>{item.price}</Text>
+                                                    <Text style={styles.itemQty}>Qty. x{item?.quantity}</Text>
+                                                    <Text style={styles.itemPrice}>{isNaN(item?.actualPrice * item?.quantity) ? 0 : item?.actualPrice * item?.quantity}</Text>
                                                 </View>
                                             </View>
                                         </View>
                                     )}
                                 />
-                            </View>
-
+                            </View>}
 
                         </View>
                     ) : (
                         <View>
                             <View style={{ paddingHorizontal: 10 }}>
                                 <View style={styles.newBtnRow}>
-                                    <Text style={styles.total}>Total 3 Services</Text>
-                                    <LinearGradient
-                                        colors={['#1E8153', '#4EA618']}
-                                        start={{ x: 0, y: 0 }}
-                                        end={{ x: 1, y: 0 }}
-                                        style={{ borderRadius: 6 }}
-                                    // style={styles.payButton}
-                                    >
-                                        <TouchableOpacity style={styles.newBtn} onPress={() => navigation.navigate(NewServiceRequestScreen)}>
-                                            <Text style={styles.newBtnText}>+ New Service</Text>
-                                        </TouchableOpacity>
-                                    </LinearGradient>
+                                    <Text style={styles.total}>Total {applyedservices?.length ?? 0} Services</Text>
+
+                                    <CustomButton
+                                        title={"+ New Service"}
+                                        onPress={() => navigation.navigate(NewServiceRequestScreen)}
+                                        show={false}
+                                    />
+
                                 </View>
                                 <FlatList
                                     data={applyedservices || []}
@@ -254,33 +306,27 @@ function MyServicesScreen({ navigation }) {
             />
 
             {activeCategory == "Door Delivery" ?
-                <LinearGradient
-                    colors={['#1E8153', '#4EA618']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.payButton}
-                >
-                    <TouchableOpacity style={styles.proceedBtn} onPress={() => navigation.navigate('DoorDeliveryComponent')}>
-                        <Text style={styles.proceedText}>Proceed to Delivery</Text>
-                        <Text style={styles.arrow}>›</Text>
-                    </TouchableOpacity>
-                </LinearGradient> :
-                <LinearGradient
-                    colors={['#1E8153', '#4EA618']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.filterButtonWrapper}
-                >
-                    <TouchableOpacity style={styles.filterButton}>
-                        <Image source={filterIcon} style={{ width: 18, height: 18, tintColor: "#fff" }} />
-                        {/* <Icon name="filter-variant" size={18} color="#fff" /> */}
-                        <Text style={styles.filterText}> Filters</Text>
-                    </TouchableOpacity>
-                </LinearGradient>
+                <CustomButton
+                    title={"Proceed to Delivery"}
+                    onPress={() => {
+                        navigation.navigate(Screen.DoorDelivery, { soNumber: soNumber })
+                        setSoNumber('')
+                    }}
+                    show={false}
+                    disabled={!soNumber}
+                />
+                :
+                <CustomButton
+                    title={"Filters"}
+                    onPress={() => setVisible(true)}
+                    show={false}
+                />
             }
-            <Indicator Indicator={!loading} />
 
-        </View >
+            <Indicator Indicator={!loading} />
+            <FilterModalForOrderAndServices visible={visible} setVisible={setVisible} />
+
+        </SafeAreaView >
     );
 }
 export default MyServicesScreen;
@@ -452,7 +498,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     infoBlock: {
-        marginBottom: 6,
+        // marginBottom: 6,
+        marginVertical: 6
     },
     label: {
         fontSize: 13,
@@ -527,8 +574,8 @@ const styles = StyleSheet.create({
     newBtnRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 10,
-        marginTop: 20,
+        alignItems: 'center',
+        paddingVertical: 20,
         paddingHorizontal: 10
     },
     total: {
@@ -594,7 +641,9 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         width: '100%',
-        padding: 12,
+        padding: 16,
+        borderTopRightRadius: 10,
+        borderTopLeftRadius: 10
     },
     filterButton: {
         flexDirection: 'row',
