@@ -20,7 +20,7 @@ import OSMAddressSearch from './OSMAddressSearch';
 import LocationIcon from '../../../assets/images/common/locationGreen.png'
 const DeliveryAddress = ({ address, setAddress, saveAddress, setShowMap }) => {
     const [errors, setErrors] = useState({});
-    const appLanguage = UserManager?.getAppMultiLanguage;
+    const appLanguages = UserManager?.getAppMultiLanguage;
     const navigation = useNavigation();
     const cities = ['Mumbai', 'Delhi', 'Bangalore', 'Pune'];
     const states = ['Maharashtra', 'Delhi', 'Karnataka'];

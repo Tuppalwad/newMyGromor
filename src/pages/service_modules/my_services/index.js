@@ -138,6 +138,7 @@ function MyServicesScreen({ navigation }) {
             const res = await dispatch(getProductDetailsFromInvoice(param));
             dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: res });
         } catch (err) {
+            setLoading(false);
 
             dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: null })
             dispatch(operation.user.getErrorHandling({ message: err?.data?.description }, 'orderTrackingDetails'));
@@ -147,7 +148,6 @@ function MyServicesScreen({ navigation }) {
         }
     };
 
-    console.log(productData, 'pppppssppppppp')
 
     return (
         <SafeAreaView style={styles.container}>
@@ -224,7 +224,7 @@ function MyServicesScreen({ navigation }) {
                                         placeholderTextColor="#999"
                                         value={soNumber}
                                         onChangeText={setSoNumber}
-                                        keyboardType="numeric"
+                                        keyboardType="default"
                                         maxLength={14}
                                         style={styles.input}
                                     />

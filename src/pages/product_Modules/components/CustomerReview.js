@@ -8,6 +8,7 @@ import {
     FlatList
 } from 'react-native';
 import RatingSummaryCard from './RatingSummaryCard';
+import { UserManager } from '../../../storage';
 // import { Circle } from 'react-native-progress'; // if using a progress circle
 // import RatingSummaryCard from './RatingSummaryCard';
 
@@ -29,6 +30,7 @@ const CustomerReviews = () => {
     const [selectedRating, setSelectedRating] = useState(0);
     const average = backendData.average;
     const reviewCount = backendData.data.length;
+    const appLanguages = UserManager?.getAppMultiLanguage;
 
     const renderStars = (count, interactive = false) => {
         return (

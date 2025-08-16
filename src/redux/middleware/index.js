@@ -37,25 +37,25 @@ const apiMiddleware = (store) => (next) => (action) => {
       }).catch((e) => {
         const { message, detail } = e;
         /*if status is undefined network unreachable or no internet connect*/
-        // if (request.offline && isUndefined(e.status)) {
-        //   AsyncStorage.getItem(action.type).then(d => {
-        //     store.dispatch({ type: action.type + '_SUCCESS', response: JSON.parse(d) });
-        //   }).catch(e => { });
-        //   reject(e);
-        // } else if (message?.includes('401')) {
-        //   if (UserManager.isLoggedIn) {
-        //     UserManager.logoutDrawer()
-        //     HEToast('Session expired or unauthorized. Please login again.');
-        //     store.dispatch({ type: 'RESET_APP', });
-        //   }
-        //   store.dispatch({ type: action.type + '_FAIL', error: e, payload: e });
-        //   reject(e);
-        // } else {
-        //   store.dispatch({ type: action.type + '_FAIL', error: e, payload: e, });
-        //   HEToast(e?.data?.description ?? "Somthing went wrong",'error');
-        //   console.log(e, 'eeeeeeeeeeee')
-        //   reject(e);
-        // }
+        if (request.offline && isUndefined(e.status)) {
+          AsyncStorage.getItem(action.type).then(d => {
+            store.dispatch({ type: action.type + '_SUCCESS', response: JSON.parse(d) });
+          }).catch(e => { });
+          reject(e);
+        } else if (message?.includes('401')) {
+          if (UserManager.isLoggedIn) {
+            UserManager.logoutDrawer()
+            HEToast('Session expired or unauthorized. Please login again.');
+            store.dispatch({ type: 'RESET_APP', });
+          }
+          store.dispatch({ type: action.type + '_FAIL', error: e, payload: e });
+          reject(e);
+        } else {
+          store.dispatch({ type: action.type + '_FAIL', error: e, payload: e, });
+          HEToast(e?.data?.description ?? "Somthing went wrong",'error');
+          console.log(e, 'eeeeeeeeeeee')
+          reject(e);
+        }
         next(action);
 
       });

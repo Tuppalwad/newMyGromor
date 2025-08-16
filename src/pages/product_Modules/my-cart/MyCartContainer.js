@@ -433,7 +433,7 @@ const MyCartContainer = ({
                                         end={{ x: 1, y: 0 }}
                                         style={styles.payButton}
                                     >
-                                        <Text style={styles.payText}>Continue Buying</Text>
+                                        <Text style={styles.payText}>Continue Shoping</Text>
                                     </LinearGradient>
                                 </TouchableOpacity>
 

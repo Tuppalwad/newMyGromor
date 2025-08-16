@@ -28,7 +28,7 @@ const ViewAllProduct = () => {
     const navigation = useNavigation();
     const route = useRoute()
     const appLanguages = useSelector(state => state.user.appMultiLanguage);
-
+    const [loading, setLoading] = useState(false);
     UserManager.loadUser()
     const appLanguage = UserManager?.getAppMultiLanguage
     const operation = useOperation();
@@ -92,6 +92,7 @@ const ViewAllProduct = () => {
     useEffect(() => {
         if (searchData !== null) {
             if (!isEmpty(searchData)) {
+                setLoading(true)
                 const delayDebounceFn = setTimeout(() => {
                     let param = {
                         language: farmerLanguage, categoryId: 0, minimumPrice: 0,
@@ -100,17 +101,20 @@ const ViewAllProduct = () => {
                         searchValue: searchData, farmerId: farmerAddress?.farmerIdentityId,
                     }
                     dispatch(operation.product.categoryProductFilters(param)).then((res) => {
+                        setLoading(false)
                         if (res?.data && res?.data?.length > 0) {
                             setProductData(res?.data)
                         } else {
                             setProductData([])
                         }
                     }).catch((err) => {
+                        setLoading(false)
                         dispatch(operation.user.getErrorHandling(err, "categoryProductFilters"));
                     })
                 }, 500)
                 return () => clearTimeout(delayDebounceFn)
             } else {
+                setLoading(false)
                 getProductDataByStoreCode(farmerAddress, false)
             }
         }
@@ -349,7 +353,7 @@ const ViewAllProduct = () => {
             <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
             <SortModal setModalVisible={setModalVisible} modalVisible={modalVisible} />
 
-            <Indicator Indicator={!isLoading} />
+            <Indicator show={isLoading || loading} />
 
         </SafeAreaView>
     );

@@ -245,7 +245,6 @@ export default function VerifyOtp({ route }) {
                 .catch(err => {
                     dispatch(operation.user.getErrorHandling(err, 'verifyOTP'));
                     setLoading(false)
-
                 });
         } catch (error) {
             setLoading(false)
