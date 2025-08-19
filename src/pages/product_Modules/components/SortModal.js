@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     position: 'relative',
     marginTop: -20,
-    padding: 10
+    padding:10
   },
   clearAll: {
     color: '#0A8F43',

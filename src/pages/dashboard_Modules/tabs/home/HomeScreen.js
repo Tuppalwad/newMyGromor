@@ -34,7 +34,6 @@ import { useOperation } from '../../../../redux/operation';
 import SearchBar from '../../../../components/common/SearchBar';
 import Indicator from '../../../../components/common/Indicator';
 import WeatherScreen from '../../../product_modules/weather/weatherScreen';
-import { applyMiddleware } from 'redux';
 
 const numColumns = 3;
 const screenWidth = Dimensions.get('window').width;

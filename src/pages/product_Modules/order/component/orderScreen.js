@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomHeader from '../../../../components/common/CustomHeader';
@@ -31,7 +31,56 @@ export default function MyOrdersScreen({
     activeCategory, setActiveCategory
 }) {
     const navigation = useNavigation();
-    const [visible, setVisible] = useState('false')
+    const [visible, setVisible] = useState(false);
+    const [originalOrders, setOriginalOrders] = useState(OrderArray || []);
+    const [filteredOrders, setFilteredOrders] = useState(OrderArray || []);
+    const [displayOrders, setDisplayOrders] = useState([]);
+
+    useEffect(() => {
+        setOriginalOrders(OrderArray || []);
+        setDisplayOrders(OrderArray || []);
+    }, [OrderArray]);
+    useEffect(() => {
+        console.log("OrderArray data:", OrderArray);
+    }, [OrderArray]);
+
+    // const applyFilters = (selectedOptions) => {
+    //     if (selectedOptions.includes("All") || selectedOptions.length === 0) {
+    //         setDisplayOrders(originalOrders);
+    //     } else {
+    //         const filtered = originalOrders.filter(item => {
+    //             const statusValue = activeCategory === "purchases"
+    //                 ? item?.orderStatus
+    //                 : item?.bookingStatus;
+    //             // return selectedOptions.includes(statusValue);
+    //             // Match ignoring case and trimming spaces
+    //             return selectedOptions.some(opt =>
+    //                 opt.toLowerCase().trim() === statusValue?.toLowerCase().trim()
+    //             );
+    //         });
+    //         setDisplayOrders(filtered);
+    //     }
+    // };
+    const applyFilters = (selectedOptions) => {
+        if (selectedOptions.includes("All") || selectedOptions.length === 0) {
+            setDisplayOrders(originalOrders);
+        } else {
+            const filtered = originalOrders.filter(item => {
+                const statusValue = activeCategory === "purchases"
+                    ? item?.orderStatus
+                    : item?.bookingStatus;
+
+                // Map API status to the 'status' label from your 'orders' array
+                const mappedStatus = orders.find(o =>
+                    statusValue?.toLowerCase().includes(o.key) // match key like 'inprogress'
+                )?.status;
+
+                return selectedOptions.includes(mappedStatus);
+            });
+            setDisplayOrders(filtered);
+        }
+    };
+
     const count = OrderArray?.length || 0;
 
     const NumberComponent = ({ text, num, item }) => {
@@ -163,12 +212,16 @@ export default function MyOrdersScreen({
                 <View style={styles.content}>
                     <Text style={styles.totalText}>Total {count} {activeCategory === 'purchases' ? "Purchases" : "Bookings"}</Text>
 
-                    <FlatList
+                    {/* <FlatList
                         data={OrderArray || []}
                         renderItem={renderItem}
                         keyExtractor={(item, index) => index.toString()}
+                    /> */}
+                    <FlatList
+                        data={displayOrders}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => index.toString()}
                     />
-
 
                 </View>
 
@@ -186,7 +239,13 @@ export default function MyOrdersScreen({
                 </LinearGradient>
 
 
-                <FilterModalForOrderAndServices visible={visible} setVisible={setVisible} />
+                {/* <FilterModalForOrderAndServices visible={visible} setVisible={setVisible} /> */}
+                <FilterModalForOrderAndServices
+                    visible={visible}
+                    setVisible={setVisible}
+                    onApply={applyFilters}
+                />
+
                 <Indicator Indicator={!isLoading} />
             </View >
         </>

@@ -25,24 +25,42 @@ const statusOptions = [
     "Cancel In-progress",
 ];
 
-const FilterModalForOrderAndServices = ({ visible, setVisible }) => {
+const FilterModalForOrderAndServices = ({ visible, setVisible, onApply }) => {
     const [selectedOptions, setSelectedOptions] = useState(["In-progress"]);
 
     const toggleOption = (option) => {
+        // if (selectedOptions.includes(option)) {
+        //     setSelectedOptions(selectedOptions.filter(item => item !== option));
+        // } else {
+        //     setSelectedOptions([...selectedOptions, option]);
+        // }
+
+        let updatedOptions;
         if (selectedOptions.includes(option)) {
-            setSelectedOptions(selectedOptions.filter(item => item !== option));
+            updatedOptions = selectedOptions.filter(item => item !== option);
         } else {
-            setSelectedOptions([...selectedOptions, option]);
+            updatedOptions = [...selectedOptions, option];
+        }
+        setSelectedOptions(updatedOptions);
+
+        // NEW: instantly update parent list when any option changes
+        if (onApply) {
+            onApply(updatedOptions);
         }
     };
 
     const clearAll = () => setSelectedOptions([]);
 
-    const applyFilters = () => {
-        console.log('Selected Filters:', selectedOptions);
+    // const applyFilters = () => {
+    //     console.log('Selected Filters:', selectedOptions);
+    //     setVisible(false);
+    // };
+    const handleApply = () => {
+        if (onApply) {
+            onApply(selectedOptions); // send selected filters to parent
+        }
         setVisible(false);
     };
-
     return (
         <Modal visible={visible} animationType="slide" transparent>
             <View style={styles.modalOverlay}>
@@ -59,7 +77,7 @@ const FilterModalForOrderAndServices = ({ visible, setVisible }) => {
                         </View>
 
                     </View>
-                    <View style={{ position: 'absolute', top: 4, right: 10,padding:20 }}>
+                    <View style={{ position: 'absolute', top: 4, right: 10, padding: 20 }}>
                         <TouchableOpacity onPress={() => setVisible(false)}>
                             <Image source={close} style={{ tintColor: '#000', width: 10, height: 10, resizeMode: "contain", }} />
                         </TouchableOpacity>
@@ -98,9 +116,14 @@ const FilterModalForOrderAndServices = ({ visible, setVisible }) => {
                         </ScrollView>
                     </View>
                     <View style={{ marginBottom: 10 }}>
+                        {/* <CustomButton
+                            title={"Apply"}
+                            show={false}
+                        /> */}
                         <CustomButton
                             title={"Apply"}
                             show={false}
+                            onPress={handleApply}
                         />
                     </View>
                 </View>

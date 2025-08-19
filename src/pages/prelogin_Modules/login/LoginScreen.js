@@ -211,7 +211,7 @@ export default function LoginScreen() {
                         .
                     </Text>
 
-                    <CustomButton title={appLanguage.login ?? "Login"} onPress={onSubmit} disabled={disableSend} />
+                    <CustomButton title={appLanguage?.login ?? "Login"} onPress={onSubmit} disabled={disableSend} />
 
                     <Text style={styles.text}>©2025 MyGromor | Version 1.0</Text>
                 </View>

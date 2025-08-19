@@ -8,6 +8,7 @@ import {
     FlatList
 } from 'react-native';
 import RatingSummaryCard from './RatingSummaryCard';
+import { useSelector } from 'react-redux';
 // import { Circle } from 'react-native-progress'; // if using a progress circle
 // import RatingSummaryCard from './RatingSummaryCard';
 
