@@ -50,22 +50,13 @@ const ViewAllCategoryContainer = ({
     showNoCode,
     setSearchData,
     searchData,
-    onPressGoToAddress,
-    subCategoryData,
     onPressDeleteFav,
     appLanguage,
-    ProductNoData,
-    farmerAddress,
     getProduct,
-    debouncedSearch,
-    onMomentumScrollBegin,
-    onScrollBeginDrag,
     type,
     categorySelected,
     setActiveSubTab,
     fetchDataonSubcategory,
-    handleSearch
-
 }) => {
     const [filterVisible, setFilterVisible] = useState(false);
     const navigation = useNavigation();
@@ -85,7 +76,7 @@ const ViewAllCategoryContainer = ({
                 onNotificationPress={() => console.log('Notification pressed')}
             />
 
-            <SearchBar value={searchData} onChangeText={(text) => { handleSearch(text) }} onPressFilter={onPressFilter} />
+            <SearchBar value={searchData} onChangeText={(text) => { setSearchData(text) }} onPressFilter={onPressFilter} />
 
             <View>
                 <HorizontalScrollButtons

@@ -9,45 +9,47 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import searchIcon from '../../assets/images/splash/search.png';
+import { useIsFocused } from '@react-navigation/native';
 
 const SearchBar = ({ onChangeText, value, onPressFilter }) => {
   const placeholderItems = ['seeds', 'Potato', 'Onion'];
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [text, setText] = useState('');
   const animatedValue = useRef(new Animated.Value(0)).current;
+  const isfocused = useIsFocused();
+
+  useEffect(() => {
+    if (isfocused && value) {
+      onChangeText(""); // reset when screen refocused
+    }
+  }, [isfocused]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (text.length === 0) {
+      if (!value || value.length === 0) {
         Animated.timing(animatedValue, {
           toValue: -20,
           duration: 400,
           useNativeDriver: true,
         }).start(() => {
           setCurrentIndex(prev => (prev + 1) % placeholderItems.length);
-          animatedValue.setValue(0); // Reset after animation
+          animatedValue.setValue(0);
         });
       }
     }, 2500);
 
     return () => clearInterval(interval);
-  }, [text]);
-
-  const handleTextChange = (inputText) => {
-    setText(inputText);
-    onChangeText?.(inputText);
-  };
+  }, [value]);
 
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        onChangeText={handleTextChange}
+        onChangeText={onChangeText}
         value={value}
         placeholder=""
         placeholderTextColor="#999"
       />
-      {text.length === 0 && (
+      {(!value || value.length === 0) && (
         <View style={styles.placeholderWrapper}>
           <Text style={styles.staticText}>Search for </Text>
           <View style={styles.animatedWrapper}>
@@ -72,6 +74,7 @@ const SearchBar = ({ onChangeText, value, onPressFilter }) => {
     </View>
   );
 };
+
 
 export default SearchBar;
 

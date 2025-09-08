@@ -330,7 +330,6 @@ const NewServiceRequestScreen = () => {
 
     const handleSubmit = async () => {
 
-        console.log('ccccccccc')
         if (!isChecked) {
             HEToast(appLanguage.lblErrorTermCondition ?? 'Please agree terms and conditions', "error")
             return

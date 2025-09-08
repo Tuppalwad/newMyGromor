@@ -19,38 +19,17 @@ const ProductCategories = ({ navigation }) => {
     const appLanguage = UserManager?.getAppMultiLanguage;
     const operation = useOperation();
     const dispatch = useDispatch();
-
-    const loadingSelector = createLoadingSelector([
-        ProductType.productCategory,
-        ProductType.myCart,
-        ProductType.allDealersAddress,
-        ProductType.addFavProduct,
-        ProductType.productByStoreCode,
-        ProductType.productByStoreCode_type,
-        ProductType.dealerAddressByLoc,
-        UserType.magicVillageList,
-        ProductType.deleteFavProduct,
-    ]);
-
-    const isLoading = useSelector(state => loadingSelector(state));
     const isFocussed = useIsFocused();
-    const productCategoryData = useSelector(
-        state => state.product.productCategory,
-    );
     const [searchData, setSearchData] = useState(null);
     const [dealersAddress, setDealersAddress] = useState([]);
     const [newProductData, setNewProductData] = useState([]);
-    const [subProductCategory, setSubProductCategory] = useState([]);
-
     const [popularProductData, setPopularProductData] = useState([]);
     const [newProductResponseData, setNewProductResponseData] = useState(null);
-    const [popularProductResponseData, setPopularProductResponseData] =
-        useState(null);
+    const [popularProductResponseData, setPopularProductResponseData] = useState(null);
     const [showNoCode, setShowNoCode] = useState(false);
     const [categoryMoreStatus, setCategoryMoreStatus] = useState(false);
     const farmerAddress = useSelector(state => state.farmer.farmerAddressArray);
     const farmerLanguage = useSelector(state => state.farmer.FarmerLanguageID);
-    const StoreCodeDetails = useSelector(state => state.farmer.farmerStoreCodeDetails);
 
     const [newProductParams, setNewProductParams] = useState({
         page: 1,
@@ -361,46 +340,7 @@ const ProductCategories = ({ navigation }) => {
         }
     };
 
-    const onEndReached = (type = 0) => {
-        if (type === 0) {
-            let total = popularProductResponseData?.totalRecords ?? 0;
-            let count = popularProductData?.length;
-            if (!isLoading && count < total) {
-                let param = {
-                    storeCode: popularProductParams?.storeCode,
-                    language: popularProductParams?.language ?? 1,
-                    page: popularProductParams?.page + 1,
-                    pageSize: popularProductParams?.pageSize,
-                    farmerId: farmerAddress?.farmerIdentityId,
-                    isProductBy: 0,
-                };
-                setPopularProductParams(param);
-                getProductByStroeCode(param, true);
-            }
-        } else if (type === 1) {
-            let total = newProductResponseData?.totalRecords ?? 0;
-            let count = newProductData?.length;
-            if (!isLoading && count < total) {
-                let param = {
-                    storeCode: newProductParams?.storeCode,
-                    language: newProductParams?.language,
-                    page: newProductParams?.page + 1,
-                    pageSize: newProductParams?.pageSize,
-                    farmerId: farmerAddress?.farmerIdentityId,
-                    isProductBy: 1,
-                };
-                setNewProductParams(param);
-                getProductByStroeCode(param, true);
-            }
-        }
-    };
-
-    const onPressGoToAddress = () => {
-        setShowNoCode(false);
-        setTimeout(() => {
-            navigation.navigate(Screen.myAccount);
-        }, 500);
-    };
+   
 
     const onPressDeleteFav = (item, index, type = 0) => {
         let param = {
@@ -432,16 +372,7 @@ const ProductCategories = ({ navigation }) => {
             });
     };
 
-    const onPressDoneSearch = (searchData = '') => {
-        navigation.navigate(Screen.viewAllProduct, {
-            searchData: searchData,
-        });
-    };
-
-    const onPressCall = phoneNumber => {
-        Linking.openURL(`tel:${phoneNumber}`);
-    };
-
+   
 
     return (
         <SafeAreaView style={{ flex: 1 }}>

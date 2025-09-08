@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from 'react-redux';
 const ViewAllProduct = () => {
     const [filterVisible, setFilterVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-
     const navigation = useNavigation();
     const route = useRoute()
     const appLanguages = useSelector(state => state.user.appMultiLanguage);
@@ -42,7 +41,7 @@ const ViewAllProduct = () => {
     ]);
     const isLoading = useSelector(state => loadingSelector(state));
     const isFocussed = useIsFocused();
-    const [searchData, setSearchData] = useState(null)
+    const [searchData, setSearchData] = useState("");
     const [productData, setProductData] = useState([])
     const productDetails = route?.params?.data
 
@@ -91,36 +90,34 @@ const ViewAllProduct = () => {
 
     useEffect(() => {
         if (searchData !== null) {
-            if (!isEmpty(searchData)) {
-                setLoading(true)
-                const delayDebounceFn = setTimeout(() => {
+            const delayDebounceFn = setTimeout(() => {
+                if (searchData.trim().length > 0) {
+                    setLoading(true);
                     let param = {
                         language: farmerLanguage, categoryId: 0, minimumPrice: 0,
                         maximumPrice: 0, sortColumn: '', pageNo: 1, pageSize: 50,
                         storeCode: productParams?.storeCode,
-                        searchValue: searchData, farmerId: farmerAddress?.farmerIdentityId,
-                    }
-                    dispatch(operation.product.categoryProductFilters(param)).then((res) => {
-                        setLoading(false)
-                        if (res?.data && res?.data?.length > 0) {
-                            setProductData(res?.data)
-                        } else {
-                            setProductData([])
-                        }
-                    }).catch((err) => {
-                        setLoading(false)
-                        dispatch(operation.user.getErrorHandling(err, "categoryProductFilters"));
-                    })
-                }, 500)
-                return () => clearTimeout(delayDebounceFn)
-            } else {
-                setLoading(false)
-                getProductDataByStoreCode(farmerAddress, false)
-            }
+                        searchValue: searchData,
+                        farmerId: farmerAddress?.farmerIdentityId,
+                    };
+                    dispatch(operation.product.categoryProductFilters(param))
+                        .then((res) => {
+                            setLoading(false);
+                            setProductData(res?.data && res?.data?.length > 0 ? res?.data : []);
+                        })
+                        .catch((err) => {
+                            setLoading(false);
+                            dispatch(operation.user.getErrorHandling(err, "categoryProductFilters"));
+                        });
+                } else {
+                    // empty → reset product list
+                    getProductDataByStoreCode(farmerAddress, false);
+                }
+            }, 1500); // debounce time
+
+            return () => clearTimeout(delayDebounceFn);
         }
-    }, [searchData])
-
-
+    }, [searchData]);
 
     const onPressProductItem = (item) => {
         navigation.navigate(Screen.productDetails, {
@@ -303,14 +300,16 @@ const ViewAllProduct = () => {
                 onCartPress={() => console.log('Cart pressed')}
                 onNotificationPress={() => console.log('Notification pressed')}
             />
-            <SearchBar onChangeText={(text) => setSearchData(text)} />
+            <SearchBar
+                value={searchData}
+                onChangeText={setSearchData}
+            />
 
             <Text style={styles.itemCount}>{productData.length} {appLanguages.items ?? "items"}</Text>
 
             <FlatList
                 data={productData || []}
                 keyExtractor={(item) => item?.id}
-                // renderItem={renderProduct}
                 renderItem={({ item, index }) => renderProduct({ item, index, isSimilar: true })}
                 numColumns={2}
                 columnWrapperStyle={styles.row}

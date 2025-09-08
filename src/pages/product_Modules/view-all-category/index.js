@@ -17,7 +17,6 @@ import { UserType } from '../../../redux/user/type';
 import { UserManager } from '../../../storage';
 import { HEToast } from '../../../components/toast';
 import { isEmpty } from '../../../utils/validator';
-import debounce from 'lodash.debounce';
 import { Screen } from '../../../router/screen';
 import ViewAllCategoryContainer from './ViewAllCategoryContainer';
 import { capitalizeAll } from '../../../utils/utils';
@@ -110,46 +109,44 @@ const ViewAllCategoryData = ({ navigation, route }) => {
         }
     }, [activeTab?.id]);
 
-    const handleSearch = text => {
-        // Replace this with your API call
-        if (!isEmpty(text)) {
-            let param = {
-                language: farmerLanguage,
-                categoryId: activeSubTab?.id,
-                minimumPrice: 0,
-                maximumPrice: 0,
-                sortColumn: '',
-                pageNo: 1,
-                pageSize: 50,
-                storeCode: storeParams?.storeCode,
-                searchValue: text,
-                isParentCategory: isParentCategory,
-                farmerId: farmerAddress?.farmerIdentityId,
-            };
-            dispatch(operation.product.categoryProductFilters(param))
-                .then(res => {
-                    console.log('res', res);
-                    if (res?.data && res?.data?.length > 0) {
-                        setProductData(res?.data);
-                        setProductNoData(false);
-                    } else {
-                        setProductData([]);
-                        setProductNoData(true);
-                    }
-                })
-                .catch(err => {
-                    setProductNoData(true);
-                    setProductData([]);
-                    dispatch(
-                        operation.user.getErrorHandling(err, 'categoryProductFilters'),
-                    );
-                });
-        } else {
-            getProduct(farmerAddress);
-        }
-    };
 
-    const debouncedSearch = useCallback(debounce(handleSearch, 500), []);
+    useEffect(() => {
+        if (!isEmpty(searchData)) {
+            setShowFilter(false)
+            const delayDebounceFn = setTimeout(() => {
+                let param = {
+                    language: farmerLanguage,
+                    categoryId: activeSubTab?.id,
+                    minimumPrice: 0,
+                    maximumPrice: 0,
+                    sortColumn: '',
+                    pageNo: 1,
+                    pageSize: 50,
+                    storeCode: storeParams?.storeCode,
+                    searchValue: searchData,
+                    isParentCategory: isParentCategory,
+                    farmerId: farmerAddress?.farmerIdentityId,
+                }
+                dispatch(operation.product.categoryProductFilters(param)).then((res) => {
+                    if (res?.data && res?.data?.length > 0) {
+                        setProductData(res?.data)
+                        setProductNoData(false)
+                    } else {
+                        setProductData([])
+                        setProductNoData(true)
+                    }
+                }).catch((err) => {
+                    setProductNoData(true)
+                    setProductData([])
+                    dispatch(operation.user.getErrorHandling(err, "categoryProductFilters"));
+                })
+            }, 1000)
+            return () => clearTimeout(delayDebounceFn)
+        } else {
+            getProduct(farmerAddress)
+        }
+    }, [searchData])
+
 
     const getProduct = farmerData => {
         if (farmerData?.storeCode) {
@@ -387,13 +384,7 @@ const ViewAllCategoryData = ({ navigation, route }) => {
         setFilterCategory(updatedCategory);
     };
 
-    const onMomentumScrollBegin = () => {
-        onEndReachedCalledDuringMomentum.current = false; // Reset during momentum scroll
-    };
 
-    const onScrollBeginDrag = () => {
-        hasScrolled.current = true; // User has started scrolling
-    };
 
     const onEndReached = () => {
         let total = productResponseData?.totalRecords ?? 0;
@@ -574,15 +565,9 @@ const ViewAllCategoryData = ({ navigation, route }) => {
             categorySelected={categorySelected}
             StoreCodeDetails={StoreCodeDetails}
             getProduct={getProduct}
-            farmerAddress={farmerAddress}
-            debouncedSearch={debouncedSearch}
-            onMomentumScrollBegin={onMomentumScrollBegin}
-            onScrollBeginDrag={onScrollBeginDrag}
             type={capitalizeAll(categorySelected.code)}
             setActiveSubTab={setActiveSubTab}
             fetchDataonSubcategory={fetchDataonSubcategory}
-            handleSearch={handleSearch}
-
         />
     );
 };

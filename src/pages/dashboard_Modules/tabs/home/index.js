@@ -44,13 +44,11 @@ const Home = () => {
   const [currentWeather, setCurrentWeather] = useState(null);
   const [data, setData] = useState([]);
   const bannerDataFromReducer = useSelector(state => state.product.bannerData);
-  const [showWeather, setShowWeather] = useState(false);
   const [location, setLocation] = useState(null);
   const [PRODUCT, setPRODUCT] = useState([]);
   const [tabData, settabData] = useState(deftabData(UserManager?.getAppMultiLanguage));
   const [activeTab, setActiveTab] = useState(tabData[0]);
-  const [section, setSections] = useState({ activeSections: [] });
-  const [isNodata, setIsNoData] = useState(false);
+
   const [notification, setnotification] = useState({
     visible: false,
     Message: ' ',
@@ -105,10 +103,10 @@ const Home = () => {
     }
   }, [isFocussed]);
 
-  useEffect(() => {
-    const tempArr = defCardData(appLanguage, farmerAddress);
-    setPRODUCT(tempArr);
-  }, [isFocussed, appLanguage, farmerAddress]);
+  // useEffect(() => {
+  //   const tempArr = defCardData(appLanguage, farmerAddress);
+  //   setPRODUCT(tempArr);
+  // }, [isFocussed, appLanguage, farmerAddress]);
 
 
   const onPressCall = () => {

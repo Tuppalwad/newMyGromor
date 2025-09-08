@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createLoadingSelector } from '../../../redux/loading-reducer';
 import { ProductType } from '../../../redux/product/type';
 import { servicetype } from '../../../redux/services/type';
-import { BuildTypes } from '../../../config';
+import { BUILD, BuildTypes } from '../../../config';
 import CustomButton from '../../../components/common/CustomButton';
 import { HEToast } from '../../../components/toast';
 import { India_INRCurrency } from '../../../utils/validator';
@@ -24,6 +24,8 @@ import { numberFormat } from '../../../utils/utils';
 import CTText from '../../../components/ctText';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { palette } from '../../../theme/color';
+import Indicator from '../../../components/common/Indicator';
+import { setDoordeliveryService } from '../../../redux/services/operation';
 
 
 let defdelivery_Charge = {
@@ -90,7 +92,6 @@ const DoorDeliveryComponent = ({ navigation }) => {
         getAddress()
     }, [previousAddress])
 
-    console.log(previousAddress, 'aalllllllll')
 
     useEffect(() => {
         if (orderItemParam?.orderItems && orderItemParam?.orderItems.length > 0) {
@@ -140,7 +141,8 @@ const DoorDeliveryComponent = ({ navigation }) => {
                 longitude: address?.longitude,
                 farmerId: farmerAddress?.farmerIdentityId,
                 language: farmerLanguage,
-                soNumber: soNumber
+                soNumber: soNumber,
+                storeCode: farmerAddress?.storeCode || '',
             };
             if (
                 address?.latitude === 0 &&
@@ -285,6 +287,9 @@ const DoorDeliveryComponent = ({ navigation }) => {
     };
 
     const getDeliveryCharges = param => {
+
+        console.log(param,'ppppppp')
+
         dispatch(operation.farmer.getNewDeliveryCharges(param))
             .then(res => {
 
@@ -300,6 +305,7 @@ const DoorDeliveryComponent = ({ navigation }) => {
                     setDistance(num)
                     return
                 } else {
+                    console.log(res, 'rrrrrrrrrr')
                     setDeliverCharges(res);
                     setTransdeliverCharges(res);
                     setEnablePayment(true);
@@ -407,7 +413,8 @@ const DoorDeliveryComponent = ({ navigation }) => {
 
     const onPressCheckOut = async (type) => {
 
-        const Payload = {
+        try {
+            const Payload = {
             "farmerId": farmerAddress?.farmerIdentityId || "",
             "language": farmerLanguage || 0,
             "devicePlatform": Platform.OS,
@@ -418,14 +425,14 @@ const DoorDeliveryComponent = ({ navigation }) => {
             "deliveryChargeCalc": deliverCharges.deliveryChargeCalc,
             "storeCode": farmerAddress?.storeCode || '',
             "orderItems": orderItemParam?.orderItems,
-            "deliveryAddress": addressData.addressLine1 + " " + addressData.addressLine2 + " " + addressData.city + " " + addressData.state + " " + addressData.pinCode,
+            "deliveryAddress": address.address1 + " " + address.address2 + " " + address.city + " " + address.state + " " + address.pincode,
             "latitude": address?.latitude,
             "longitude": address?.longitude,
             'soNumber': soNumber
         }
 
 
-        // console.log(Payload, 'Payload')
+        console.log(Payload, 'Payload')
 
         if (type == 'COD') {
 
@@ -513,6 +520,9 @@ const DoorDeliveryComponent = ({ navigation }) => {
                 });
             dispatch({ type: servicetype.doorDeliveryProduct + '_SUCCESS', payload: null })
 
+        }
+        } catch (error) {
+            console.log(error,'eeeeeeeeeeee')
         }
     }
 
@@ -655,6 +665,8 @@ const DoorDeliveryComponent = ({ navigation }) => {
                 }}
                 WebViewURL={constants.termsAndCondition}
             />
+
+            <Indicator show={isLoading} />
         </SafeAreaView>
     );
 };
