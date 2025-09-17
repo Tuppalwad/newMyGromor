@@ -77,25 +77,25 @@ export default function LoginScreen() {
         });
     }, [appLanguages]);
 
-    useEffect(() => {
-        if (mobileNumber?.length == 10) {
-            setLoading(true)
-            dispatch(operation.farmer.farmerTypeAction(mobileNumber))
-                .then(res => {
-                    for (let i = 0; i < cfArrayDetails.length; i++) {
-                        if (cfArrayDetails[i].classificationCode === res) {
-                            setFarmerType(cfArrayDetails[i]);
-                        }
-                    }
-                })
-                .catch(err => {
-                    dispatch(operation.user.getErrorHandling(err, 'farmerTypeAction'));
-                });
-            setLoading(false)
-        } else {
-            setFarmerType({});
-        }
-    }, [mobileNumber]);
+    // useEffect(() => {
+    //     if (mobileNumber?.length == 10) {
+    //         setLoading(true)
+    //         dispatch(operation.farmer.farmerTypeAction(mobileNumber))
+    //             .then(res => {
+    //                 for (let i = 0; i < cfArrayDetails.length; i++) {
+    //                     if (cfArrayDetails[i].classificationCode === res) {
+    //                         setFarmerType(cfArrayDetails[i]);
+    //                     }
+    //                 }
+    //             })
+    //             .catch(err => {
+    //                 dispatch(operation.user.getErrorHandling(err, 'farmerTypeAction'));
+    //             });
+    //         setLoading(false)
+    //     } else {
+    //         setFarmerType({});
+    //     }
+    // }, [mobileNumber]);
 
 
     const onSubmit = () => {
@@ -113,7 +113,7 @@ export default function LoginScreen() {
             } else {
                 dispatch(operation.user.generateOTP(param))
                     .then(res => {
-                        if (res.errors == null || res.errors.length === 0) {
+                        if (res?.errors == null || res?.errors?.length === 0) {
                             navigation.navigate(Screen.otpscreen, {
                                 mobileNumber: mobileNumber,
                                 selectedLanguage: selectedLanguage,
@@ -121,14 +121,14 @@ export default function LoginScreen() {
                             });
                         } else {
                             console.log(res)
-                            dispatch(operation.user.getErrorHandling(res, 'res_generateOTP'));
+                            dispatch(operation?.user?.getErrorHandling(res?.data, 'res_generateOTP'));
                         }
                         setLoading(false)
 
                     })
                     .catch(err => {
-                        console.log(err)
-                        dispatch(operation.user.getErrorHandling(err, 'generateOTP'));
+                        console.log(err,'errrrrrrrrrrrr')
+                        dispatch(operation.user.getErrorHandling(err.data, 'generateOTP'));
                         setLoading(false)
 
                     });
@@ -137,6 +137,9 @@ export default function LoginScreen() {
             HEToast(e ?? '', 'error');
             setLoading(false)
 
+        }
+        finally {
+            // setLoading(false)
         }
     };
 
@@ -216,7 +219,7 @@ export default function LoginScreen() {
                     <Text style={styles.text}>©2025 MyGromor | Version 1.0</Text>
                 </View>
 
-                <Indicator show={loading} />
+                <Indicator show={isLoading} />
 
             </KeyboardAvoidingView>
 
@@ -336,7 +339,7 @@ const styles = StyleSheet.create({
     },
     text: {
         textAlign: 'center',
-        lineHeight: 10,
+        lineHeight: 20,
         paddingVertical: 10,
         color: '#878787',
         fontSize: 10

@@ -7,6 +7,12 @@ import rightArrow from '../../../assets/images/common/rightArrow.png'
 import LinearGradient from 'react-native-linear-gradient';
 import leftArrow from '../../../assets/images/splash/leftArrow.png'
 import CustomHeader from '../../../components/common/CustomHeader';
+import { useSelector } from 'react-redux';
+import { isEmpty } from '../../../utils/validator';
+import { defConfigImageURL } from '../../dashboard_modules/tabs/home/index.service';
+import _, { capitalize } from "lodash";
+
+
 const MyAccountScreen = ({ navigation }) => {
     const menuItems = [
         { title: 'My Information', icon: require('../../../assets/images/account/accountUser.png') },
@@ -20,6 +26,12 @@ const MyAccountScreen = ({ navigation }) => {
         { title: 'Following', icon: require('../../../assets/images/account/following.png') },
     ];
     const gradientColors = ['#1E8153', '#4EA618']; // dark green to light green
+    const farmerAddress = useSelector((state) => state.farmer.farmerAddressArray)
+    const BannerData = useSelector((state) => state.product.bannerData);
+    const StoreCodeDetails = useSelector(
+        state => state.farmer.farmerStoreCodeDetails,
+    );
+    const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
 
     const renderItem = ({ item }) => {
         return (<TouchableOpacity style={styles.gridItem}>
@@ -28,8 +40,9 @@ const MyAccountScreen = ({ navigation }) => {
         </TouchableOpacity>)
     }
 
+
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <LinearGradient
                 colors={gradientColors}
                 start={{ x: 0, y: 0 }}
@@ -48,22 +61,40 @@ const MyAccountScreen = ({ navigation }) => {
                 />
 
                 <View style={styles.profileSection}>
-                    <Image source={require('../../../assets/drawer/userProfile.png')} style={styles.avatar} />
-                    <TouchableOpacity style={{ ...styles.editIcon, marginRight: 15 }}>
-                        <Image source={require('../../../assets/images/account/edit.png')} style={{ width: 18, height: 18, }} />
-                    </TouchableOpacity>
-                    <Text style={styles.name}>Ramachandra</Text>
+                    {/* <Image source={require('../../../assets/drawer/userProfile.png')} style={styles.avatar} /> */}
+                    <View style={{ position: 'relative', width: 80, height: 80, marginTop: 8 }}>
+                        <Image
+                            source={
+                                !isEmpty(farmerAddress.profileImage) && typeof BannerData !== 'undefined' && BannerData.imageBaseURL
+                                    ? { uri: defConfigImageURL(BannerData.imageBaseURL, farmerAddress.profileImage) }
+                                    : Icon.profileAvatar
+                            }
+                            style={styles.avatar}
+                        />
+
+                        <TouchableOpacity style={styles.editIcon}>
+                            <Image
+                                source={require('../../../assets/images/account/edit.png')}
+                                style={{ width: 18, height: 18, resizeMode: 'contain' }}
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+
+                    <Text style={styles.name}>{capitalize(farmerAddress?.name ?? "")}</Text>
                     <View style={styles.profileInfo}>
                         <Image source={phone} style={{ width: 14, height: 14, resizeMode: 'contain', }} />
-                        <Text style={styles.phone}>+91-7021234567</Text>
+                        <Text style={styles.phone}>+91-{farmerAddress.mobileNumber ?? "-"}</Text>
                     </View>
                     <View style={styles.profileInfo}>
                         <Image source={location} style={{ width: 14, height: 14, resizeMode: 'contain' }} />
-                        <Text style={styles.location}>Anantapur, Andhra Pradesh</Text>
+                        <Text style={styles.location}>{capitalize(farmerAddress?.address?.district ?? "") + "," + capitalize(farmerAddress?.address?.state ?? "")}</Text>
+
                     </View>
                     <View style={styles.profileInfo}>
                         <Image source={storeLocation} style={{ tintColor: '#fff', width: 14, height: 14, resizeMode: 'contain' }} />
-                        <Text style={styles.store}>Store Code: <Text style={styles.bold}>S0584</Text> | Mana Gromor Centre A.kon...</Text>
+                        <Text style={styles.store}>Store Code: <Text style={styles.bold}>{storeCode}</Text> | {storeName.slice(0, 20) + (storeName.length > 20 ? '...' : '')
+                        }</Text>
                         <Image source={rightArrow} style={{ width: 14, height: 14, resizeMode: 'contain', marginLeft: 10 }} />
                     </View>
                 </View>
@@ -77,7 +108,7 @@ const MyAccountScreen = ({ navigation }) => {
                 columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 10 }}
                 contentContainerStyle={{ paddingVertical: 10 }}
             />
-        </ScrollView>
+        </View>
     );
 };
 
@@ -123,16 +154,17 @@ const styles = StyleSheet.create({
     avatar: {
         width: 80,
         height: 80,
-        marginTop: 8,
+        borderRadius: 40,
     },
     editIcon: {
         position: 'absolute',
-        right: 130,
-        top: 60,
+        bottom: 0,
+        right: 0,
         backgroundColor: '#fff',
         borderRadius: 20,
         padding: 4,
     },
+
     profileInfo: {
         flexDirection: 'row',
         justifyContent: 'center',

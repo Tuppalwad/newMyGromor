@@ -42,17 +42,30 @@ const LanguageScreen = ({ navigation }) => {
 
 
     const handlePress = () => {
-        dispatch(operation.user.getAppMultiLanguage({
-            language: selectedLanguage?.id ?? 1
-        })).then((res) => {
-            navigation.navigate(Screen.login, {
-                selectedLanguage: selectedLanguageData,
-                selectedLanguageResponse: res,
+        dispatch(
+            operation.user.getAppMultiLanguage({
+                language: selectedLanguage?.id ?? 1,
             })
-        }).catch((err) => {
-            dispatch(operation.user.getErrorHandling(err, "getAppMultiLanguage"))
-        })
-    }
+        )
+            .then((res) => {
+                if (UserManager.isLoggedIn) {
+                    navigation.navigate(Screen.homes, {
+                        selectedLanguage: selectedLanguageData,
+                        selectedLanguageResponse: res,
+                    });
+                } else {
+                    navigation.navigate(Screen.login, {
+                        selectedLanguage: selectedLanguageData,
+                        selectedLanguageResponse: res,
+                    });
+                }
+            })
+            .catch((err) => {
+                dispatch(
+                    operation.user.getErrorHandling(err, "getAppMultiLanguage")
+                );
+            });
+    };
 
 
     return (

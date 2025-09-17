@@ -15,6 +15,7 @@ import checkIcon from '../../../../assets/images/common/checkIcon.png';
 const { height } = Dimensions.get('window');
 import search from '../../../../assets/images/common/searchIcon.png'
 import LinearGradient from 'react-native-linear-gradient';
+import { UserManager } from '../../../../storage';
 
 const tabs = ["Crop", "Language"];
 

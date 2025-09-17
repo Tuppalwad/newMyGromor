@@ -355,7 +355,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { Alert, Platform, SafeAreaView, StatusBar, View } from 'react-native';
+import { Alert, Platform, SafeAreaView, StatusBar, Text, View } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import NetInfo from '@react-native-community/netinfo';
@@ -434,7 +434,10 @@ const App = () => {
         <AppStack />
         <Toast config={ToastConfig} />
         {!isConnected && (
-          <Alert title="No Internet" message="Please check your internet connection." />
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: '#ffcdd2', padding: 16, zIndex: 999 }}>
+            <Text style={{ color: '#b71c1c', fontWeight: 'bold', fontSize: 16 }}>No Internet</Text>
+            <Text style={{ color: '#b71c1c', fontSize: 14 }}>Please check your internet connection.</Text>
+          </View>
         )}
       </View>
     </CProvider>

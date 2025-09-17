@@ -243,11 +243,12 @@ export default function VerifyOtp({ route }) {
                     }
                 })
                 .catch(err => {
-                    dispatch(operation.user.getErrorHandling(err, 'verifyOTP'));
+                    console.log(err, 'errrrrrrrrrrrr');
+                    dispatch(operation.user.getErrorHandling(err.data, 'verifyOTP'));
                     setLoading(false)
                 });
         } catch (error) {
-            setLoading(false)
+            // setLoading(false)
         }
         finally {
             // setLoading(false)
@@ -332,7 +333,14 @@ export default function VerifyOtp({ route }) {
                 />
 
                 {/* Verify Button */}
-                <CustomButton title={appLanguage.submit ?? "Verify OTP"} onPress={handleSubmit} disabled={loading} style={styles.verifyButton} show={false} />
+                <CustomButton
+                    title={appLanguage.submit ?? "Verify OTP"}
+                    onPress={handleSubmit}
+                    disabled={loading
+                        || code.length < 4
+                    } style={styles.verifyButton} show={false}
+
+                />
 
                 {/* Timer and Resend */}
                 <View style={styles.bottomRow}>
@@ -431,7 +439,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     timerRow: {
-        lineHeight: 10,
+        lineHeight: 20,
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -448,7 +456,7 @@ const styles = StyleSheet.create({
     resendText: {
         fontSize: 14,
         fontWeight: '600',
-        lineHeight: 10
+        lineHeight: 20
     },
     footerText: {
         textAlign: 'center',

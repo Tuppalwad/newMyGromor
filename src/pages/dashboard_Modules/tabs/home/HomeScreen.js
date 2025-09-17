@@ -150,7 +150,7 @@ const HomeScreen = ({ isloading }) => {
                 {/* Header */}
                 <CustomHeader
                     type="home"
-                    welcomeText="Ramachandra"
+                    welcomeText={farmerAddress?.name ?? "Farmer"}
                     onMenuPress={() => navigation.openDrawer()}
                     onCartPress={() => navigation.navigate('Cart')}
                     onNotificationPress={() => console.log('Notification pressed')}

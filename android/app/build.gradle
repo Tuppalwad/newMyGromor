@@ -84,7 +84,7 @@ android {
         applicationId "com.coromandel.gromor"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 146
+        versionCode 164   
         versionName "3.17"
     }
     signingConfigs {
@@ -105,6 +105,26 @@ android {
             keyPassword 'android'
         }
     }
+
+     flavorDimensions "app"
+
+    productFlavors {
+        MyGromorProduction {
+            dimension "app"
+            applicationId "com.coromandel.gromor"
+            resValue "string", "app_name", "MyGromor"
+            signingConfig signingConfigs.release
+            versionCode 200
+        }
+        MyGromorUAT {
+            dimension "app"
+            applicationId "com.coromandel.gromor.test"
+            resValue "string", "app_name", "MyGromor UAT"
+            signingConfig signingConfigs.release
+            versionCode 200
+        }
+    }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug

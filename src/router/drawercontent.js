@@ -17,11 +17,18 @@ import { Icon } from '../../assets/images';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { palette } from '../theme/color';
 import CustomPopupModal from '../components/common/CustomPopupModal';
+import { useSelector } from 'react-redux';
+import { isEmpty } from '../utils/validator';
+import { defConfigImageURL } from "../pages/dashboard_modules/tabs/home/index.service"
+import { capitalizeAll } from '../utils/utils';
+import _, { capitalize } from "lodash";
+
 
 const DrawerContent = (props) => {
   const appLanguage = UserManager?.getAppMultiLanguage
   const [isLogout, setIslogout] = useState(false)
-
+  const farmerAddress = useSelector((state) => state.farmer.farmerAddressArray)
+  const BannerData = useSelector((state) => state.product.bannerData);
   const navigation = useNavigation();
 
   const handleCloseDrawer = () => {
@@ -68,19 +75,29 @@ const DrawerContent = (props) => {
       <ScrollView >
         <View style={styles.header}>
           <View style={{ flexDirection: 'row' }}>
-            <Image source={require('../../src/assets/drawer/userProfile.png')} style={styles.avatar} />
+            {/*
+              require('../../src/assets/drawer/userProfile.png')
+            */}
+            <Image
+              source={
+                !isEmpty(farmerAddress.profileImage) && typeof BannerData !== 'undefined' && BannerData.imageBaseURL
+                  ? { uri: defConfigImageURL(BannerData.imageBaseURL, farmerAddress.profileImage) }
+                  : Icon.profileAvatar
+              }
+              style={styles.avatar}
+            />
 
             <View style={{ flex: 1, marginLeft: 12 }}>
-              <Text style={styles.name}>Ramachandra</Text>
+              <Text style={styles.name}>{capitalize(farmerAddress?.name ?? "")}</Text>
 
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                 <Image source={phone} style={{ width: 12, height: 12, marginRight: 6 }} />
-                <Text style={styles.phone}>+91-7021234567</Text>
+                <Text style={styles.phone}>+91-{farmerAddress.mobileNumber ?? "-"}</Text>
               </View>
 
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
                 <Image source={location} style={{ width: 12, height: 12, marginRight: 6 }} />
-                <Text style={styles.location}>Anantapur, Andhra Pradesh</Text>
+                <Text style={styles.location}>{capitalize(farmerAddress?.address?.district ?? "") + "," + capitalize(farmerAddress?.address?.state ?? "")}</Text>
               </View>
 
             </View>

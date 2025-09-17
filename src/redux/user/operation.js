@@ -59,7 +59,7 @@ export const verifyOTP = param => {
               resolve(user);
             })
             .catch(err => {
-              // console.log(err);
+              console.log(err);
             });
         }
       } catch (e) {
