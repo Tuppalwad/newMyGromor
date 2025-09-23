@@ -213,7 +213,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#e6e6e6e8',
         paddingHorizontal: 10,
-        // paddingTop: 20,
     },
     header: {
         flexDirection: 'row',
@@ -235,9 +234,7 @@ const styles = StyleSheet.create({
     tabs: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        // marginVertical: 16,
         paddingVertical: 16,
-        // backgroundColor: '#fff'
         backgroundColor: '#f5f8f7ff'
     },
     tab: {

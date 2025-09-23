@@ -7,9 +7,18 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
+    "postinstall": "npm run patch",
     "test": "jest",
+    "clean": "cd android && ./gradlew clean && cd ..",
+    "pod": "cd ios && pod install --repo-update && cd ..",
+    "generateBundle": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res",
+    "cleanDrawable": "rm -rf ./android/app/src/main/res/drawable-* && rm -rf ./android/app/src/main/res/raw",
     "androidUATRelease": "npx react-native run-android --mode=MyGromorUATRelease --appId=com.coromandel.gromor.test",
-    "androidProdRelease": "npx react-native run-android --mode=MyGromorProductionRelease --appId=com.coromandel.gromor"
+    "androidUATDebug": "npx react-native run-android --mode=MyGromorUATDebug --appId=com.coromandel.gromor.test",
+    "androidProdRelease": "npx react-native run-android --mode=MyGromorProductionRelease --appId=com.coromandel.gromor",
+    "androidProdDebug": "npx react-native run-android --mode=MyGromorProductionDebug --appId=com.coromandel.gromor",
+    "patch": "rimraf node_modules/.cache && npx @vm-lib/patch-node-modules -s node_modules_patches -o node_modules",
+    "start:rtron": "adb reverse tcp:9090 tcp:9090"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.24.0",

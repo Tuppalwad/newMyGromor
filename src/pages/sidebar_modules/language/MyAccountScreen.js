@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { isEmpty } from '../../../utils/validator';
 import { defConfigImageURL } from '../../dashboard_modules/tabs/home/index.service';
 import _, { capitalize } from "lodash";
+import { Icon } from '../../../../assets/images';
 
 
 const MyAccountScreen = ({ navigation }) => {
@@ -67,7 +68,7 @@ const MyAccountScreen = ({ navigation }) => {
                             source={
                                 !isEmpty(farmerAddress.profileImage) && typeof BannerData !== 'undefined' && BannerData.imageBaseURL
                                     ? { uri: defConfigImageURL(BannerData.imageBaseURL, farmerAddress.profileImage) }
-                                    : Icon.profileAvatar
+                                    :  Icon.profileAvatar
                             }
                             style={styles.avatar}
                         />
@@ -118,7 +119,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F2F5F4',
-        marginTop: 30,
     },
     header: {
         // backgroundColor: '#208b3a',

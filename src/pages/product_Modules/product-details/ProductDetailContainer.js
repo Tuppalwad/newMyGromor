@@ -74,7 +74,7 @@ export default function ProductDetailContainer({
 
     return (
         <>
-            <View style={{ marginTop: 30 }}>
+            <View style={{ }}>
                 <CustomHeader
                     type="detail"
                     topTitle={capitalizeAll(productData?.nameToShowOnSite ?? " ")}
@@ -415,7 +415,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F9FAFB',
-        // marginTop: 35,
         paddingHorizontal: 10
     },
 

@@ -7,11 +7,11 @@ import {
 } from '@react-navigation/drawer';
 // import DrawerContent from './drawercontent';
 import StackNav from './stacknav';
-import { Dimensions, SafeAreaView, View } from 'react-native';
+import { Dimensions, View } from 'react-native';
 import analytics from '@react-native-firebase/analytics';
 import { UserManager } from '../storage';
 import DrawerContent from './drawercontent';
-
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 const Drawer = createDrawerNavigator();
 
 // const AppTheme = {
@@ -25,49 +25,51 @@ export default function AppStack() {
 
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom', 'left', 'right']}>
 
-      <NavigationContainer
-        ref={navigationRef}
-        onReady={() => { routeNameRef.current = navigationRef.current.getCurrentRoute().name }}
-        onStateChange={async () => {
-          const previousRouteName = routeNameRef.current;
-          const currentRouteName = navigationRef.current.getCurrentRoute().name;
-          if (previousRouteName !== currentRouteName) {
-            await analytics().logEvent(currentRouteName, {
-              user_id: UserManager?.getUserId,
-              mobile_number: UserManager?.getUserMobileNumber,
-            });
-          }
-          routeNameRef.current = currentRouteName;
-        }}
-      >
-        <Drawer.Navigator
-          screenOptions={{
-            gestureEnabled: false,
-            swipeEnabled: false,
-            drawerStyle: {
-              width: Dimensions.get('window').width / 1.2,
-            },
+        <NavigationContainer
+          ref={navigationRef}
+          onReady={() => { routeNameRef.current = navigationRef.current.getCurrentRoute().name }}
+          onStateChange={async () => {
+            const previousRouteName = routeNameRef.current;
+            const currentRouteName = navigationRef.current.getCurrentRoute().name;
+            if (previousRouteName !== currentRouteName) {
+              await analytics().logEvent(currentRouteName, {
+                user_id: UserManager?.getUserId,
+                mobile_number: UserManager?.getUserMobileNumber,
+              });
+            }
+            routeNameRef.current = currentRouteName;
           }}
-          initialRouteName="home"
-          onStateChange={null}
-          drawerContent={props => <DrawerContent {...props} />}
         >
-          <Drawer.Screen
-            options={{
-              headerShown: false,
-              // swipeEnabled: false,
-              drawerLabel: () => null,
-              title: null,
-              drawerIcon: () => null,
-              drawerItemStyle: { height: 0 },
+          <Drawer.Navigator
+            screenOptions={{
+              gestureEnabled: false,
+              swipeEnabled: false,
+              drawerStyle: {
+                width: Dimensions.get('window').width / 1.2,
+              },
             }}
-            name="home"
-            component={StackNav}
-          />
-        </Drawer.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+            initialRouteName="home"
+            onStateChange={null}
+            drawerContent={props => <DrawerContent {...props} />}
+          >
+            <Drawer.Screen
+              options={{
+                headerShown: false,
+                // swipeEnabled: false,
+                drawerLabel: () => null,
+                title: null,
+                drawerIcon: () => null,
+                drawerItemStyle: { height: 0 },
+              }}
+              name="home"
+              component={StackNav}
+            />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }

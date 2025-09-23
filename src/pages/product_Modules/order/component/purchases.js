@@ -230,7 +230,7 @@ export default function PurchaseDetail({ navigation, route }) {
 
 
     return (
-        <SafeAreaView style={{ flex: 1, marginTop: 30 }}>
+        <SafeAreaView style={{ flex: 1 }}>
             <View>
                 <CustomHeader
                     type="Purchase Details"
@@ -347,7 +347,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F6F8',
         paddingHorizontal: 16,
-        marginTop: 30
     },
     cardCentered: {
         backgroundColor: '#fff',
@@ -619,7 +618,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#219653', // green gradient base color (if no gradient)
-        // marginTop: 30
         marginVertical: 30
 
     },

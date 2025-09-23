@@ -20,7 +20,7 @@ export default function ShopScreen({ searchData, setSearchData, onPressCategory,
 
     return (
 
-        <SafeAreaView style={{ flex: 1, marginTop: 30 }}>
+        <SafeAreaView style={{ flex: 1 }}>
             <View>
                 <CustomHeader
                     type="shop"

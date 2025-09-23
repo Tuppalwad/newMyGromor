@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: palette.lightWhite,
-    marginTop: 30
   },
   webviewContainer: {
     flex: 1,

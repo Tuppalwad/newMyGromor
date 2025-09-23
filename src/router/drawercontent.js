@@ -201,8 +201,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderTopRightRadius: 12,
     borderTopLeftRadius: 12,
-    // marginTop: 30
-
   },
   header: {
     flexDirection: 'column',

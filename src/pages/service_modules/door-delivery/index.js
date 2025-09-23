@@ -538,7 +538,7 @@ const DoorDeliveryComponent = ({ navigation }) => {
         <SafeAreaView style={{ flex: 1 }}>
 
             {/* Header */}
-            <View style={{ marginTop: 30, }}>
+            <View style={{ }}>
                 <CustomHeader
                     type="door delivery"
                     topTitle="Door Delivery"

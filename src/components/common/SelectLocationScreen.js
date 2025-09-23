@@ -279,7 +279,6 @@ const SelectLocationScreen = ({ address, setShowMap, setAddress }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    marginTop: 30,
     backgroundColor: '#fff',
   },
   header: {

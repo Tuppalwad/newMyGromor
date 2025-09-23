@@ -430,7 +430,7 @@ const App = () => {
   return (
     <CProvider>
       <View style={{ flex: 1 }}>
-        <StatusBar barStyle="dark-content" />
+        <StatusBar barStyle="light-content" backgroundColor="#fff" />
         <AppStack />
         <Toast config={ToastConfig} />
         {!isConnected && (
