@@ -35,6 +35,7 @@ export const Screen = {
   welcomeHNI: 'welcomeHNI',
   payment: 'payment',
   language: 'language',
+  newLanguage: 'newLanguage',
   addressDetails: 'addressDetails',
   viewAllDealers: 'viewAllDealers',
   viewAllReview: 'viewAllReview',

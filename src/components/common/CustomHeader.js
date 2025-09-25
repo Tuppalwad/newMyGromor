@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
         color: '#222',
     },
     shopTitle: {
+        marginTop: 2,
         fontSize: 18,
         fontWeight: 'bold',
         marginLeft: 8,

@@ -109,6 +109,7 @@ import WeatherScreen from '../pages/product_modules/weather/weatherScreen';
 import NextDaysScreen from '../pages/product_modules/weather/nextdays';
 import MyOrders from '../pages/product_modules/order';
 import MyBookingDetails from '../pages/product_modules/order/component/MyBooking';
+import NewLanguageScreen from '../pages/sidebar_modules/language/NewLanguageScreen';
 // import WeatherScreen from '../pages/product_modules/weather/wheatherScreen';
 // import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
@@ -278,6 +279,11 @@ const StackNav = ({ navigation }) => {
         component={NextDaysScreen}
       />
 
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.newLanguage}
+        component={NewLanguageScreen}
+      />
       {/* 
       <Stack.Screen
         options={{headerShown: false}}

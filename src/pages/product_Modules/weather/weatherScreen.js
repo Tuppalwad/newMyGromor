@@ -94,7 +94,7 @@ const WeatherScreen = ({ navigation }) => {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
             {/* Header */}
             <CustomHeader
                 type="Wheather Forcast"
@@ -113,7 +113,7 @@ const WeatherScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 ))}
             </View>
-            <ScrollView style={styles.container}>
+            <ScrollView style={{ paddingHorizontal: '16' }}>
                 {activeTab === 'Today' && (
                     <>
                         {/* Weather Card */}
@@ -203,7 +203,8 @@ const WeatherScreen = ({ navigation }) => {
 
             </ScrollView>
             <Indicator show={isLoading} />
-        </SafeAreaView>
+
+        </View>
     );
 };
 
@@ -211,8 +212,8 @@ export default WeatherScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#e6e6e6e8',
-        paddingHorizontal: 10,
+        // backgroundColor: '#e6e6e6e8',
+        // paddingHorizontal: 10,
     },
     header: {
         flexDirection: 'row',

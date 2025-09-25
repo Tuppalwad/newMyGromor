@@ -159,7 +159,7 @@ const MyCartContainer = ({
     return (
 
         <>
-            <View style={{ marginTop: 30 }} >
+            <View>
                 <CustomHeader
                     type="cart"
                     topTitle="My Cart"

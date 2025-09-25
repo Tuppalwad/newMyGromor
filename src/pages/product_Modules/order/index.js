@@ -119,7 +119,7 @@ const MyOrders = ({ navigation }) => {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
             <MyOrdersScreen
                 onPressBack={() => navigation.goBack()}
                 onPressItem={onPressItem}
@@ -135,7 +135,7 @@ const MyOrders = ({ navigation }) => {
                 setActiveCategory={setActiveCategory}
                 activeCategory={activeCategory}
             />
-        </SafeAreaView>
+        </View>
     )
 }
 

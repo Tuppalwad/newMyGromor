@@ -71,7 +71,7 @@ const DrawerContent = (props) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView >
         <View style={styles.header}>
           <View style={{ flexDirection: 'row' }}>
@@ -121,7 +121,7 @@ const DrawerContent = (props) => {
             <Text style={styles.languageLabel}> Language:</Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate(Screen.language)}
+            onPress={() => navigation.navigate(Screen.newLanguage)}
             style={{ alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
 
             <Text style={styles.languageValue}>English</Text>
@@ -181,7 +181,7 @@ const DrawerContent = (props) => {
         />
 
       </CustomPopupModal>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
     borderTopRightRadius: 12,
-    borderTopLeftRadius: 12,
+    borderBottomRightRadius: 12,
   },
   header: {
     flexDirection: 'column',
