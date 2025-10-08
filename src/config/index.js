@@ -1,3 +1,9 @@
+/* Dev Endpoint
+export const Configuration = {
+  FarmerURL: 'http://172.16.0.14:4549/api/',
+  IdentityURL: 'http://172.16.0.14:4546/api/'
+};
+*/
 
 export const BuildTypes = {
   Production: 'Production',
@@ -6,21 +12,31 @@ export const BuildTypes = {
   PreProduction: 'PreProduction',
 };
 
-// export const BUILD = BuildTypes.Production;
-export const BUILD = BuildTypes.Development;
+export const BUILD = BuildTypes.Production;
+// export const BUILD = BuildTypes.Development;
 
 
 export const DEV_BASE_URL = 'https://mygromor20uatazure.coromandel.biz';
 export const PROD_BASE_URL = 'https://mygromor.coromandel.biz';
 
+// export const DEV_BASE_URL = 'https://mygromor20uat.coromandel.biz'
+// export const PROD_BASE_URL = 'https://mygromor.coromandel.biz'
+
 export const PREPROD_BASE_URL = 'https://mygromor.coromandel.biz';
 export const STG_BASE_URL = 'http://172.16.0.14';
 
 // testing payment params
-export const PAYMENT_KEY = BUILD === BuildTypes.Production ? 'B49p0D' : 'oZ7oo9';
-export const PAYMENT_SALT = BUILD === BuildTypes.Production ? 'QjOW5Iqh' : 'UkojH5TS';
+export const PAYMENT_KEY =
+  BUILD === BuildTypes.Production ? 'B49p0D' : 'oZ7oo9';
+export const PAYMENT_SALT =
+  BUILD === BuildTypes.Production ? 'QjOW5Iqh' : 'UkojH5TS';
 
-
+// export const PAYMENT_KEY =  "oZ7oo9";
+// export const PAYMENT_SALT =  "UkojH5TS";
+// production payment params
+// export const PAYMENT_KEY = "B49p0D";
+// export const PAYMENT_SALT = "QjOW5Iqh";
+// Weather URL Version, Change this if any update from the 3rd party provider version\
 
 export const WEATHER_VERSION = '2.5';
 export const WEATHER_APP_KEY = '70b89900c420a15c1e0d59123470db2c';
@@ -46,15 +62,13 @@ function getURL() {
       // Weather API
       WeatherURL: 'https://api.openweathermap.org/data/' + WEATHER_VERSION,
       ProWeatherURL: 'https://pro.openweathermap.org/data/' + WEATHER_VERSION,
-      ImageURL:
-        'https://cilmygromorsa.blob.core.windows.net/gromor-media-prod/',
+      ImageURL: 'https://cilmygromorsa.blob.core.windows.net/gromor-media-prod/',
       feedImageID: 'feeds/',
       tollfreenumber: '1800 425 2828',
       tollfreenumber_Linking: '18004252828',
       version: 'Version',
       buildNo: '',
-      contact_Info:
-        'We are not operational in your area. Stay tuned; for more information, contact customer service. ',
+      contact_Info: 'We are not operational in your area. Stay tuned; for more information, contact customer service. ',
     };
   } else if (BUILD === BuildTypes.PreProduction) {
 
@@ -62,6 +76,8 @@ function getURL() {
     return {
       FarmerURL: BASE_URL + '/farmer.api/api',
       CommunityURL: BASE_URL + '/community.api/api',
+      // IdentityURL: BASE_URL + '/identity-api-prod/api',
+      // ProductURL: BASE_URL + '/productprod.api/api', // production payement testing url
       IdentityURL: BASE_URL + '/identity.api/api',
       ProductURL: BASE_URL + '/product.api/api', // uat payement testing url
       AdvisoryURL: BASE_URL + '/advisory.api/api',
@@ -86,7 +102,8 @@ function getURL() {
       FarmerURL: BASE_URL + '/farmer.api/api',
       CommunityURL: BASE_URL + '/community.api/api',
       IdentityURL: BASE_URL + '/identity.api/api',
-      ProductURL: BASE_URL + '/product.api/api',
+      ProductURL: BASE_URL + '/product.api/api', // uat payement testing url
+      // ProductURL: BASE_URL + '/productprod.api/api', // production payement testing url
       AdvisoryURL: BASE_URL + '/advisory.api/api',
       ChatURL: BASE_URL + '/chat.api/api',
       NotificationURL: BASE_URL + '/notification.api/api',
@@ -123,7 +140,19 @@ function getURL() {
       tollfreenumber_Linking: '18004252828',
       version: 'UAT_Version',
       buildNo: App_Current_VERSION,
-      contact_Info: 'We are not operational in your area. Stay tuned; for more information, contact customer service. ',
+      contact_Info:
+        'We are not operational in your area. Stay tuned; for more information, contact customer service. ',
     };
   }
 }
+
+// // Stg Endpoint
+// export const Configuration = {
+//   FarmerURL: 'https://mygromor20uat.coromandel.biz/farmer.api/api',
+//   IdentityURL: 'https://mygromor20uat.coromandel.biz/identity.api/api',
+//   ProductURL: 'https://mygromor20uat.coromandel.biz/product.api/api',
+
+//   // Weather API
+
+//   WeatherURL: 'https://api.openweathermap.org/'
+// };
