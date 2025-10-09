@@ -216,7 +216,7 @@ const MyBookingDetails = ({ navigation, route }) => {
                 </View>
 
             </ScrollView>
-            <Indicator Indicator={!isLoading} />
+            <Indicator show={isLoading} />
         </View>
 
     );

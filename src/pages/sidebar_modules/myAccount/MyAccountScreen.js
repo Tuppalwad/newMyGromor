@@ -12,19 +12,20 @@ import { isEmpty } from '../../../utils/validator';
 import { defConfigImageURL } from '../../dashboard_modules/tabs/home/index.service';
 import _, { capitalize } from "lodash";
 import { Icon } from '../../../../assets/images';
+import { Screen } from '../../../router/screen';
 
 
 const MyAccountScreen = ({ navigation }) => {
     const menuItems = [
-        { title: 'My Information', icon: require('../../../assets/images/account/accountUser.png') },
-        { title: 'My Crops', icon: require('../../../assets/images/account/mycrop.png') },
-        { title: 'My Assets', icon: require('../../../assets/images/account/myasset.png') },
-        { title: 'My Feeds', icon: require('../../../assets/images/account/myfeed.png') },
-        { title: 'Saved Feeds', icon: require('../../../assets/images/account/savefeed.png') },
-        { title: 'My Groups', icon: require('../../../assets/images/account/mygroup.png') },
-        { title: 'Public Groups', icon: require('../../../assets/images/account/publicgroup.png') },
-        { title: 'Followers', icon: require('../../../assets/images/account/followers.png') },
-        { title: 'Following', icon: require('../../../assets/images/account/following.png') },
+        { title: 'My Information', icon: require('../../../assets/images/account/accountUser.png'), path: Screen.myInfoScreen },
+        { title: 'My Crops', icon: require('../../../assets/images/account/mycrop.png'), path: Screen.mycrop },
+        { title: 'My Assets', icon: require('../../../assets/images/account/myasset.png'), path: Screen.myAssets },
+        { title: 'My Feeds', icon: require('../../../assets/images/account/myfeed.png'), path: Screen.myFeeds },
+        { title: 'Saved Feeds', icon: require('../../../assets/images/account/savefeed.png'), path: Screen.savedFeeds },
+        { title: 'My Groups', icon: require('../../../assets/images/account/mygroup.png'), path: Screen.myGroups },
+        { title: 'Public Groups', icon: require('../../../assets/images/account/publicgroup.png'), path: Screen.publicGroups },
+        { title: 'Followers', icon: require('../../../assets/images/account/followers.png'), path: Screen.followers },
+        { title: 'Following', icon: require('../../../assets/images/account/following.png'), path: Screen.following },
     ];
     const gradientColors = ['#1E8153', '#4EA618']; // dark green to light green
     const farmerAddress = useSelector((state) => state.farmer.farmerAddressArray)
@@ -35,7 +36,9 @@ const MyAccountScreen = ({ navigation }) => {
     const { storeName, storeCode, address, contactDetails } = StoreCodeDetails
 
     const renderItem = ({ item }) => {
-        return (<TouchableOpacity style={styles.gridItem}>
+        return (<TouchableOpacity style={styles.gridItem}
+            onPress={() => navigation.navigate(item.path)}
+        >
             <Image source={item.icon} style={styles.gridIcon} />
             <Text style={styles.gridText}>{item.title}</Text>
         </TouchableOpacity>)
@@ -58,7 +61,6 @@ const MyAccountScreen = ({ navigation }) => {
                     onBackPress={() => navigation.goBack()}
                     onCartPress={() => console.log('Cart pressed')}
                     onNotificationPress={() => console.log('Notification pressed')}
-
                 />
 
                 <View style={styles.profileSection}>
@@ -68,7 +70,7 @@ const MyAccountScreen = ({ navigation }) => {
                             source={
                                 !isEmpty(farmerAddress.profileImage) && typeof BannerData !== 'undefined' && BannerData.imageBaseURL
                                     ? { uri: defConfigImageURL(BannerData.imageBaseURL, farmerAddress.profileImage) }
-                                    :  Icon.profileAvatar
+                                    : Icon.profileAvatar
                             }
                             style={styles.avatar}
                         />
@@ -122,14 +124,14 @@ const styles = StyleSheet.create({
     },
     header: {
         // backgroundColor: '#208b3a',
-        padding: 16,
+        // padding: 16,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     headerContainer: {
         paddingTop: 20,
-        paddingBottom: 30,
+        // paddingBottom: 30,
         // paddingHorizontal: 16,
     },
 
@@ -178,7 +180,8 @@ const styles = StyleSheet.create({
     },
     phone: {
         color: '#fff',
-        marginLeft: 10
+        marginLeft: 10,
+        paddingVertical: 5
     },
     location: {
         color: '#fff',

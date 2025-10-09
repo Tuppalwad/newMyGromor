@@ -1,80 +1,14 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import AntIcon from 'react-native-vector-icons/AntDesign';
 import {
   ImageBackground,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native';
-// import { Icon } from '../../assets/images';
-// import { palette } from '../theme';
-
-// import {TabNavigator} from './tab-router';
 import { Screen } from './screen';
-// import { UserManager } from '../storage';
-
-// import CheckoutNewScreen from '../pages/checkout_new';
-
-// import SplashContainer from '../pages/prelogin_Modules/splash-screen';
-// import WelcomeContainer from '../pages/prelogin_Modules/welcome-screen';
-// import Login from '../pages/prelogin_Modules/login';
-// import OtpScreen from '../pages/prelogin_Modules/otp-screen';
-// import WelcomeHNI from '../pages/prelogin_Modules/welcome-HNI';
-
-// import HomeComponent from '../pages/dashboard_Modules/tabs/home';
-// import AdVideoScreen from '../pages/dashboard_Modules/tabs/ad-video';
-// import GromorStore from '../pages/dashboard_Modules/tabs/gromo-store';
-// import AdvisoryDashboard from '../pages/dashboard_Modules/tabs/advisory-dashboard';
-// import HomeMarketValue from '../pages/dashboard_Modules/tabs/market-value/marketvalue';
-// import ViewAllDealers from '../pages/dashboard_Modules/tabs/view-all-dealers';
-// import MyServices from '../pages/dashboard_Modules/tabs/my-services';
-// import MyServicesDelivery from '../pages/dashboard_Modules/tabs/my-services/my-services-delivery.screen';
-
-// import MyAccountContainer from '../pages/sidebar_Modules/myAccount';
-// import NotificationScreen from '../pages/sidebar_Modules/notification';
-// import LanguageScreen from '../pages/sidebar_Modules/language';
-// import FavouriteProductScreen from '../pages/sidebar_Modules/product-favourites';
-// import MyCart from '../pages/sidebar_Modules/my-cart';
-// import LoyalityPointsScreen from '../pages/sidebar_Modules/loyality-points';
-// import MyPractice from '../pages/sidebar_Modules/my-practice';
-// import Testimonial from '../pages/sidebar_Modules/testimonial';
-// import PlantixScreen from '../pages/sidebar_Modules/plantix';
-
-// import ViewAllProduct from '../pages/product_Modules/view-all-product';
-// import ViewAllCategory from '../pages/product_Modules/view-all-category';
-// import ReviewProduct from '../pages/product_Modules/review-product';
-// import ProductScreen from '../pages/product_Modules/products';
-// import ViewAllReview from '../pages/product_Modules/view-all-review';
-// import ProductDetails from '../pages/product_Modules/product-details';
-// import ChangeStoreDetailsScreen from '../pages/product_Modules/changeStoreDetails';
-// import SimilarProudct from '../pages/product_Modules/similar-product';
-
-// import MyOrderHistory from '../pages/order_Modules/my-order-history';
-// import MyBookingHistory from '../pages/order_Modules/my-booking-history';
-// import BookingStatus from '../pages/order_Modules/bookingStatus';
-
-// import DeliveryStatus from '../pages/order_Modules/delivery-status';
-// import PostFeedScreen from '../pages/sidebar_Modules/postFeed';
-// import createFeedScreen from '../pages/sidebar_Modules/postFeed/tabs/createFeed';
-
-// import feedMyProfileScreen from '../pages/sidebar_Modules/postFeed/tabs/feedMyProfile';
-// import GroupDetails from '../pages/sidebar_Modules/postFeed/Groups';
-
-// import PlantixSummaryScreen from '../pages/sidebar_Modules/plantix/plantixSummary';
-// import PlantixDetailsContainer from '../pages/sidebar_Modules/plantix/PlantixDetails';
-
-// import FylloScreen from '../pages/sidebar_Modules/fyllo';
-// import MyProfileContainer from '../pages/sidebar_Modules/myProfile';
-
-//Old Version ...
-// import ChatApp from '../pages/Backup_Modules/chat';
 import { height } from '../config/resposiveSize';
-// import SparyServiceDetail from '../pages/dashboard_Modules/tabs/my-services/Components/SparyServiceDetail';
-// import ListOfApplyedService from '../pages/dashboard_Modules/tabs/my-services/Components/ListOfApplyedService';
-// import PlantixRecommndation from '../pages/sidebar_Modules/plantix/plantixSummary/recommndation.screen';
-// import ServiceDetailsScreen from '../pages/dashboard_Modules/tabs/my-services/Components/ServiceDetailsScreen';
-// import CTText from '../components/ctText';
+
 import Home from '../pages/dashboard_modules/tabs/home';
 import LanguageScreen from '../pages/sidebar_modules/language/LanguageScreen';
 import WelcomeScreen from '../pages/prelogin_modules/welcome_screen';
@@ -86,7 +20,6 @@ import LoginScreen from '../pages/prelogin_modules/login/LoginScreen';
 import { TabNavigator } from './tab-router';
 
 import ViewAllProduct from '../pages/product_modules/components/ViewAllProduct';
-// import ProductDetail from '../pages/product_Modules/product-details/ProductDetailContainer';
 import AgriVideo from '../pages/dashboard_modules/tabs/ad-video/AgriVideo';
 import MyCart from '../pages/product_modules/my-cart';
 import MyOrdersScreen from '../pages/product_modules/order/component/orderScreen';
@@ -95,7 +28,7 @@ import ProductDetails from '../pages/product_modules/product-details';
 import purchases from '../pages/product_modules/order/component/purchases';
 import MyBooking from '../pages/product_modules/order/component/MyBooking';
 import PurchaseDetail from '../pages/product_modules/order/component/purchases';
-import MyAccountScreen from '../pages/sidebar_modules/language/MyAccountScreen';
+import MyAccountScreen from '../pages/sidebar_modules/myAccount/MyAccountScreen';
 import MyServicesScreen from '../pages/service_modules/my_services';
 import ViewAllCategory from '../pages/product_modules/view-all-category';
 import ViewAllCategoryData from '../pages/product_modules/view-all-category';
@@ -109,11 +42,34 @@ import WeatherScreen from '../pages/product_modules/weather/weatherScreen';
 import NextDaysScreen from '../pages/product_modules/weather/nextdays';
 import MyOrders from '../pages/product_modules/order';
 import MyBookingDetails from '../pages/product_modules/order/component/MyBooking';
-import NewLanguageScreen from '../pages/sidebar_modules/language/NewLanguageScreen';
+import UpdateLanguage from '../pages/sidebar_modules/language/UpdateLanguage';
+import FavouriteProductScreen from '../pages/sidebar_modules/my-favourite';
+import MyInfoScreen from '../pages/sidebar_modules/myAccount/component/myinfo/myInfoScreen';
+import ChangeStoreDetailsScreen from '../pages/sidebar_modules/myAccount/change-store/ChangeStoreDetails.screen';
+import MyCrop from '../pages/sidebar_modules/my-crops';
+import ChangeStoreDetails from '../pages/product_modules/changeStoreDetails';
+import MyCropsScreen from '../pages/sidebar_modules/my-crops';
+import MyAssets from '../pages/sidebar_modules/myAccount/component/myAssets';
+import MyFeedsScreen from '../pages/sidebar_modules/myAccount/component/myFeeds';
+import SaveFeeds from '../pages/sidebar_modules/myAccount/component/savedFeeds';
+import Followers from '../pages/sidebar_modules/myAccount/component/followers';
+import Following from '../pages/sidebar_modules/myAccount/component/following';
+import MyGroups from '../pages/sidebar_modules/myAccount/component/myGroups';
+import MyPublicGroups from '../pages/sidebar_modules/myAccount/component/publicGroups';
+import PersonalInfoScreen from '../pages/sidebar_modules/myAccount/component/myinfo';
+import MarketValue from '../pages/dashboard_modules/tabs/market-value';
+// import PersonalInfoScreen from '../pages/sidebar_modules/myAccount/component/myinfo';
 // import WeatherScreen from '../pages/product_modules/weather/wheatherScreen';
 // import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
 // import MyServicesScreen from '../pages/service_module/myServices';
+
+import PostDetailScreen from '../pages/dashboard_modules/tabs/community/PostDetail';
+import NotificationScreen from '../pages/dashboard_modules/tabs/notification';
+import NewPostScreen from '../pages/dashboard_modules/tabs/community/NewPost';
+import ProfileCard from '../pages/dashboard_modules/tabs/community/Profile';
+import ReportModal from '../pages/dashboard_modules/tabs/community/ReportModal';
+import CropDetailScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/CropDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -281,8 +237,110 @@ const StackNav = ({ navigation }) => {
 
       <Stack.Screen
         options={{ headerShown: false }}
-        name={Screen.newLanguage}
-        component={NewLanguageScreen}
+        name={Screen.updateLanguage}
+        component={UpdateLanguage}
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.favouriteProduct}
+        component={FavouriteProductScreen}
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.myInfoScreen}
+        component={PersonalInfoScreen}
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.mycrop}
+        component={MyCropsScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.myAssets}
+        component={MyAssets}
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.myFeeds}
+        component={MyFeedsScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.savedFeeds}
+        component={SaveFeeds}
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.followers}
+        component={Followers}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.following}
+        component={Following}
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.myGroups}
+        component={MyGroups}
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.publicGroups}
+        component={MyPublicGroups}
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.ChangeStoreDetails}
+        component={ChangeStoreDetails}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.marketValue}
+        component={MarketValue}
+      />
+
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.PostDetail}
+        component={PostDetailScreen}
+      />
+
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.Notification}
+        component={NotificationScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.NewPost}
+        component={NewPostScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.Profile}
+        component={ProfileCard}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.ReportModal}
+        component={ReportModal}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.CropDetailScreen}
+        component={CropDetailScreen}
       />
       {/* 
       <Stack.Screen
@@ -320,11 +378,7 @@ const StackNav = ({ navigation }) => {
         component={ProductDetails}
       />
 
-      <Stack.Screen
-        options={{headerShown: false}}
-        name={Screen.favouriteProduct}
-        component={FavouriteProductScreen}
-      />
+      
       <Stack.Screen
         options={{headerShown: false}}
         name={Screen.viewAllProduct}

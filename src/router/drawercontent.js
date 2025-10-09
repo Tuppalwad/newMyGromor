@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, { act, useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Share, Linking } from 'react-native';
 import language from '../../src/assets/drawer/language.png'
 import edit from '../../src/assets/drawer/edit.png'
 import location from '../../src/assets/images/common/location.png';
 import phone from '../../src/assets/images/common/phone.png';
-import { height } from '../config/resposiveSize';
+import { height, Isplatform_IOS } from '../config/resposiveSize';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DrawerActions, useNavigation } from '@react-navigation/native';
 import { Screen } from './screen';
@@ -22,6 +22,10 @@ import { isEmpty } from '../utils/validator';
 import { defConfigImageURL } from "../pages/dashboard_modules/tabs/home/index.service"
 import { capitalizeAll } from '../utils/utils';
 import _, { capitalize } from "lodash";
+import ConfirmationModal from '../components/common/ConfirmationModal';
+import { Configuration } from '../config';
+import { useOperation } from '../redux/operation';
+import constants from '../config/constants';
 
 
 const DrawerContent = (props) => {
@@ -30,6 +34,8 @@ const DrawerContent = (props) => {
   const farmerAddress = useSelector((state) => state.farmer.farmerAddressArray)
   const BannerData = useSelector((state) => state.product.bannerData);
   const navigation = useNavigation();
+  const [isDeleteAccountPopup, setisDeleteAccountPopup] = useState(false)
+  const operation = useOperation();
 
   const handleCloseDrawer = () => {
     props.navigation.closeDrawer()
@@ -60,9 +66,59 @@ const DrawerContent = (props) => {
   };
 
 
-  const renderOption = (title, icon, path) => (
+  const onPressNavigation = () => {
+    let refMsg = `${appLanguage.lblLetmerecommend ?? "Let me recommend you this application"} \n\n ${Isplatform_IOS ? constants.ios : constants.android}`
+    Share.share({ message: refMsg });
+
+  }
+
+
+  const onPressDeleteAccount = () => {
+
+    let param = farmerAddress.farmerIdentityId ?? ""
+    dispatch(operation.user.getdeleteAccount(param)).then((res) => {
+      if (res?.data) {
+        setisDeleteAccountPopup(false)
+        onPressDrawerItem(Screen.logout)
+      } else {
+        dispatch(operation.user.getErrorHandling(res, "getdeleteAccount"))
+      }
+    }).catch((err) => {
+      dispatch(operation.user.getErrorHandling(err, "getdeleteAccount"))
+    });
+
+  }
+
+
+  const onPressCall = () => {
+    let phoneNumber = Configuration.tollfreenumber_Linking;
+    try {
+      let param = {
+        farmerId: farmerAddress?.farmerIdentityId,
+        name: farmerAddress?.name,
+        mobileNumber: farmerAddress?.mobileNumber,
+        timeOfCall: new Date(),
+      };
+      dispatch(operation.farmer.postCallMethod(param)).then(res => {
+        Linking.openURL(`tel:${phoneNumber}`);
+      });
+    } catch (e) { }
+  };
+
+  const renderOption = (title, icon, path, action) => (
     <TouchableOpacity style={styles.option}
-      onPress={() => navigation.navigate(path)}
+
+      onPress={() => {
+        if (action == "share") {
+          onPressNavigation()
+        }
+        if (action == "phone") {
+          onPressCall()
+        } else {
+          navigation.navigate(path)
+        }
+      }
+      }
     >
       <Image source={icon} style={styles.icon} resizeMode='contain' />
       <Text style={styles.optionText}>{title}</Text>
@@ -121,7 +177,7 @@ const DrawerContent = (props) => {
             <Text style={styles.languageLabel}> Language:</Text>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate(Screen.newLanguage)}
+            onPress={() => navigation.navigate(Screen.updateLanguage)}
             style={{ alignItems: 'center', justifyContent: 'flex-start', flexDirection: 'row' }}>
 
             <Text style={styles.languageValue}>English</Text>
@@ -136,20 +192,20 @@ const DrawerContent = (props) => {
           {renderOption('My Account', require('../../src/assets/drawer/accountIcon.png'), Screen.myAccount)}
           {renderOption('My Orders', require('../../src/assets/drawer/orderIcon.png'), Screen.MyOrder)}
           {renderOption('My Cart', require('../../src/assets/drawer/cart.png'), Screen.myCart)}
-          {renderOption('Favourite Products', require('../../src/assets/drawer/favourite.png'))}
+          {renderOption('Favourite Products', require('../../src/assets/drawer/favourite.png'), Screen.favouriteProduct)}
         </View>
 
         <View style={styles.gridSection}>
           {renderGridOption('Shop', require('../../src/assets/drawer/shop.png'), Screen.Shop, navigation)}
           {renderGridOption('My Services', require('../../src/assets/drawer/service.png'), Screen.MyServicesScreen, navigation)}
-          {renderGridOption('Crop Advisory', require('../../src/assets/drawer/crop.png',))}
-          {renderGridOption('Crop Doctor', require('../../src/assets/drawer/cropZoom.png',))}
+          {renderGridOption('Crop Advisory', require('../../src/assets/drawer/crop.png'), Screen.cropAdvisory)}
+          {renderGridOption('Crop Doctor', require('../../src/assets/drawer/cropZoom.png'), Screen.cropDocktore)}
         </View>
 
         <View style={styles.section}>
-          {renderOption('Terms & Conditions', require('../../src/assets/drawer/terms.png'))}
-          {renderOption('Share App', require('../../src/assets/drawer/share.png'))}
-          {renderOption('Call 1800 425 2828', require('../assets/drawer/call.png'))}
+          {renderOption('Terms & Conditions', require('../../src/assets/drawer/terms.png'), "", "term")}
+          {renderOption('Share App', require('../../src/assets/drawer/share.png'), "", "share")}
+          {renderOption('Call 1800 425 2828', require('../assets/drawer/call.png'), "", "phone")}
         </View>
         <TouchableOpacity style={styles.signOutButton}
           onPress={() => setIslogout(true)}
@@ -161,19 +217,30 @@ const DrawerContent = (props) => {
         </TouchableOpacity>
       </ScrollView>
 
+      <ConfirmationModal
+        visible={isLogout ?? false}
+        title="Confirm"
+        subtitle={appLanguage?.logout_confirmation ?? 'Are you sure you want to logout?'}
+        onCancel={() => { setIslogout(false) }}
+        onConfirm={() => { onPressDrawerItem(Screen.logout) }}
+        position="bottom"
+      />
+
+
+
       <CustomPopupModal
-        visible={isLogout}
+        visible={isDeleteAccountPopup}
         icon={Icon.warning}
         isRed={true}
         title={appLanguage?.warning ?? 'Warning!'}
         buttonText={appLanguage?.yes ?? 'Yes'}
         button2Text={appLanguage?.no ?? 'No'}
-        onPressButton2={() => { setIslogout(false) }}
+        onPressButton2={() => { setisDeleteAccountPopup(false) }}
         BottomPopupStatus={true}
-        onPressDone={() => { onPressDrawerItem(Screen.logout) }}>
+        onPressDone={() => { onPressDeleteAccount("isDeleteAccountPopup") }}>
 
         <CTText
-          text={appLanguage?.logout_confirmation ?? 'Are you sure you want to logout?'}
+          text={appLanguage?.lblAreyousuretodelete ?? 'Are you sure you want to Delete Account?'}
           fontSize={RFValue(12)}
           semiBold
           textColor={palette.grey}
@@ -200,13 +267,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
     borderTopRightRadius: 12,
-    borderBottomRightRadius: 12,
+    borderTopLeftRadius: 12,
   },
   header: {
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#0A8F43',
-    padding: 16,
+    // padding: 16,/
     borderTopRightRadius: 12,
     borderTopLeftRadius: 12,
     paddingVertical: 30
@@ -233,6 +300,7 @@ const styles = StyleSheet.create({
   phone: {
     color: '#fff',
     fontSize: 12,
+    paddingVertical: 5
 
   },
   location: {

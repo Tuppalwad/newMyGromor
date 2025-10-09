@@ -35,7 +35,7 @@ export const Screen = {
   welcomeHNI: 'welcomeHNI',
   payment: 'payment',
   language: 'language',
-  newLanguage: 'newLanguage',
+  updateLanguage: 'updateLanguage',
   addressDetails: 'addressDetails',
   viewAllDealers: 'viewAllDealers',
   viewAllReview: 'viewAllReview',
@@ -83,5 +83,22 @@ export const Screen = {
   NextDays: 'NextDaysScreen',
   MyOrder: "MyOrder",
   PurchaseDetail: "PurchaseDetail",
-  BookingDetails: "BookingDetails"
+  BookingDetails: "BookingDetails",
+  myInfoScreen: "myInfoScreen",
+  mycrop: "mycrop",
+  myAssets: "myAssets",
+  myFeeds: "myFeeds",
+  savedFeeds: 'savedFeeds',
+  myGroups: "myGroups",
+  publicGroups: 'publicGroups',
+  followers: "followers",
+  following: "following",
+  ChangeStore: "ChangeStore",
+  PostDetail: "PostDetail",
+  Notification: "notification",
+  NewPost: "newPost",
+  Profile: "profile",
+  ReportModal: "ReportModal",
+  CropDetailScreen: "CropDetailScreen"
+
 };

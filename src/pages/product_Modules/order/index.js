@@ -119,23 +119,21 @@ const MyOrders = ({ navigation }) => {
 
 
     return (
-        <View style={{ flex: 1 }}>
-            <MyOrdersScreen
-                onPressBack={() => navigation.goBack()}
-                onPressItem={onPressItem}
-                onPressContinue={onPressContinue}
-                isLoading={isLoading}
-                appLanguage={appLanguage}
-                sortData={filterStatusArray}
-                setSelectedSort={setSelectedSort}
-                selectedSort={selectedSort}
-                OrderArray={data}
-                onEndReached={onEndReached}
-                getFetchAPIMethod={getFetchAPIMethod}
-                setActiveCategory={setActiveCategory}
-                activeCategory={activeCategory}
-            />
-        </View>
+        <MyOrdersScreen
+            onPressBack={() => navigation.goBack()}
+            onPressItem={onPressItem}
+            onPressContinue={onPressContinue}
+            isLoading={isLoading}
+            appLanguage={appLanguage}
+            sortData={filterStatusArray}
+            setSelectedSort={setSelectedSort}
+            selectedSort={selectedSort}
+            OrderArray={data}
+            onEndReached={onEndReached}
+            getFetchAPIMethod={getFetchAPIMethod}
+            setActiveCategory={setActiveCategory}
+            activeCategory={activeCategory}
+        />
     )
 }
 

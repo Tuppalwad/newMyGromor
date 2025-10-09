@@ -78,12 +78,12 @@ const HomeScreen = ({ isloading }) => {
         { title: appLanguages.buy_products ?? 'Buy Products', screen: Screen.viewAllCategory, icon: BuyProduct }, // Replace with actual icon if different
         { title: appLanguages.spraying_service ?? 'Spraying Services', screen: Screen.MyServicesScreen, icon: SprayingService, state: 'Spraying Services' },
         { title: appLanguages.door_delivery ?? 'Door Delivery', screen: Screen.MyServicesScreen, icon: DoorDelivery, state: 'Door Delivery' },
-        { title: appLanguages.mana_gromor_store ?? ' Mana Gromor Store', screen: '', icon: GromorStore },
+        { title: appLanguages.mana_gromor_store ?? ' Mana Gromor Store', screen: Screen.marketValue, icon: GromorStore },
         { title: appLanguages.lblCropDoctor ?? 'Crop Doctor', screen: '', icon: CropDoctore },
         { title: appLanguages.ask_expert ?? 'Ask Experts', screen: '', icon: AskTheExperts },
         { title: appLanguages.my_crop_advisory ?? 'My Crop Advisory', screen: '', icon: CropAdvisory },
         { title: appLanguages.video ?? 'Agri Video', screen: Screen.adVideo, icon: AgriVideo },
-        { title: appLanguages.cultivated_crops ?? 'My Crops', screen: '', icon: MyCrop },
+        { title: appLanguages.cultivated_crops ?? 'My Crops', screen: Screen.mycrop, icon: MyCrop },
         { title: appLanguages.lblFeeds ?? 'Gromor Connect', screen: '', icon: GromorConnect },
         { title: 'Mandi Rates', screen: '', icon: MandiRates },
         { title: 'Fertilizer Calculator', screen: '', icon: fertilizerCal },
@@ -230,7 +230,7 @@ const HomeScreen = ({ isloading }) => {
                 onRequestClose={() => setStoreModalVisible(false)}
             >
                 <TouchableWithoutFeedback onPress={() => setStoreModalVisible(false)}>
-                    <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)', marginBottom: 40 }}>
+                    <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.4)', marginBottom: 60 }}>
                         <View style={{
                             backgroundColor: '#DFF5E3',
                             borderTopLeftRadius: 16,
@@ -278,7 +278,7 @@ const HomeScreen = ({ isloading }) => {
                     </View>
                 </TouchableWithoutFeedback>
             </Modal>
-            <Indicator Indicator={!isloading} />
+            {/* <Indicator show={isloading} /> */}
         </View>
     );
 };

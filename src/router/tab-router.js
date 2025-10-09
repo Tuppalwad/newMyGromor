@@ -9,6 +9,7 @@ import Advisory from '../pages/dashboard_modules/tabs/advisory-dashboard';
 import CropDoctor from '../pages/dashboard_modules/tabs/crop-doctor';
 import MarketValue from '../pages/dashboard_modules/tabs/market-value';
 import ProductCategories from '../pages/product_modules/product-category';
+import Community from '../pages/dashboard_modules/tabs/community';
 
 const Tab = createBottomTabNavigator();
 
@@ -57,7 +58,7 @@ export const TabNavigator = () => {
 
       <Tab.Screen
         name={appLanguage?.Community ?? Screen.Community}
-        component={MarketValue}
+        component={Community}
       />
 
     </Tab.Navigator>

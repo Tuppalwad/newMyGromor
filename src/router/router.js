@@ -23,7 +23,6 @@ export default function AppStack() {
   const routeNameRef = React.useRef();
   const navigationRef = React.useRef();
 
-
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom', 'left', 'right']}>

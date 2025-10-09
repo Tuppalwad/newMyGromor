@@ -222,7 +222,7 @@ const AgriVideo = () => {
 
             <AgriFilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
 
-            <Indicator Indicator={!isLoading} />
+            <Indicator show={isLoading} />
         </SafeAreaView>
     );
 };

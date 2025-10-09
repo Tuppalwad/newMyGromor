@@ -16,7 +16,7 @@ import { Icon } from "../../../../assets/images";
 import { HEToast } from "../../../components/toast";
 import { isEmpty } from "../../../utils/validator";
 
-const ProductCard = ({ item, onPressProductItem, index, onPressFavourite, type, onPressDeleteFav }) => {
+const ProductCard = ({ showRemove = false, item, onPressProductItem, index, onPressFavourite, type, onPressDeleteFav, onpressRemove = null }) => {
 
     const isFocussed = useIsFocused();
     const weightOptions = ['30 Kg', '50 Kg', '100 Kg']
@@ -240,11 +240,13 @@ const ProductCard = ({ item, onPressProductItem, index, onPressFavourite, type, 
         }
     };
 
+    console.log(type, 'llllllll')
+
     return (
         <View style={styles.card}>
             <View style={styles.badgeContainer}>
                 <Text style={styles.badgeText}>{item?.brand}</Text>
-                <TouchableOpacity
+                {type !== "isfovourite" && <TouchableOpacity
                     onPress={() => { item?.isFavouriteProduct ? onPressDeleteFav(item, index, type) : onPressFavourite(item, index, type) }}
                 >
                     {item?.isFavouriteProduct ? <Image
@@ -265,7 +267,7 @@ const ProductCard = ({ item, onPressProductItem, index, onPressFavourite, type, 
                         />
                     }
 
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
 
             <TouchableOpacity
@@ -313,9 +315,18 @@ const ProductCard = ({ item, onPressProductItem, index, onPressFavourite, type, 
             </View>
 
             {/* <View style={styles.addButton}> */}
-            <CustomButton title={"Add to Cart"} onPress={() => onPressAddToCart()} />
+            {
+                type == "isfovourite" ?
+                    <CustomButton title={"Move to Cart"} show={false} onPress={() => onPressAddToCart()} />
+                    :
+                    <CustomButton title={"Add to Cart"} onPress={() => onPressAddToCart()} />}
             {/* </View> */}
 
+            {showRemove && <View style={{ paddingVertical: 10 }}>
+                <TouchableOpacity style={styles.cancelButton} onPress={() => onpressRemove(item)}>
+                    <Text style={styles.cancelText}>Remove</Text>
+                </TouchableOpacity>
+            </View>}
 
             <CustomPopupModal
                 visible={showNoCode?.visible}
@@ -460,5 +471,18 @@ const styles = StyleSheet.create({
     addButton: {
         borderRadius: 6,
         alignItems: 'center',
+    },
+
+    cancelButton: {
+        borderWidth: 1,
+        borderColor: '#F36D45',
+        borderRadius: 8,
+        paddingVertical: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    cancelText: {
+        color: '#F36D45',
+        fontWeight: '600',
     },
 });

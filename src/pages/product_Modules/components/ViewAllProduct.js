@@ -94,8 +94,13 @@ const ViewAllProduct = () => {
                 if (searchData.trim().length > 0) {
                     setLoading(true);
                     let param = {
-                        language: farmerLanguage, categoryId: 0, minimumPrice: 0,
-                        maximumPrice: 0, sortColumn: '', pageNo: 1, pageSize: 50,
+                        language: farmerLanguage,
+                        categoryId: 0,
+                        minimumPrice: 0,
+                        maximumPrice: 0,
+                        sortColumn: '',
+                        pageNo: 1, 
+                        pageSize: 50,
                         storeCode: productParams?.storeCode,
                         searchValue: searchData,
                         farmerId: farmerAddress?.farmerIdentityId,
@@ -296,6 +301,8 @@ const ViewAllProduct = () => {
                 type="shop"
                 topTitle="All"
                 subtitle="Store Code: S0584 | Mana Gromor Centre Akola"
+                showLocation={true}
+                // subtitle={true}
                 onBackPress={() => navigation.goBack()}
                 onCartPress={() => console.log('Cart pressed')}
                 onNotificationPress={() => console.log('Notification pressed')}
@@ -349,7 +356,7 @@ const ViewAllProduct = () => {
                 </TouchableOpacity>
             </View>
 
-            <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
+            <FilterModal  visible={filterVisible} onClose={() => setFilterVisible(false)} />
             <SortModal setModalVisible={setModalVisible} modalVisible={modalVisible} />
 
             <Indicator show={isLoading || loading} />

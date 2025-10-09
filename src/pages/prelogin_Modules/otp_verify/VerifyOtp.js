@@ -243,15 +243,16 @@ export default function VerifyOtp({ route }) {
                     }
                 })
                 .catch(err => {
-                    console.log(err, 'errrrrrrrrrrrr');
                     dispatch(operation.user.getErrorHandling(err.data, 'verifyOTP'));
                     setLoading(false)
                 });
         } catch (error) {
-            // setLoading(false)
+            setLoading(false)
         }
         finally {
-            // setLoading(false)
+            setTimeout(() => {
+                setLoading(false)
+            }, 3000);
         }
 
     };

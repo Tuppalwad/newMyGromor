@@ -22,7 +22,7 @@ export const palette = {
     darkOrange: '#D6731D',
     dimGray: '#4C8E300D',
     lighOrangeBg: '#D6731D1A',
-    lightOrangerBorder: '#D6731D33',
+    lightOrangerBorder: '#B4B4B4',
     lightYellowBg: '#FBBA2B1A',
     lightYellowBorder: '#FBBA2B33',
     cropSelectedOverlay: '#3c5933ad',

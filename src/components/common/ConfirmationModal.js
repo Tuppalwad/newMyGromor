@@ -21,6 +21,7 @@ const ConfirmationModal = ({
     onCancel,
     onConfirm,
     position = 'bottom', // 'bottom' or 'center'
+    rightButtonText='Confirm'
 }) => {
     const overlayPositionStyle = {
         justifyContent: position === 'center' ? 'center' : 'flex-end',
@@ -47,7 +48,7 @@ const ConfirmationModal = ({
 
                         <View style={{ width: '48%' }}>
                             <CustomButton
-                                title={"Confirm"}
+                                title={rightButtonText}
                                 onPress={onConfirm}
                                 show={false}
                             />
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
     },
     modalContainer: {
         position: 'absolute',
-        bottom: -30,
+        // bottom: -30,
         // width: width - 32,
         backgroundColor: '#fff',
         paddingHorizontal: 20,

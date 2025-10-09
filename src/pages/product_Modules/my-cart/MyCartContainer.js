@@ -159,7 +159,7 @@ const MyCartContainer = ({
     return (
 
         <>
-            <View>
+            <View >
                 <CustomHeader
                     type="cart"
                     topTitle="My Cart"

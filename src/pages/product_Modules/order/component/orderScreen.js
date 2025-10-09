@@ -106,88 +106,91 @@ export default function MyOrdersScreen({
 
 
     return (
-        <View style={styles.container}>
-            <CustomHeader
-                type="order"
-                topTitle="My Orders"
-                subtitle=""
-                onBackPress={() => navigation.goBack()}
-                onCartPress={() => console.log('Order pressed')}
-                onNotificationPress={() => console.log('Notification pressed')}
-            />
-
-            <View style={styles.tabContainer}>
-                <TouchableOpacity
-                    onPress={() => setActiveCategory('purchases')}
-                    style={styles.tabButton}
-                >
-                    <View style={styles.tabInner}>
-                        <Image source={parcel} style={{
-                            width: 24, height: 24,
-                            tintColor: activeCategory === 'purchases' ? '#01AD41' : '#444'
-                        }} />
-                        <Text style={[
-                            styles.tabText,
-                            activeCategory === 'purchases' && styles.activeTabText
-                        ]}>
-                            My Purchases
-                        </Text>
-
-                    </View>
-                    {activeCategory === 'purchases' && <View style={styles.greenUnderline} />}
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    onPress={() => {
-                        setActiveCategory('bookings');
-                        // navigation.navigate('MyBookings');
-                    }}
-                    style={styles.tabButton}
-                >
-                    <View style={styles.tabInner}>
-                        <Image source={booking} style={{ width: 24, height: 24, tintColor: activeCategory === 'bookings' ? '#01AD41' : '#444' }} />
-                        <Text style={[
-                            styles.tabText,
-                            activeCategory === 'bookings' && styles.activeTabText
-                        ]}>
-                            My Bookings
-                        </Text>
-
-                    </View>
-                    {activeCategory === 'bookings' && <View style={styles.greenUnderline} />}
-                </TouchableOpacity>
-            </View>
-
-
-            <View style={styles.content}>
-                <Text style={styles.totalText}>Total {count} {activeCategory === 'purchases' ? "Purchases" : "Bookings"}</Text>
-
-                <FlatList
-                    data={OrderArray || []}
-                    renderItem={renderItem}
-                    keyExtractor={(item, index) => index.toString()}
+        <>
+            <View style={styles.container}>
+                <CustomHeader
+                    type="order"
+                    topTitle="My Orders"
+                    subtitle=""
+                    onBackPress={() => navigation.goBack()}
+                    onCartPress={() => console.log('Order pressed')}
+                    onNotificationPress={() => console.log('Notification pressed')}
                 />
 
+                <View style={styles.tabContainer}>
+                    <TouchableOpacity
+                        onPress={() => setActiveCategory('purchases')}
+                        style={styles.tabButton}
+                    >
+                        <View style={styles.tabInner}>
+                            <Image source={parcel} style={{
+                                width: 24, height: 24,
+                                tintColor: activeCategory === 'purchases' ? '#01AD41' : '#444'
+                            }} />
+                            <Text style={[
+                                styles.tabText,
+                                activeCategory === 'purchases' && styles.activeTabText
+                            ]}>
+                                My Purchases
+                            </Text>
 
-            </View>
+                        </View>
+                        {activeCategory === 'purchases' && <View style={styles.greenUnderline} />}
+                    </TouchableOpacity>
 
-            <LinearGradient
-                colors={['#1E8153', '#4EA618']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.filterButtonWrapper}
-            >
-                <TouchableOpacity style={styles.filterButton} onPress={() => setVisible(true)}>
-                    <Image source={filterIcon} style={{ width: 18, height: 18, tintColor: "#fff" }} />
-                    {/* <Icon name="filter-variant" size={18} color="#fff" /> */}
-                    <Text style={styles.filterText}> Filters</Text>
-                </TouchableOpacity >
-            </LinearGradient>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setActiveCategory('bookings');
+                            // navigation.navigate('MyBookings');
+                        }}
+                        style={styles.tabButton}
+                    >
+                        <View style={styles.tabInner}>
+                            <Image source={booking} style={{ width: 24, height: 24, tintColor: activeCategory === 'bookings' ? '#01AD41' : '#444' }} />
+                            <Text style={[
+                                styles.tabText,
+                                activeCategory === 'bookings' && styles.activeTabText
+                            ]}>
+                                My Bookings
+                            </Text>
+
+                        </View>
+                        {activeCategory === 'bookings' && <View style={styles.greenUnderline} />}
+                    </TouchableOpacity>
+                </View>
 
 
-            <FilterModalForOrderAndServices visible={visible} setVisible={setVisible} />
-            <Indicator Indicator={!isLoading} />
-        </View >
+                <View style={styles.content}>
+                    <Text style={styles.totalText}>Total {count} {activeCategory === 'purchases' ? "Purchases" : "Bookings"}</Text>
+
+                    <FlatList
+                        data={OrderArray || []}
+                        renderItem={renderItem}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+
+                </View>
+
+                {
+                OrderArray?.length > 0 && <LinearGradient
+                    colors={['#1E8153', '#4EA618']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.filterButtonWrapper}
+                >
+                    <TouchableOpacity style={styles.filterButton} onPress={() => setVisible(true)}>
+                        <Image source={filterIcon} style={{ width: 18, height: 18, tintColor: "#fff" }} />
+                        {/* <Icon name="filter-variant" size={18} color="#fff" /> */}
+                        <Text style={styles.filterText}> Filters</Text>
+                    </TouchableOpacity>
+                </LinearGradient>
+                }
+
+
+                <FilterModalForOrderAndServices visible={visible} setVisible={setVisible} />
+                <Indicator show={isLoading} />
+            </View >
+        </>
     );
 }
 

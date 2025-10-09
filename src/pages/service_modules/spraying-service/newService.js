@@ -583,7 +583,7 @@ const NewServiceRequestScreen = () => {
             state={"Spraying Services'"}
         />
             :
-            <SafeAreaView style={{ flex: 1 }}>
+            <>
 
                 {/* Header */}
                 <View>
@@ -939,7 +939,7 @@ const NewServiceRequestScreen = () => {
                     WebViewURL={constants.termsAndConditionSpray}
                 />
                 <Indicator show={loading} />
-            </SafeAreaView >
+            </>
 
 };
 

@@ -135,7 +135,7 @@ const ViewAllCategoryContainer = ({
 
             <FilterModal visible={filterVisible} onClose={() => setFilterVisible(false)} />
 
-            <Indicator Indicator={!isLoading} />
+            <Indicator show={isLoading} />
 
         </SafeAreaView>
     );

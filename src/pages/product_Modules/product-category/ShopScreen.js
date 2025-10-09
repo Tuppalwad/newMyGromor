@@ -108,7 +108,7 @@ export default function ShopScreen({ searchData, setSearchData, onPressCategory,
                     </LinearGradient>
 
 
-                    <CustomButton title={"View All Product"} onPress={() => navigation.navigate(Screen.viewAllProduct)} />
+                    {newProductData?.length > 0 && <CustomButton title={"View All Product"} onPress={() => navigation.navigate(Screen.viewAllProduct)} />}
 
                     <Indicator Indicator={newProductData?.length > 0 ? true : false} />
 

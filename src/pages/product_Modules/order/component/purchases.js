@@ -230,7 +230,7 @@ export default function PurchaseDetail({ navigation, route }) {
 
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
+        < >
             <View>
                 <CustomHeader
                     type="Purchase Details"
@@ -329,8 +329,8 @@ export default function PurchaseDetail({ navigation, route }) {
                     <Text style={styles.buttonText}>🧾 Download Invoice</Text>
                 </TouchableOpacity>
             </ScrollView>
-            <Indicator Indicator={!isLoading} />
-        </SafeAreaView>
+            <Indicator show={isLoading} />
+        </>
     );
 }
 
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
         // flex: 1,
         backgroundColor: '#01AD41',
         marginTop: 2,
-        height:40
+        height: 40
 
     },
     textColumn: {

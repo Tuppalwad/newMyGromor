@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Share } from 'react-native';
 import colors from '../../utils/theam'; // Your color file
 import menuIcon from '../../assets/images/splash/menu.png';
+import dotIcon from '../../assets/images/common/dotIcon.png';
+
 import leftArrow from '../../assets/images/splash/leftArrow.png';
 // import backIcon from '../../assets/images/splash/back.png';
 import bellIcon from '../../assets/images/splash/BellIcon.png';
@@ -36,7 +38,9 @@ export default function CustomHeader({
     onPressFavourite,
     itemData,
     isFav,
-    onPressDeleteFav
+    onPressDeleteFav,
+    showmenu = false,
+    onPressShowMenu,
 
 }) {
     const dispatch = useDispatch()
@@ -147,32 +151,62 @@ export default function CustomHeader({
 
                             </View>
                         ) :
-                            <>
-                                <TouchableOpacity onPress={onNotificationPress} style={styles.iconWrapper}>
-                                    <Image source={bellIcon} style={{
-                                        width: 22,
-                                        height: 22,
-                                        tintColor: type == "profile" ? "#fff" : '#222',
 
-                                    }} resizeMode='contain' />
-                                </TouchableOpacity>
+                            showmenu ? (
+                                <>
+                                    <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
+                                        <View style={{ position: 'relative' }}>
+                                            <Image source={cartIcon} style={{
+                                                ...styles.carticon,
+                                                tintColor: type == "profile" ? "#fff" : '#222',
+                                            }} resizeMode="contain" />
 
-                                <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
-                                    <View style={{ position: 'relative' }}>
-                                        <Image source={cartIcon} style={{
-                                            ...styles.carticon,
+                                            {cartCount > 0 && (
+                                                <View style={styles.badge}>
+                                                    <Text style={styles.badgeText}>{cartCount}</Text>
+                                                </View>
+                                            )}
+                                        </View>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={onPressShowMenu}>
+                                        <Image source={dotIcon} style={{
+                                            ...styles.icon,
                                             tintColor: type == "profile" ? "#fff" : '#222',
-                                        }} resizeMode="contain" />
+                                        }} resizeMode='contain' />
+                                    </TouchableOpacity>
+                                </>
+                            ) :
 
-                                        {cartCount > 0 && (
-                                            <View style={styles.badge}>
-                                                <Text style={styles.badgeText}>{cartCount}</Text>
-                                            </View>
-                                        )}
-                                    </View>
-                                </TouchableOpacity>
+                                <>
+                                    <TouchableOpacity onPress={
+                                        () => {
+                                            navigation.navigate(Screen.notification)
+                                        }
+                                    } style={styles.iconWrapper}>
+                                        <Image source={bellIcon} style={{
+                                            width: 22,
+                                            height: 22,
+                                            tintColor: type == "profile" ? "#fff" : '#222',
 
-                            </>
+                                        }} resizeMode='contain' />
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity onPress={onCartPress} style={{ marginRight: 15 }}>
+                                        <View style={{ position: 'relative' }}>
+                                            <Image source={cartIcon} style={{
+                                                ...styles.carticon,
+                                                tintColor: type == "profile" ? "#fff" : '#222',
+                                            }} resizeMode="contain" />
+
+                                            {cartCount > 0 && (
+                                                <View style={styles.badge}>
+                                                    <Text style={styles.badgeText}>{cartCount}</Text>
+                                                </View>
+                                            )}
+                                        </View>
+                                    </TouchableOpacity>
+
+                                </>
                     }
                 </View>
             </View>
@@ -215,7 +249,6 @@ const styles = StyleSheet.create({
         color: '#222',
     },
     shopTitle: {
-        marginTop: 2,
         fontSize: 18,
         fontWeight: 'bold',
         marginLeft: 8,

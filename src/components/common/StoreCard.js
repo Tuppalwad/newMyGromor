@@ -3,10 +3,15 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking, Image } from 'react-
 import Location from '../../assets/images/common/location.png'
 import Contact from '../../assets/images/common/phone.png'
 import Shop from '../../assets/images/common/shop.png'
+import { useNavigation } from '@react-navigation/native';
+import { Screen } from '../../router/screen';
 
 
 
-export default StoreCard = ({ storeCode, storeName, addressLines, phoneNumber }) => {
+export default StoreCard = ({ storeCode, storeName, addressLines, phoneNumber, showChangeButton = false }) => {
+   
+    const navigation = useNavigation();
+
     return (
         <View style={styles.card}>
             {/* Store Code Section */}
@@ -38,6 +43,13 @@ export default StoreCard = ({ storeCode, storeName, addressLines, phoneNumber })
                 <Image source={Contact} style={{ ...styles.icon, marginTop: 4, tintColor: '#4E4E4E' }} />
                 <Text style={styles.text}>{"+91 " + phoneNumber}</Text>
             </TouchableOpacity>
+
+            {showChangeButton && <View style={{ width: '98%', marginTop: 15 }}>
+                <TouchableOpacity style={styles.cancelButton} onPress={() => {navigation.navigate(Screen.ChangeStoreDetails) }}>
+                    <Text style={styles.cancelText}>Change Store</Text>
+                </TouchableOpacity>
+            </View>}
+
         </View>
     );
 };
@@ -92,6 +104,18 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#333',
         marginLeft: 10
+    },
+    cancelButton: {
+        borderWidth: 1,
+        borderColor: '#F36D45',
+        borderRadius: 8,
+        paddingVertical: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    cancelText: {
+        color: '#F36D45',
+        fontWeight: '600',
     },
 });
 
