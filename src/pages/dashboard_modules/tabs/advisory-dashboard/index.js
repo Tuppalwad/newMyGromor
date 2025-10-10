@@ -17,6 +17,7 @@ import chilliImage from '../../../../assets/images/common/chilli.png';
 import cottonImage from '../../../../assets/images/common/cotton.png';
 import { FlatList } from 'react-native-gesture-handler';
 import { Screen } from '../../../../router/screen';
+import QuriesScreen from './QueriesScreen';
 const CropAdvisoryScreen = () => {
     //   const renderCardItem = (title, isHighlighted = false, iconName = null) => (
     //     <View style={[styles.cardItem, isHighlighted && styles.highlightedItem]}>
@@ -85,6 +86,7 @@ const CropAdvisoryScreen = () => {
                 <TouchableOpacity
                     onPress={() => {
                         setActiveCategory('Queries');
+                        // navigation.navigate(Screen.QuriesScreen)
                     }}
                     style={styles.tabButton}
                 >
@@ -105,19 +107,22 @@ const CropAdvisoryScreen = () => {
             <ScrollView style={styles.scrollView}>
 
                 {/* My Crops Section */}
-                <View style={styles.myCropSection}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                        <Text style={styles.sectionTitle}>My Crops</Text>
-                        <TouchableOpacity style={styles.addButton}>
-                            {/* <Icon name="add" size={20} color="#4CAF50" /> */}
-                            <Text style={styles.addButtonText}>+Add Crop</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.card}>
-                        {/* <Image source={chilli} />
+
+                {activeCategory === "Advisory" ?
+                    <>
+                        <View style={styles.myCropSection}>
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                <Text style={styles.sectionTitle}>My Crops</Text>
+                                <TouchableOpacity style={styles.addButton}>
+                                    {/* <Icon name="add" size={20} color="#4CAF50" /> */}
+                                    <Text style={styles.addButtonText}>+Add Crop</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.card}>
+                                {/* <Image source={chilli} />
                         <Text style={styles.cardTitle}>Chilli</Text>
                          */}
-                        {/* <FlatList
+                                {/* <FlatList
                             data={crops}
                             horizontal
                             showsHorizontalScrollIndicator={false}
@@ -130,311 +135,317 @@ const CropAdvisoryScreen = () => {
                             )}
                             contentContainerStyle={{ paddingVertical: 10, paddingHorizontal: 5 }}
                         /> */}
-                        <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                    <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
 
-                    </View>
-                </View>
+                            </View>
+                        </View>
 
-                <View style={styles.divider} />
+                        <View style={styles.divider} />
 
-                {/* Vegetables Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Vegetables</Text>
-                    <View style={styles.card}>
-                       <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                    <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
 
-                <View style={styles.divider} />
+                        {/* Vegetables Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Vegetables</Text>
+                            <View style={styles.card}>
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
 
-                {/* Home Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Fruit</Text>
-                    <View style={styles.card}>
-                        <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                     <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
+                        <View style={styles.divider} />
 
-                <View style={styles.divider} />
+                        {/* Home Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Fruit</Text>
+                            <View style={styles.card}>
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
 
-                {/* Fabbage Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Cash Crop</Text>
-                    <View style={styles.card}>
-                       <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                     <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
+                        <View style={styles.divider} />
 
-                    <View style={styles.divider} />
-                    {/* Spices Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Spices</Text>
-                    <View style={styles.card}>
-                       <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                     <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
-                    <View style={styles.divider} />
-                    {/* cereals Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Cereals</Text>
-                    <View style={styles.card}>
-                       <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                     <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
+                        {/* Fabbage Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Cash Crop</Text>
+                            <View style={styles.card}>
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
 
-{/* pulses Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Pulses</Text>
-                    <View style={styles.card}>
-                       <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                     <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
-                    <View style={styles.divider} />
-                    {/* oil seeds Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Oil Seeds</Text>
-                    <View style={styles.card}>
-                       <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}> 
-                                <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
-                <View style={styles.divider} />
-                {/* Medicinal Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Medicinal</Text>
-                    <View style={styles.card}>
-                       
-                       <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                    <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                        <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    
-                    </View>
-                </View>
-                <View style={styles.divider} />
-                {/* Flowers Section */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Flowers</Text>
-                    <View style={styles.card}>
-                       <FlatList
-                            data={crops}
-                            numColumns={3}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item }) => (
-                                <View style={{
-                                    alignItems: 'center',
-                                    marginBottom: 16,
-                                    width: '33.33%' // This ensures 3 items per row
-                                }}>
-                                     <TouchableOpacity onPress={()=>navigation.navigate(Screen.CropDetailScreen)}>
-                                    <Image
-                                        source={item.image }
-                                        style={{ width: 94, height: 94}}
-                                    />
-                                    <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
-                                        {item.name}
-                                    </Text>
-                                     </TouchableOpacity>
-                                </View>
-                            )}
-                        />
-                    </View>
-                </View>
+                        <View style={styles.divider} />
+                        {/* Spices Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Spices</Text>
+                            <View style={styles.card}>
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.divider} />
+                        {/* cereals Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Cereals</Text>
+                            <View style={styles.card}>
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
+
+                        {/* pulses Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Pulses</Text>
+                            <View style={styles.card}>
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.divider} />
+                        {/* oil seeds Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Oil Seeds</Text>
+                            <View style={styles.card}>
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.divider} />
+                        {/* Medicinal Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Medicinal</Text>
+                            <View style={styles.card}>
+
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+
+                            </View>
+                        </View>
+                        <View style={styles.divider} />
+                        {/* Flowers Section */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Flowers</Text>
+                            <View style={styles.card}>
+                                <FlatList
+                                    data={crops}
+                                    numColumns={3}
+                                    showsVerticalScrollIndicator={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item }) => (
+                                        <View style={{
+                                            alignItems: 'center',
+                                            marginBottom: 16,
+                                            width: '33.33%' // This ensures 3 items per row
+                                        }}>
+                                            <TouchableOpacity onPress={() => navigation.navigate(Screen.CropDetailScreen)}>
+                                                <Image
+                                                    source={item.image}
+                                                    style={{ width: 94, height: 94 }}
+                                                />
+                                                <Text style={{ marginTop: 8, fontSize: 14, color: '#333', textAlign: 'center' }}>
+                                                    {item.name}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                        </View>
+                    </>
+                    : <>
+                        <QuriesScreen />
+                    </>
+                }
             </ScrollView>
         </View>
     );
@@ -545,10 +556,10 @@ const styles = StyleSheet.create({
     inactiveTabText: {
         color: '#555',
     },
-     addButtonText: {
-    fontSize: 16,
-    color: '#4CAF50',
-    fontWeight: '500',
-    marginLeft: 8,
-  },
+    addButtonText: {
+        fontSize: 16,
+        color: '#4CAF50',
+        fontWeight: '500',
+        marginLeft: 8,
+    },
 });

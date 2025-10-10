@@ -90,5 +90,6 @@ Notification: "notification",
 NewPost:"newPost",
 Profile:"profile",
 ReportModal:"ReportModal",
-CropDetailScreen: "CropDetailScreen"
+CropDetailScreen: "CropDetailScreen",
+QuriesScreen:"QuriesScreen"
 };

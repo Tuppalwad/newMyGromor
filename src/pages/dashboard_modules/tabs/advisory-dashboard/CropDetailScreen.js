@@ -1,340 +1,205 @@
-// src/screens/MangoCropScreen.js
-import React from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-  Image
-} from 'react-native';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import IconFA from 'react-native-vector-icons/FontAwesome';
+import React, { useState } from "react";
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
+import CustomHeader from "../../../../components/common/CustomHeader";
+// import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import mango from '../../../../assets/images/common/mango.png'
 import calender from '../../../../assets/images/common/calender.png'
-const CropDetailScreen = () => {
-  return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-      
-      
-      {/* custom header here  */}
+import irrigation from '../../../../assets/images/common/irrigation.png'
+import acres from '../../../../assets/images/common/acres.png'
+import floodIrrigation from '../../../../assets/images/common/floodIrrigation.png'
+import leaf from '../../../../assets/images/common/crop.png'
+const CropDetailsScreen = () => {
+  const [expanded, setExpanded] = useState(null);
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Header */}
-      <View style={styles.headerRow}>
-        <Text style={styles.headerText}>In your “My Crop”</Text>
-        <TouchableOpacity>
-          <Text style={styles.summaryText}>View Summary ➜</Text>
-      </TouchableOpacity>
+  const toggleSection = (id) => {
+    setExpanded(expanded === id ? null : id);
+  };
+
+  const sections = [
+    {
+      title: "Planning & Preparation",
+      icon: leaf,
+      color: "#00A36C",
+      items: ["Introduction", "Mango cultivation method", "Planting method"],
+    },
+    {
+      title: "Nutrient & Growth Management",
+      icon: leaf,
+      color: "#00A36C",
+      items: ["Nutrient Management", "Nutrient deficiency symptoms and their management"],
+    },
+  ];
+
+  return (
+    <>
+<CustomHeader
+                    type="services"
+                    topTitle="crop Detail"
+                    subtitle=""
+                    onBackPress={() => navigation.goBack()}
+                    onCartPress={() => console.log('Cart pressed')}
+                    onNotificationPress={() => console.log('Notification pressed')}
+                    style={styles.header}
+                />
+
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      {/* <View style={styles.headerRow}>
+        {/* <Ionicons name="arrow-back" size={24} color="#000" /> */}
+        {/* <Text style={styles.headerTitle}>Mango</Text>
+        <View style={styles.headerIcons}> */}
+          {/* <Ionicons name="notifications-outline" size={22} color="#000" style={styles.icon} /> */}
+          {/* <Feather name="shopping-cart" size={22} color="#000" /> */}
+        {/* </View>
+      </View> */}
+
+      {/* Crop Summary */}
+      <View style={styles.cropCard}>
+        <View style={styles.rowBetween}>
+          <View style={styles.greenBadge}>
+            {/* <Ionicons name="checkmark-circle" color="#fff" size={16} /> */}
+            <Text style={styles.badgeText}>In your "My Crop"</Text>
+          </View>
+          <Text style={styles.viewSummary}>View Summary →</Text>
+        </View>
+
+        <View style={styles.cropInfo}>
+          <Image
+            source={mango}
+            style={styles.cropImage}
+          />
+          <View style={styles.cropDetails}>
+            <Text style={styles.cropName}>Mango</Text>
+            <View style={styles.greenUnderline}></View>
+              <Text style={{fontSize:12,fontWeight:500,marginTop:10}}>Showing Details</Text>
+            <View style={styles.sowingDetails}>
+              <View style={[styles.detailRow,{marginTop:10}]}>
+                {/* <MaterialIcons name="event" size={18} color="#00A36C" /> */}
+                <Image source={calender} style={{width:18,height:20}}/>
+                <Text style={styles.detailText}>07 Apr 2025</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Image source={irrigation} style={{width:18,height:20}}/>
+                {/* <Ionicons name="water-outline" size={18} color="#00A36C" /> */}
+                <Text style={styles.detailText}>Irrigation Stage</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Image source={acres} style={{width:18,height:20}}/>
+                {/* <Ionicons name="crop-outline" size={18} color="#00A36C" /> */}
+                <Text style={styles.detailText}>2 acres</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Image source={floodIrrigation} style={{width:18,height:20}}/>
+                {/* <Ionicons name="rainy-outline" size={18} color="#00A36C" /> */}
+                <Text style={styles.detailText}>Flood Irrigation</Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </View>
 
-      {/* Card */}
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Image
-            source={mango} // <-- Update your image path
-            style={styles.image}
-          />
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>Mango</Text>
-            <Text style={styles.subTitle}>Sowing Details</Text>
+      {/* Sections */}
+      {sections.map((section, index) => (
+        <View key={index} style={styles.sectionContainer}>
+          <View style={styles.sectionHeader}>
+            {/* <Ionicons name={section.icon} size={18} color={section.color} /> */}
+            <Image source={section.icon} style={{height:20,width:20}}/>
+            <Text style={[styles.sectionTitle, { color: section.color }]}>{section.title}</Text>
           </View>
+
+          {section.items.map((item, idx) => (
+            <TouchableOpacity
+              key={idx}
+              style={styles.accordionItem}
+              onPress={() => toggleSection(`${section.title}-${idx}`)}
+            >
+              <View style={styles.accordionHeader}>
+                <Text style={styles.accordionTitle}>{item}</Text>
+                {/* <Ionicons */}
+                  {/* name={expanded === `${section.title}-${idx}` ? "chevron-up" : "chevron-down"}
+                  size={20}
+                  color="#666"
+                /> */}
+              </View>
+
+              {expanded === `${section.title}-${idx}` && (
+                <Text style={styles.accordionContent}>
+                  This section provides detailed information about {item.toLowerCase()}.
+                </Text>
+              )}
+            </TouchableOpacity>
+          ))}
         </View>
-
-        {/* Details */}
-        <View style={styles.details}>
-          <View style={styles.row}>
-            <Image source={calender} />
-            <Text style={styles.detailText}>07 Apr 2025</Text>
-          </View>
-          <View style={styles.row}>
-            <FontAwesome5 name="seedling" size={16} color="#00A86B" />
-            <Text style={styles.detailText}>Irrigation Stage</Text>
-          </View>
-          <View style={styles.row}>
-            <FontAwesome name="square" size={16} color="#00A86B" />
-            <Text style={styles.detailText}>2 acres</Text>
-          </View>
-          <View style={styles.row}>
-            <MaterialIcons name="water-damage" size={18} color="#00A86B" />
-            <Text style={styles.detailText}>Flood Irrigation</Text>
-          </View>
-        </View>
-        </View>
-
-        {/* Divider */}
-        <View style={styles.divider} />
-
-        {/* Planning & Preparation Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionMainTitle}>Planning & Preparation</Text>
-          
-          {/* Introduction */}
-          <View style={styles.subSection}>
-            <Text style={styles.subSectionTitle}>Introduction</Text>
-            <View style={styles.methodCard}>
-              <Text style={styles.methodTitle}>Mango cultivation method</Text>
-            </View>
-          </View>
-
-          {/* Planting Method */}
-          <View style={styles.subSection}>
-            <View style={styles.methodHeader}>
-              <Text style={styles.methodTitle}>Planting method</Text>
-              {/* <Icon name="check-circle" size={20} color="#4CAF50" /> */}
-            </View>
-            <View style={styles.iconsRow}>
-              {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-            </View>
-          </View>
-
-          {/* Nutrient & Growth Management */}
-          <View style={styles.subSection}>
-            <Text style={styles.sectionSubTitle}>Nutrient & Growth Management</Text>
-            
-            {/* Nutrient Management */}
-            <View style={styles.methodCard}>
-              <View style={styles.methodHeader}>
-                <Text style={styles.methodTitle}>Nutrient Management</Text>
-                {/* <Icon name="check-circle" size={20} color="#4CAF50" /> */}
-              </View>
-              <View style={styles.iconsRow}>
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              </View>
-            </View>
-
-            {/* Nutrient Deficiency */}
-            <View style={styles.methodCard}>
-              <View style={styles.methodHeader}>
-                <Text style={styles.methodTitle}>Nutrient deficiency symptoms and their management</Text>
-                {/* <Icon name="check-circle" size={20} color="#4CAF50" /> */}
-              </View>
-              <View style={styles.iconsRow}>
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              </View>
-            </View>
-          </View>
-
-          {/* Protection & Health */}
-          <View style={styles.subSection}>
-            <Text style={styles.sectionSubTitle}>Protection & Health</Text>
-            
-            {/* Plant Protection */}
-            <View style={styles.methodCard}>
-              <View style={styles.methodHeader}>
-                <Text style={styles.methodTitle}>Plant protection control in mango</Text>
-                {/* <Icon name="check-circle" size={20} color="#4CAF50" /> */}
-              </View>
-              <View style={styles.iconsRow}>
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              </View>
-            </View>
-
-            {/* Pest Management */}
-            <View style={styles.methodCard}>
-              <View style={styles.methodHeader}>
-                <Text style={styles.methodTitle}>Pest management</Text>
-                {/* <Icon name="check-circle" size={20} color="#4CAF50" /> */}
-              </View>
-              <View style={styles.iconsRow}>
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              </View>
-            </View>
-
-            {/* Disease Management */}
-            <View style={styles.methodCard}>
-              <View style={styles.methodHeader}>
-                <Text style={styles.methodTitle}>Disease Management</Text>
-                {/* <Icon name="check-circle" size={20} color="#4CAF50" /> */}
-              </View>
-              <View style={styles.iconsRow}>
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-                {/* <Icon name="favorite" size={20} color="#ff6b6b" style={styles.methodIcon} /> */}
-              </View>
-            </View>
-          </View>
-
-        </View>
-
-        {/* Bottom Spacing */}
-        <View style={styles.bottomSpacing} />
-
-      </ScrollView>
-    </View>
+      ))}
+    </ScrollView>
+ </>
   );
 };
 
+export default CropDetailsScreen;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
+  container: { flex: 1, backgroundColor: "#f7f9f8", paddingHorizontal: 12 },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 12,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  backButton: {
-    padding: 4,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  placeholder: {
-    width: 24,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  banner: {
-    backgroundColor: '#e8f5e8',
-    margin: 20,
+  headerTitle: { fontSize: 18, fontWeight: "600" },
+  headerIcons: { flexDirection: "row" },
+  icon: { marginHorizontal: 8 },
+
+  cropCard: {
+    backgroundColor: "#fff",
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    marginBottom: 10,
   },
-  bannerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  bannerTitle: {
-    fontSize: 16,
-    color: '#2e7d32',
-    fontWeight: '500',
-  },
-  summaryButton: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+  greenBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#00A36C",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: 20,
   },
-  summaryButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  section: {
-    paddingHorizontal: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 16,
-  },
-  sectionMainTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-  },
-  sectionSubTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  detailsCard: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 12,
-    padding: 16,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef',
-  },
-  detailRowLast: {
-    borderBottomWidth: 0,
-  },
-  detailLabel: {
-    fontSize: 16,
-    color: '#666',
-    flex: 1,
-  },
-  detailValue: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  detailText: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
-    marginLeft: 8,
-  },
-  divider: {
-    height: 8,
-    backgroundColor: '#f1f3f4',
-    marginVertical: 20,
-  },
-  subSection: {
-    marginBottom: 24,
-  },
-  subSectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 12,
-  },
-  methodCard: {
-    backgroundColor: '#f8f9fa',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-  },
-  methodHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  methodTitle: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '500',
-    flex: 1,
-    marginRight: 12,
-  },
-  iconsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  methodIcon: {
-    marginRight: 12,
-  },
-  bottomSpacing: {
-    height: 20,
-  },
-});
+  badgeText: { color: "#fff", fontSize: 12, marginLeft: 4 },
+  viewSummary: { color: "#00A36C", fontWeight: "600", fontSize: 13 },
+  rowBetween: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  cropInfo: { flexDirection: "row", marginTop: 10 },
+  cropImage: { width: 100, height: 100, borderRadius: 4 },
+  cropDetails: { flex: 1, marginLeft: 10 },
+  cropName: { fontSize: 20, fontWeight: "700", marginBottom: 6 },
+  sowingDetails: { gap: 10 },
+  detailRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  detailText: { fontSize: 13, color: "#4E4E4E",fontWeight:400 },
 
-export default CropDetailScreen;
+  sectionContainer: { marginTop: 12 },
+  sectionHeader: { flexDirection: "row", alignItems: "center", marginBottom: 6 },
+  sectionTitle: { fontSize: 14, fontWeight: "700", marginLeft: 6 },
+
+  accordionItem: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    marginVertical: 4,
+  },
+  accordionHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  accordionTitle: { fontSize: 14, color: "#000", fontWeight: "500" },
+  accordionContent: { marginTop: 6, color: "#555", fontSize: 13 },
+ greenUnderline: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        top: 33,
+        // marginTop: 4,
+        height: 1,
+        backgroundColor: '#01AD41',
+        width: '100%'
+    },
+});

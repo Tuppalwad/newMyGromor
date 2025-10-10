@@ -116,6 +116,7 @@ import NewPostScreen from '../pages/dashboard_modules/tabs/community/NewPost';
 import ProfileCard from '../pages/dashboard_modules/tabs/community/Profile';
 import ReportModal from '../pages/dashboard_modules/tabs/community/ReportModal';
 import CropDetailScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/CropDetailScreen';
+import QuriesScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/QueriesScreen';
 // import WeatherScreen from '../pages/product_modules/weather/wheatherScreen';
 // import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
@@ -320,6 +321,11 @@ const StackNav = ({ navigation }) => {
         options={{ headerShown: false }}
         name={Screen.CropDetailScreen}
         component={CropDetailScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.QuriesScreen}
+        component={QuriesScreen}
       />
       {/* 
       <Stack.Screen
