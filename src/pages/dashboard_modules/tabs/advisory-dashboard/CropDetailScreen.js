@@ -43,15 +43,6 @@ const CropDetailsScreen = () => {
                 />
 
     <ScrollView style={styles.container}>
-      {/* Header */}
-      {/* <View style={styles.headerRow}>
-        {/* <Ionicons name="arrow-back" size={24} color="#000" /> */}
-        {/* <Text style={styles.headerTitle}>Mango</Text>
-        <View style={styles.headerIcons}> */}
-          {/* <Ionicons name="notifications-outline" size={22} color="#000" style={styles.icon} /> */}
-          {/* <Feather name="shopping-cart" size={22} color="#000" /> */}
-        {/* </View>
-      </View> */}
 
       {/* Crop Summary */}
       <View style={styles.cropCard}>

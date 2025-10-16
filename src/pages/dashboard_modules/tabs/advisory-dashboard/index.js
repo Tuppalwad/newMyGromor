@@ -18,6 +18,7 @@ import cottonImage from '../../../../assets/images/common/cotton.png';
 import { FlatList } from 'react-native-gesture-handler';
 import { Screen } from '../../../../router/screen';
 import QuriesScreen from './QueriesScreen';
+import QueriesScreen from './QueriesScreen';
 const CropAdvisoryScreen = () => {
     //   const renderCardItem = (title, isHighlighted = false, iconName = null) => (
     //     <View style={[styles.cardItem, isHighlighted && styles.highlightedItem]}>
@@ -443,7 +444,7 @@ const CropAdvisoryScreen = () => {
                         </View>
                     </>
                     : <>
-                        <QuriesScreen />
+                        <QueriesScreen />
                     </>
                 }
             </ScrollView>

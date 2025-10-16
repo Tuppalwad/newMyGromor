@@ -116,7 +116,11 @@ import NewPostScreen from '../pages/dashboard_modules/tabs/community/NewPost';
 import ProfileCard from '../pages/dashboard_modules/tabs/community/Profile';
 import ReportModal from '../pages/dashboard_modules/tabs/community/ReportModal';
 import CropDetailScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/CropDetailScreen';
-import QuriesScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/QueriesScreen';
+import QueriesScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/QueriesScreen';
+import PostQueryDetail from '../pages/dashboard_modules/tabs/advisory-dashboard/PostQueryDetail';
+import NewQueryScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/NewQueryScreen';
+import NewVideoQueryScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/NewVideoQueryScreen';
+import CropDoctorScreen from '../pages/dashboard_modules/tabs/crop-doctor';
 // import WeatherScreen from '../pages/product_modules/weather/wheatherScreen';
 // import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
@@ -324,8 +328,28 @@ const StackNav = ({ navigation }) => {
       />
       <Stack.Screen
         options={{ headerShown: false }}
-        name={Screen.QuriesScreen}
-        component={QuriesScreen}
+        name={Screen.QueriesScreen}
+        component={QueriesScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.PostQueryDetail}
+        component={PostQueryDetail}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.NewQueryScreen}
+        component={NewQueryScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.NewVideoQueryScreen}
+        component={NewVideoQueryScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.CropDoctorScreen}
+        component={CropDoctorScreen}
       />
       {/* 
       <Stack.Screen

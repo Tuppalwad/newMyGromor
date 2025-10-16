@@ -8,7 +8,6 @@ import {
     ScrollView,
     Image
 } from 'react-native';
-// import { Ionicons, Feather } from '@expo/vector-icons';
 import mic from '../../../../assets/images/common/mic.png';
 import video from '../../../../assets/images/common/video.png';
 import camera from '../../../../assets/images/common/camera.png';
@@ -16,30 +15,21 @@ import gallery from '../../../../assets/images/common/gallery.png';
 import CustomHeader from '../../../../components/common/CustomHeader';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomButton from '../../../../components/common/CustomButton';
-import CommanPost from '../../component/commanPost';
-import Farm from '../../../../assets/images/common/communityFarm.png';
-const NewPostScreen = ({ navigation }) => {
+import calendar from '../../../../assets/images/common/calender.png';
+
+const NewVideoQueryScreen = ({ navigation, route }) => {
+    const { type } = route.params || {};
     const [question, setQuestion] = useState('');
+
+    let headerTitle = 'New Query';
+    if (type === 'video') headerTitle = 'Video Consultation';
+    else if (type === 'physical') headerTitle = 'Physical Consultation';
 
     return (
         <View style={styles.container}>
-            {/* Header */}
-            {/* <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <TouchableOpacity>
-            <Ionicons name="arrow-back" size={22} color="#000" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>New Post</Text>
-        </View>
-        <View style={styles.headerRight}>
-          <Feather name="bell" size={22} color="#000" style={{ marginRight: 15 }} />
-          <Ionicons name="cart-outline" size={22} color="#000" />
-        </View>
-      </View> */}
-
             <CustomHeader
                 type=""
-                topTitle="New Post"
+                topTitle={headerTitle}
                 subtitle=""
                 onBackPress={() => navigation.goBack()}
                 onCartPress={() => console.log('Cart pressed')}
@@ -47,28 +37,11 @@ const NewPostScreen = ({ navigation }) => {
             />
 
             <ScrollView contentContainerStyle={styles.contentContainer}>
-                {/* Ask Question Section */}
-                <CommanPost
-                item={
-                    {
-                        id: '1',
-                        name: 'Kissanlal Yadav',
-                        location: 'Kolhapur, Maharashtra',
-                        date: '30 Jun 25, 8:48 pm',
-                        image: Farm, // replace with your image URL or local asset
-                        question: 'How to grow water spinach in plastic bottles with water very easily and quickly?',   
-                        tag: 'Spinach',
-                        likes: 678, 
-                        comments: 14,
-                        shares: 60,
-                    }
-                }
-                />
-                <View style={{ backgroundColor: '#FFFFFF', padding: 10 }} >
-                    <Text style={styles.sectionTitle}>Ask your question</Text>
+                <Text style={styles.sectionTitle}>Query Description</Text>
+                <View style={{ backgroundColor: '#FFFFFF', padding: 10 }}>
                     <TextInput
                         style={styles.textArea}
-                        placeholder="Describe your crop issue or ask a farming question."
+                        placeholder="Describe your query"
                         placeholderTextColor="#888"
                         multiline
                         numberOfLines={10}
@@ -76,16 +49,51 @@ const NewPostScreen = ({ navigation }) => {
                         onChangeText={setQuestion}
                     />
                 </View>
-                {/* Add File Section */}
-                <Text style={styles.sectionTitle}>Add a file</Text>
-                <Text style={styles.fileInfo}>File size is maximum of 5 MB</Text>
-                <Text style={styles.audioNote}>* Press Audio button to record</Text>
+               
 
-                {/* File Options */}
+                    <Text style={{ fontSize: 16, fontWeight: "700", color: "#000", marginTop: 15 }}>
+                        Select Date & Time
+                    </Text>
+                <View style={{ backgroundColor: '#fff', padding: 16, marginTop: 10, borderRadius: 4 }}>
+
+                    <Text style={{ fontSize: 14, color: "#4E4E4E", fontWeight: "600", marginBottom: 6 }}>
+                        Schedule Date
+                    </Text>
+
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            borderWidth: 1,
+                            borderColor: "#D0D0D0",
+                            borderRadius: 4,
+                            paddingVertical: 10,
+                            paddingHorizontal: 12,
+                            backgroundColor: "#fff",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Text style={{ fontSize: 16,fontWeight:400, color: "#878787" }}>Select Date</Text>
+                        <Image
+                            source={calendar}
+                            style={{ height: 20, width: 20, tintColor: "#2ECC71" }}
+                        />
+                    </View>
+                </View>
+
+
+                <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Add a file</Text>
+                <Text style={styles.fileInfo}>File size is maximum of 5 MB</Text>
+                <Text style={styles.audioNote}>
+                    <Text style={{ color: 'red' }}>*</Text> Press Audio button to record
+                </Text>
+
                 <View style={styles.fileOptionsContainer}>
                     <TouchableOpacity style={styles.fileButton}>
                         <Image source={mic} style={{ height: 24, width: 24 }} />
-                        <Text style={styles.fileText}>Audio<Text style={{ color: 'red' }}>*</Text></Text>
+                        <Text style={styles.fileText}>
+                            Audio<Text style={{ color: 'red' }}>*</Text>
+                        </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.fileButton}>
@@ -105,19 +113,18 @@ const NewPostScreen = ({ navigation }) => {
                 </View>
             </ScrollView>
 
-            {/* Submit Button */}
             <CustomButton title="Submit" onPress={() => { }} />
-
         </View>
     );
 };
 
-export default NewPostScreen;
+export default NewVideoQueryScreen;
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F7F9F8',
+        backgroundColor: '#EEF2F1',
     },
     header: {
         flexDirection: 'row',
@@ -134,34 +141,34 @@ const styles = StyleSheet.create({
     headerRight: { flexDirection: 'row', alignItems: 'center' },
 
     contentContainer: {
-        paddingHorizontal: 16,
+        paddingHorizontal: 10,
         paddingTop: 10,
         marginTop: 10,
     },
 
     sectionTitle: {
-        fontSize: 15,
-        fontWeight: '600',
+        fontSize: 16,
+        fontWeight: '700',
         color: '#000',
-        marginTop: 12,
+        marginTop: 10,
         marginBottom: 8,
         // backgroundColor: '#FFFFFF',
     },
 
     textArea: {
         backgroundColor: '#fff',
-        borderRadius: 8,
+        borderRadius: 4,
         borderWidth: 1,
         borderColor: '#ddd',
         padding: 12,
         textAlignVertical: 'top',
         fontSize: 14,
         color: '#333',
-        minHeight: 100,
+        minHeight: 150,
     },
 
-    fileInfo: { fontSize: 13, color: '#555' },
-    audioNote: { fontSize: 12, color: 'red', marginTop: 2 },
+    fileInfo: { fontSize: 14, fontWeight: 400, color: '#00' },
+    audioNote: { fontSize: 14, fontWeight: 700, color: '#4E4E4E', marginTop: 2 },
 
     fileOptionsContainer: {
         flexDirection: 'row',

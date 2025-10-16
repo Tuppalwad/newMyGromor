@@ -1,14 +1,182 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet, FlatList } from "react-native";
-import PostQuery from '../../../../assets/images/common/PostQuery.png';
-import VideoConsultation from '../../../../assets/images/common/VideoConsultation.png';
-import PhysicalConsultation from '../../../../assets/images/common/PhysicalConsultation.png'
-import LinearGradient from "react-native-linear-gradient";
-import timer from '../../../../assets/images/splash/timer.png'
-// import complete from '../../../../assets/images/common/success.png'
-import filter from '../../../../assets/images/common/filter.png'
-import rightArrow from '../../../../assets/images/common/rightArrow.png';
+// import React from "react";
+// import { View, Text, TouchableOpacity, Image, StyleSheet, FlatList } from "react-native";
+// import PostQuery from '../../../../assets/images/common/PostQuery.png';
+// import VideoConsultation from '../../../../assets/images/common/VideoConsultation.png';
+// import PhysicalConsultation from '../../../../assets/images/common/PhysicalConsultation.png'
+// import LinearGradient from "react-native-linear-gradient";
+// import timer from '../../../../assets/images/splash/timer.png'
+// // import complete from '../../../../assets/images/common/success.png'
+// import filter from '../../../../assets/images/common/filter.png'
+// import rightArrow from '../../../../assets/images/common/rightArrow.png';
 
+
+// const queries = [
+//   {
+//     id: "6404",
+//     description: "Dummy text Lorem ipsum dol...",
+//     type: "Post",
+//     date: "06-05-2025",
+//     status: "In-progress",
+//   },
+//   {
+//     id: "3796",
+//     description: "",
+//     type: "Video Consultation",
+//     date: "06-05-2025",
+//     status: "Completed",
+//   },
+//   {
+//     id: "3796",
+//     description: "",
+//     type: "Physical Consultation",
+//     date: "06-05-2025",
+//     status: "Completed",
+//   },
+// ];
+
+
+// const QueriesScreen = () => {
+//   const renderStatus = (status) => {
+//     const isCompleted = status === "Completed";
+//     return (
+//       <View
+//         style={[
+//           styles.statusContainer,
+//           { backgroundColor: isCompleted ? "#E8F8EE" : "#FFF8E1" },
+//         ]}
+//       >
+//         <Image source={timer}
+//           size={14}
+//           color={isCompleted ? "#32C86E" : "#E5B700"}
+//           style={{ marginRight: 4, tintColor: isCompleted ? "#32C86E" : "#E5B700", height: 12, width: 12 }}
+//         />
+//         <Text
+//           style={[
+//             styles.statusText,
+//             { color: isCompleted ? "#32C86E" : "#E5B700" },
+//           ]}
+//         >
+//           {status}
+//         </Text>
+//       </View>
+//     );
+//   };
+
+//   const renderItem = ({ item }) => (
+//     <View style={styles.card}>
+//       <View style={styles.cardHeader}>
+//         <Text style={styles.queryId}>Query ID</Text>
+//         {renderStatus(item.status)}
+//       </View>
+//       <Text style={styles.queryNumber}>{item.id}</Text>
+//       <View style={styles.greenUnderline}></View>
+//       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+//         <View>
+//           <Text style={styles.description}>
+//             <Text style={styles.bold}>Description: </Text>
+//             <Text style={{ fontWeight: 400, fontSize: 13, color: '#4E4E4E' }}>{item.description}</Text>
+//           </Text>
+//           <Text style={styles.queryDetail}>
+//             <Text style={styles.bold}>Query Type: </Text>
+//             {item.type}
+//           </Text>
+//           <Text style={styles.queryDetail}>
+//             <Text style={styles.bold}>Query Date: </Text>
+//             {item.date}
+//           </Text>
+//         </View>
+//         <View style={{ marginTop: 10 }}>
+//           <TouchableOpacity onPress={() => onPressItem(item)}>
+//             <Image source={rightArrow} style={{ width: 16, height: 16, tintColor: '#000', resizeMode: 'contain', }} />
+//           </TouchableOpacity>
+//         </View>
+//       </View>
+//     </View>
+//   );
+
+
+
+//   return (<>
+//     <View style={styles.container}>
+//       <View>
+//         <Text style={styles.title}>Ask the Expert</Text>
+//         <Text style={styles.subtitle}>Select how you want to consult</Text>
+
+//         <View style={styles.optionsRow}>
+//           <TouchableOpacity style={styles.optionCard}>
+//             <Image
+//               source={PostQuery} // replace with your icon
+//               style={styles.icon}
+//             />
+//             <Text style={styles.optionText}>Post a Query</Text>
+//           </TouchableOpacity>
+
+//           <TouchableOpacity style={styles.optionCard}>
+//             <Image
+//               source={VideoConsultation} // replace with your icon
+//               style={styles.icon}
+//             />
+//             <Text style={styles.optionText}>Video Consultation</Text>
+//           </TouchableOpacity>
+
+//           <TouchableOpacity style={styles.optionCard}>
+//             <Image
+//               source={PhysicalConsultation} // replace with your icon
+//               style={styles.icon}
+//             />
+//             <Text style={styles.optionText}>Physical Consultation</Text>
+//           </TouchableOpacity>
+//         </View>
+//       </View>
+//     </View>
+
+//     <View style={{ marginTop: 20 }}>
+
+//       <Text style={styles.totalText}>Total 3 Queries</Text>
+
+//       <FlatList
+//         data={queries}
+//         renderItem={renderItem}
+//         keyExtractor={(item, index) => index.toString()}
+//         contentContainerStyle={{ paddingBottom: 100 }}
+//       />
+
+//       {/* Filter Bar */}
+//       <LinearGradient
+//         colors={["#52C234", "#06B34F"]}
+//         style={styles.filterBar}
+//       >
+//         <TouchableOpacity style={styles.filterButton}>
+//           <Image source={filter}  style={{ width: 16, height: 16, tintColor: '#fff' }} />
+//           <Text style={styles.filterText}>Filters</Text>
+//         </TouchableOpacity>
+//       </LinearGradient>
+//     </View>
+//   </>
+//   );
+// };
+// export default QueriesScreen;
+
+import React from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  FlatList,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import LinearGradient from "react-native-linear-gradient";
+
+// ✅ Your existing image imports
+import PostQuery from "../../../../assets/images/common/PostQuery.png";
+import VideoConsultation from "../../../../assets/images/common/VideoConsultation.png";
+import PhysicalConsultation from "../../../../assets/images/common/PhysicalConsultation.png";
+import timer from "../../../../assets/images/splash/timer.png";
+import filter from "../../../../assets/images/common/filter.png";
+import rightArrow from "../../../../assets/images/common/rightArrow.png";
+import { Screen } from "../../../../router/screen";
 
 const queries = [
   {
@@ -21,12 +189,12 @@ const queries = [
   {
     id: "3796",
     description: "",
-    type: "Post",
+    type: "Video Consultation",
     date: "06-05-2025",
     status: "Completed",
   },
   {
-    id: "3796",
+    id: "3797",
     description: "",
     type: "Physical Consultation",
     date: "06-05-2025",
@@ -34,8 +202,10 @@ const queries = [
   },
 ];
 
+const QueriesScreen = () => {
+  const navigation = useNavigation(); // ✅ Add navigation hook
 
-const QuriesScreen = () => {
+  // ✅ Status color logic
   const renderStatus = (status) => {
     const isCompleted = status === "Completed";
     return (
@@ -45,10 +215,14 @@ const QuriesScreen = () => {
           { backgroundColor: isCompleted ? "#E8F8EE" : "#FFF8E1" },
         ]}
       >
-        <Image source={timer}
-          size={14}
-          color={isCompleted ? "#32C86E" : "#E5B700"}
-          style={{ marginRight: 4, tintColor: isCompleted ? "#32C86E" : "#E5B700", height: 12, width: 12 }}
+        <Image
+          source={timer}
+          style={{
+            marginRight: 4,
+            tintColor: isCompleted ? "#32C86E" : "#E5B700",
+            height: 12,
+            width: 12,
+          }}
         />
         <Text
           style={[
@@ -62,6 +236,18 @@ const QuriesScreen = () => {
     );
   };
 
+  // ✅ Navigation logic based on query type
+  const onPressItem = (item) => {
+    if (item.type === "Post") {
+      navigation.navigate("PostQueryDetail", { queryId: item.id });
+    } else if (item.type === "Video Consultation") {
+      navigation.navigate("VideoConsultationDetail", { queryId: item.id });
+    } else if (item.type === "Physical Consultation") {
+      navigation.navigate("PhysicalConsultationDetail", { queryId: item.id });
+    }
+  };
+
+  // ✅ Render query card
   const renderItem = ({ item }) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
@@ -70,91 +256,97 @@ const QuriesScreen = () => {
       </View>
       <Text style={styles.queryNumber}>{item.id}</Text>
       <View style={styles.greenUnderline}></View>
-      <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-      <View>
-        <Text style={styles.description}>
-          <Text style={styles.bold}>Description: </Text>
-          <Text style={{ fontWeight: 400, fontSize: 13, color: '#4E4E4E' }}>{item.description}</Text>
-        </Text>
-        <Text style={styles.queryDetail}>
-          <Text style={styles.bold}>Query Type: </Text>
-          {item.type}
-        </Text>
-        <Text style={styles.queryDetail}>
-          <Text style={styles.bold}>Query Date: </Text>
-          {item.date}
-        </Text>
-      </View>
-      <View style={{marginTop:10}}>
-        <TouchableOpacity onPress={() => onPressItem(item)}>
-          <Image source={rightArrow} style={{ width: 16, height: 16, tintColor: '#000', resizeMode: 'contain', }} />
-        </TouchableOpacity>
-      </View>
-      </View>
-    </View>
-  );
 
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View>
+          <Text style={styles.description}>
+            <Text style={styles.bold}>Description: </Text>
+            <Text style={{ fontWeight: "400", fontSize: 13, color: "#4E4E4E" }}>
+              {item.description}
+            </Text>
+          </Text>
+          <Text style={styles.queryDetail}>
+            <Text style={styles.bold}>Query Type: </Text>
+            {item.type}
+          </Text>
+          <Text style={styles.queryDetail}>
+            <Text style={styles.bold}>Query Date: </Text>
+            {item.date}
+          </Text>
+        </View>
 
-
-  return (<>
-    <View style={styles.container}>
-      <View>
-        <Text style={styles.title}>Ask the Expert</Text>
-        <Text style={styles.subtitle}>Select how you want to consult</Text>
-
-        <View style={styles.optionsRow}>
-          <TouchableOpacity style={styles.optionCard}>
+        <View style={{ marginTop: 10 }}>
+          <TouchableOpacity onPress={() => onPressItem(item)}>
             <Image
-              source={PostQuery} // replace with your icon
-              style={styles.icon}
+              source={rightArrow}
+              style={{
+                width: 16,
+                height: 16,
+                tintColor: "#000",
+                resizeMode: "contain",
+              }}
             />
-            <Text style={styles.optionText}>Post a Query</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.optionCard}>
-            <Image
-              source={VideoConsultation} // replace with your icon
-              style={styles.icon}
-            />
-            <Text style={styles.optionText}>Video Consultation</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.optionCard}>
-            <Image
-              source={PhysicalConsultation} // replace with your icon
-              style={styles.icon}
-            />
-            <Text style={styles.optionText}>Physical Consultation</Text>
           </TouchableOpacity>
         </View>
       </View>
     </View>
+  );
 
-    <View style={{ marginTop: 20 }}>
+  return (
+    <>
+      <View style={styles.container}>
+        <View>
+          <Text style={styles.title}>Ask the Expert</Text>
+          <Text style={styles.subtitle}>Select how you want to consult</Text>
 
-      <Text style={styles.totalText}>Total 3 Queries</Text>
+          <View style={styles.optionsRow}>
+            <TouchableOpacity style={styles.optionCard} onPress={()=>navigation.navigate(Screen.NewQueryScreen)}>
+              <Image source={PostQuery} style={styles.icon} />
+              <Text style={styles.optionText}>Post a Query</Text>
+            </TouchableOpacity>
 
-      <FlatList
-        data={queries}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-        contentContainerStyle={{ paddingBottom: 100 }}
-      />
+            <TouchableOpacity style={styles.optionCard} onPress={()=>navigation.navigate(Screen.NewVideoQueryScreen,{type: "video"})}>
+              <Image source={VideoConsultation} style={styles.icon} />
+              <Text style={styles.optionText}>Video Consultation</Text>
+            </TouchableOpacity>
 
-      {/* Filter Bar */}
-      <LinearGradient
-        colors={["#52C234", "#06B34F"]}
-        style={styles.filterBar}
-      >
-        <TouchableOpacity style={styles.filterButton}>
-          <Image source={filter} />
-          <Text style={styles.filterText}>Filters</Text>
-        </TouchableOpacity>
-      </LinearGradient>
-    </View>
-  </>
+            <TouchableOpacity style={styles.optionCard} onPress={()=>navigation.navigate(Screen.NewVideoQueryScreen, {type: "physical"})}>
+              <Image source={PhysicalConsultation} style={styles.icon} />
+              <Text style={styles.optionText}>Physical Consultation</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
+      <View style={{ marginTop: 20 }}>
+        <Text style={styles.totalText}>Total {queries.length} Queries</Text>
+
+        <FlatList
+          data={queries}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={{ paddingBottom: 100 }}
+        />
+
+        {/* ✅ Filter Bar */}
+        <LinearGradient
+          colors={["#52C234", "#06B34F"]}
+          style={styles.filterBar}
+        >
+          <TouchableOpacity style={styles.filterButton}>
+            <Image
+              source={filter}
+              style={{ width: 16, height: 16, tintColor: "#fff" }}
+            />
+            <Text style={styles.filterText}>Filters</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
+    </>
   );
 };
+
+export default QueriesScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -277,7 +469,17 @@ const styles = StyleSheet.create({
     fontWeight: 500,
     color: "#4E4E4E",
     marginLeft: 10
-  }
+  },
+  filterButton: {
+    position: 'relative',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  filterText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
 
-export default QuriesScreen;

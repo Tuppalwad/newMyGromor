@@ -1,4 +1,5 @@
-import CropDetailScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/CropDetailScreen';
+// import CropDetailScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/CropDetailScreen';
+// import QueryDetailScreen fro../pages/dashboard_modules/tabs/advisory-dashboard/PostQueryDetaileen';
 import { UserManager } from '../storage';
 
 export const Screen = {
@@ -91,5 +92,9 @@ NewPost:"newPost",
 Profile:"profile",
 ReportModal:"ReportModal",
 CropDetailScreen: "CropDetailScreen",
-QuriesScreen:"QuriesScreen"
+QueriesScreen:"QueriesScreen",
+PostQueryDetail:"PostQueryDetail",
+NewQueryScreen:"NewQueryScreen",
+NewVideoQueryScreen:"NewVideoQueryScreen",
+CropDoctorScreen:"CropDoctorScreen",
 };
