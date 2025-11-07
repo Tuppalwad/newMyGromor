@@ -13,11 +13,15 @@ import healthy from '../../../../assets/images/common/healthy.png';
 import takePicture from '../../../../assets/images/common/takePicture.png';
 import LinearGradient from 'react-native-linear-gradient';
 import downArrow from '../../../../assets/images/common/downArrow.png'
+import close from '../../../../assets/images/common/close.png';
+import HealthyCropScreen from './HealthyCropScreen';
+import { Screen } from '../../../../router/screen';
+import { useNavigation } from '@react-navigation/native';
 
 const CropImageModal = ({ visible, onClose }) => {
     const [selectedCrop, setSelectedCrop] = useState('Mango');
     const [dropdownVisible, setDropdownVisible] = useState(false); // Added missing state
-
+ const navigation= useNavigation();
 
     return (
         <Modal visible={visible} transparent animationType="fade">
@@ -25,6 +29,7 @@ const CropImageModal = ({ visible, onClose }) => {
                 <View style={styles.modalContainer}>
                     {/* Close Button */}
                     <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+                        <Image source={close} style={{width:12, height:12, tintColor: '#000'}} />
                         {/* <X size={20} color="#000" /> */}
                     </TouchableOpacity>
 
@@ -48,15 +53,14 @@ const CropImageModal = ({ visible, onClose }) => {
                         <Text style={styles.label}>Select Crop</Text>
 
                         <TouchableOpacity
-                            style={styles.dropdownHeader && styles.pickerWrapper}
+                            style={styles.pickerWrapper}
                             onPress={() => setDropdownVisible(!dropdownVisible)}
                         >
                         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                             <Text style={styles.selectedText}>{selectedCrop}</Text>
-                            <Image source={downArrow} style={styles.arrow}/>
+                            <Image source={downArrow} style={{width: 12, height: 12, tintColor: '#000', resizeMode: 'contain'}} />
                         </View>
                         </TouchableOpacity>
-
                         {dropdownVisible && (
                             <View style={styles.dropdownList}>
                                 {['Mango', 'Tomato', 'Cotton', 'Wheat'].map((crop) => (
@@ -68,7 +72,7 @@ const CropImageModal = ({ visible, onClose }) => {
                                             setDropdownVisible(false);
                                         }}
                                     >
-                                        <Text style={styles.dropdownItemText}>{crop}</Text>
+                                        <Text style={{fontSize: 16, fontWeight: '400'}}>{crop}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>
@@ -89,8 +93,7 @@ const CropImageModal = ({ visible, onClose }) => {
                             end={{ x: 1, y: 0 }}
                             style={styles.diagnosisBtn}
                         >
-                            <TouchableOpacity  >
-                                {/* onPress={onDiagnosis} */}
+                            <TouchableOpacity onPress={()=>navigation.navigate(Screen.HealthyCropScreen)} >
 
                                 <Text style={styles.diagnosisBtnText}>See Diagnosis</Text>
                             </TouchableOpacity>
@@ -149,14 +152,18 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 14,
-        color: '#000',
+        fontWeight: '600',
+        color: '#4E4E4E',
         marginBottom: 4,
     },
     pickerWrapper: {
         borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        overflow: 'hidden',
+        borderColor: '#B4B4B4',
+        borderRadius: 4,
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        justifyContent: 'center',
+        // overflow: 'hidden',
     },
     picker: {
         height: 40,

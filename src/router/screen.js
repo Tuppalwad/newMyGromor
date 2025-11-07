@@ -97,4 +97,5 @@ PostQueryDetail:"PostQueryDetail",
 NewQueryScreen:"NewQueryScreen",
 NewVideoQueryScreen:"NewVideoQueryScreen",
 CropDoctorScreen:"CropDoctorScreen",
+HealthyCropScreen:"HealthyCropScreen",
 };

@@ -121,6 +121,7 @@ import PostQueryDetail from '../pages/dashboard_modules/tabs/advisory-dashboard/
 import NewQueryScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/NewQueryScreen';
 import NewVideoQueryScreen from '../pages/dashboard_modules/tabs/advisory-dashboard/NewVideoQueryScreen';
 import CropDoctorScreen from '../pages/dashboard_modules/tabs/crop-doctor';
+import HealthyCropScreen from '../pages/dashboard_modules/tabs/crop-doctor/HealthyCropScreen';
 // import WeatherScreen from '../pages/product_modules/weather/wheatherScreen';
 // import MyServicesScreen from '../pages/service_module/myServices';
 // import MyBookings from '../pages/product_Modules/order/MyBooking';
@@ -350,6 +351,11 @@ const StackNav = ({ navigation }) => {
         options={{ headerShown: false }}
         name={Screen.CropDoctorScreen}
         component={CropDoctorScreen}
+      />
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name={Screen.HealthyCropScreen}
+        component={HealthyCropScreen}
       />
       {/* 
       <Stack.Screen
